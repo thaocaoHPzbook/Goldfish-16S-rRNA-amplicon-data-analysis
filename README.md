@@ -6,9 +6,9 @@
 ## [Quality check of raw reads](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Quality_Check.md)
 
 ## [Step in Qiime 2](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime2_steps.md)
-### 1. [Importing raw data into Qiime2](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/Importing-raw-data-into-Qiime2.md)
+### [1. Importing raw data into Qiime2](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/1.%20Importing-raw-data-into-Qiime2.md)
 
-### 2. Filtering, dereplication, sample inference, chimera identification, and merging of paired-end reads by DADA2 package in qiime2
+### [2. Filtering, dereplication, sample inference, chimera identification, and merging of paired-end reads by DADA2 package in qiime2](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/2.%20Filtering%2C%20dereplication%2C%20sample%20inference%2C%20chimera%20identification%2C%20and%20merging%20of%20paired-end%20reads%20by%20DADA2%20package%20in%20qiime2.md)
 
 ### 3. Training a primer-based region-specific classifier for taxonomic classification by Naïve-Bayes method
 
