@@ -10,4 +10,47 @@ qiime tools import \
   --output-path short_reads_demux.qza \
   --input-format PairedEndFastqManifestPhred33
 ```
+This might take a while before you get the results. The output of this, is a .qza file that you have already specified it in the command, in this example demuxed-dss.qza. You can then create a visualized file from this artifact, with the following command:
 
+```bash
+qiime demux summarize \
+  --i-data short_reads_demux.qza \
+  --o-visualization short_reads_demux.qzv
+```
+This **short_reads_demux.qzv** is a visualized format of short_reads_demux.qza. which you can view it on {qiime2 viewer}(https://view.qiime2.org/)). Once you are there you can either drag-and-drop the artifact into the designated area or simpley copy the link to the artifact from this repository and paste it in the box file from the web. Once there, you must come across the following picture:
+![image](https://github.com/user-attachments/assets/dbfb9bb8-4dfc-4676-a680-1774ead4cbce)
+**Figure 1. Demultiplexed pairedEnd read**
+On this overview page you can see counts of demultiplexed sequences for the entire samples for both forward and reverse reads, with min, median, mean and max and total counts.
+![image](https://github.com/user-attachments/assets/352add1e-abed-404b-83dc-12a7d0200684)
+**Figure 2. Interacvive plot for demultiplexed pairedEnd reads**
+Understanding this plot is crucial for the denoising step, as you need to determine the truncation length for both forward and reverse reads in a way that ensures at least 50% of the reads have a quality score (Q) ≥ 30. You can observe these changes by hovering over the interactive box plots. In this case, the quality of both forward and reverse reads starts to decline significantly after approximately 220 nt.
+
+# 2. Filtering, dereplication, sample inference, chimera identification, and merging of paired-end reads by DADA2 package in qiime2.
+```bash
+qiime dada2 denoise-paired \
+  --i-demultiplexed-seqs short_reads_demux.qza \
+  --p-trim-left-f 0 \
+  --p-trim-left-r 0 \
+  --p-trunc-len-f 220 \
+  --p-trunc-len-r 220 \
+  --o-table table.qza \
+  --o-representative-sequences rep-seqs.qza \
+  --o-denoising-stats denoising-stats.qza
+```
+You can convert the denoising-stats.qza file into a .qzv file and visualize it on qiime viewer as explained earlier
+```bash
+qiime metadata tabulate \
+  --m-input-file denoising-stats.qza \
+  --o-visualization denoising-stats.qzv
+```
+![image](https://github.com/user-attachments/assets/6de3099b-4481-401a-acf4-d81eeb8ddb72)
+Figure 3. The denoising status of the reads for each sample. You can see the number of filtered reads and also the percentage of non-chimeric sequences after denoising.
+The filtered reads and also the percentage of non-chimeric sequences are quite low. You may need to adjust the chimera filtering process in DADA2 or apply an alternative approach
+```bash
+qiime vsearch uchime-denovo \
+  --i-table table.qza \
+  --i-sequences rep-seqs.qza \
+  --o-chimeras chimeras.qza \
+  --o-nonchimeras rep-seqs-no-chimera.qza \
+  --o-stats chimera-stats.qza
+```
