@@ -234,7 +234,39 @@ Pairwise (Between groups):
         All pairwise comparisons have p-value > 0.05, indicating no significant differences in Faith's PD between any of the groups.
 **Conclusion: There is no significant difference in Faith's PD between the groups, suggesting that the phylogenetic diversity is similar across all groups in this study.**
 
+# Beta diversity analysis
+## 1. Bray-Curtis Index
+This index is used to measure the difference between two microbial communities. The value ranges from 0 to 1:
+    0 means the two communities are completely identical.
+    1 means the two communities are completely different.
+This index helps us understand the level of difference in microbial species between samples.
+**PCoA Plot**
+```bash
+qiime diversity pcoa \
+  --i-distance-matrix core-metrics-results/bray_curtis_distance_matrix.qza \
+  --o-pcoa core-metrics-results/bray_curtis_pcoa_results.qza
+```
+```bash
+qiime emperor plot \
+  --i-pcoa core-metrics-results/bray_curtis_pcoa_results.qza \
+  --m-metadata-file metadata.tsv \
+  --o-visualization core-metrics-results/bray_curtis_emperor.qzv
+```
+![image](https://github.com/user-attachments/assets/58a66a9c-99f1-419a-a07c-f771008fdd07)
 
+The PCoA plot does not show clear clustering between the treatments,further PERMANOVA analysis for a more detailed examination and reveals significant differences in microbial communities across the groups.
+**PERMANOVA analysis**
+```bash
+qiime diversity beta-group-significance \
+  --i-distance-matrix beta-diversity.qza \
+  --m-metadata-file metadata.tsv \
+  --p-method permanova \
+  --o-visualization bray_curtis_group_significance.qzv
+```
+![image](https://github.com/user-attachments/assets/efec7fb7-6697-4740-b5d7-337bc7f399d3)
+With a p-value greater than 0.05, the conclusion is that there is no significant difference between the groups based on the Bray-Curtis index. This suggests that the treatments or groupings do not have a strong influence on the differences in microbial community structure between the groups.
+
+##
 
 
 
