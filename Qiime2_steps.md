@@ -93,7 +93,7 @@ qiime feature-classifier fit-classifier-naive-bayes \
   --i-reference-taxonomy silva_data/silva-138-99-tax.qza \
   --o-classifier silva_data/silva-classifier.qza
 ```
-After you got [silva-classifier.qza](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/upload/main/Qiime_steps) classifier file, you can use it for your taxonomic classifications as follows:
+After you got **silva-classifier.qza** classifier file, you can use it for your taxonomic classifications as follows:
 ## Taxonomic clasification
 ```bash
 qiime feature-classifier classify-sklearn \
@@ -131,7 +131,7 @@ qiime tools export \
   --input-path tree-no-chimera.qza \
   --output-path exported_tree
 ```
-The Newick file will be in the exported_tree/tree.nwk folder. You can upload it to [iTOL](https://itol.embl.de/upload.cgi) to view it.
+The Newick file will be in the exported_tree/tree.nwk folder. You can upload [tree.nwk](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/tree.nwk) to [iTOL](https://itol.embl.de/upload.cgi) to view it.
 ![image](https://github.com/user-attachments/assets/20474d10-c2fd-4cf6-a923-b7e20afb4f00)
 
 # Rarefraction curve analysis
