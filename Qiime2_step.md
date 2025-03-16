@@ -115,8 +115,6 @@ You can see in the taxa barplot that most samples have similar microbial composi
 
 To investigate further, we will examine the summary statistics after chimera filtering and perform rarefaction curve analysis in the next steps. 
 
-#
-
 # Creating a phylogenetic tree using align-to-tree-MAFFT-FastTree
 ```bash
 qiime phylogeny align-to-tree-mafft-fasttree \
@@ -134,6 +132,44 @@ qiime tools export \
 ```
 The Newick file will be in the exported_tree/tree.nwk folder. You can upload it to [iTOL](https://itol.embl.de/upload.cgi) to view it.
 ![image](https://github.com/user-attachments/assets/20474d10-c2fd-4cf6-a923-b7e20afb4f00)
+
+# Rarefraction curve analysis
+Rarefaction curves assess sequencing depth sufficiency and microbial diversity saturation in samples. This helps (1) Ensure adequate sequencing depth for reliable diversity estimation (2) Compare samples to detect under-sequenced ones; (3) Evaluate data stability—a plateauing curve indicates sufficient sampling.
+**Generate rarefraction curve chart**
+```bash
+qiime diversity alpha-rarefaction \
+  --i-table filtered-table.qza \
+  --i-phylogeny tree-no-chimera.qza \
+  --p-max-depth 14007 \
+  --p-steps 20 \
+  --p-iterations 10 \
+  --m-metadata-file metadata.tsv \
+  --o-visualization alpha-rarefaction.qzv
+```
+You can view the chart **alpha-rarefaction.qzv** by qiime view as method explained previously.
+![image](https://github.com/user-attachments/assets/7bdadcb9-a4c5-4cfd-a2f4-f231d4f37a40)
+At a depth of 4000, the rarefaction curve reaches saturation, indicating that increasing reads will not detect many new ASVs.
+
+![image](https://github.com/user-attachments/assets/0efd2bda-dbdf-4a18-b38b-58b9512bfedd)
+At a depth of 4000, 2 out of 15 samples are removed, it means that over 80% of the samples (13/15) are retained. This suggests that normalization at this depth would keep most of the dataset for analysis.
+**Proceed with normalization at a subsampling depth of 4000**
+```bash
+qiime diversity core-metrics-phylogenetic \
+  --i-table filtered-table.qza \
+  --i-phylogeny tree-no-chimera.qza \
+  --p-sampling-depth 4000 \
+  --m-metadata-file metadata.tsv \
+  --output-dir core-metrics-results-4000
+```
+# Alpha diversity analysis
+```bash
+qiime diversity alpha \
+  --i-table filtered-table.qza \
+  --p-metric chao1 \
+  --o-alpha-diversity chao1-diversity.qza
+```
+
+
 
 
 
