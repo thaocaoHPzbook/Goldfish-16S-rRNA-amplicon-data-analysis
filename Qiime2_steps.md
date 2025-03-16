@@ -22,7 +22,7 @@ This [short_reads_demux.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA
 **Figure 1. Demultiplexed pairedEnd read**    
 On this overview page you can see counts of demultiplexed sequences for the entire samples for both forward and reverse reads, with min, median, mean and max and total counts.
 ![image](https://github.com/user-attachments/assets/352add1e-abed-404b-83dc-12a7d0200684)
-**Figure 2. Interacvive plot for demultiplexed pairedEnd reads**
+**Figure 2. Interacvive plot for demultiplexed pairedEnd reads**    
 Understanding this plot is crucial for the denoising step, as you need to determine the truncation length for both forward and reverse reads in a way that ensures at least 50% of the reads have a quality score (Q) ≥ 30. You can observe these changes by hovering over the interactive box plots. In this case, the quality of both forward and reverse reads starts to decline significantly after approximately 220 nt.
 
 # 2. Filtering, dereplication, sample inference, chimera identification, and merging of paired-end reads by DADA2 package in qiime2.
@@ -37,7 +37,7 @@ qiime dada2 denoise-paired \
   --o-representative-sequences rep-seqs.qza \
   --o-denoising-stats denoising-stats.qza
 ```
-You can convert the denoising-stats.qza file into a .qzv file and visualize it on qiime viewer as explained earlier
+You can convert the denoising-stats.qza file into a [denoising-stats.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/denoising-stats.qzv) file and visualize it on qiime viewer as explained earlier
 ```bash
 qiime metadata tabulate \
   --m-input-file denoising-stats.qza \
