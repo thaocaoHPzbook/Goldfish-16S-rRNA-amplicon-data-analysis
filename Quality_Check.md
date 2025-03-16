@@ -26,6 +26,7 @@ chmod +r Home/hpGoldfish/Raw_data/IDs.list
 ```bash
 nano run_fastqc.sh
 ```
+(./Goldfish-16S-rRNA-amplicon-data-analysis/Quality_Check/quality_check.sh)
 
 ```bash
 chmod +x run_fastqc.sh
