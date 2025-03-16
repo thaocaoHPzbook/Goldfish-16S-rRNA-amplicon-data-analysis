@@ -24,6 +24,6 @@
 
 
 ## Steps in R/Rstudio
-### 1. Differential abundance analysis of taxa by ANCOMBC
+### [1. Differential abundance analysis of taxa by ANCOMBC](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/1.%20Differential%20abundance%20analysis%20of%20taxa%20by%20ANCOMBC.md)
 
-### 2. Analysis of chemical biomarkers for gut microbiome: Heatmap correlation
+### [2. Analysis of biomarkers for gut microbiome](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/2.%20Analysis%20of%20biomarkers%20for%20gut%20microbiome.md)
