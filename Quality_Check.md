@@ -1,7 +1,7 @@
 # 1. Dowload data and create the list of sample's name
 ## Create the Goldfish directory with a subdirectory named Raw_data
 ```bash
-mkdir -p Home/hpGoldfish/Raw_data
+mkdir -p Home/hp/Goldfish/Raw_data
 ```
 ## Navigate to the Raw_data directory
 ```bash
