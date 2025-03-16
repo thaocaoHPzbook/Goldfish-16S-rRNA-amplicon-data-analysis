@@ -93,7 +93,7 @@ qiime feature-classifier fit-classifier-naive-bayes \
   --o-classifier silva_data/silva-classifier.qza
 ```
 After you got **silva-classifier.qza** classifier file, you can use it for your taxonomic classifications as follows:
-# Taxonomic clasification
+## Taxonomic clasification
 ```bash
 qiime feature-classifier classify-sklearn \
   --i-classifier silva_data/silva-classifier.qza \
