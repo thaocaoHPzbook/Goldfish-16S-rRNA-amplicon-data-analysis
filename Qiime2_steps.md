@@ -191,7 +191,7 @@ The Kruskal-Wallis test results indicate:
     *Pairwise comparisons*
         Most group comparisons have p-values > 0.05, suggesting no statistically significant differences.
         However, RP-20 vs RP-40 and RP-20 vs RP-5 have p-values = 0.0495, indicating a potential difference.
-        Yet, the q-values are > 0.05 (after multiple testing correction), meaning the observed differences may not be strong enough to be considered statistically significant.
+        Yet, the q-values are > 0.05 (after multiple testing correction), meaning the observed differences may not be strong enough to be considered statistically significant.    
 **Conclusion**: There is no significant difference in Chao1 alpha diversity among the groups after multiple comparison correction.
 
 ## Shannon index
@@ -207,8 +207,7 @@ qiime diversity alpha-group-significance \
 [shannon-group-significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/shannon-group-significance.qzv) file is generated.
 ![image](https://github.com/user-attachments/assets/16ed9d07-b543-4eb6-8c06-f32130231ffc)
 Overall: p-value = 0.6476 → There is no significant difference in the Shannon index between groups overall. This means that the microbial diversity structure across all groups is similar.
-Pairwise: All p-values > 0.05 → There is no significant difference in the Shannon index between any pair of groups. This indicates that no group has significantly higher or lower microbial diversity compared to the others.
-
+Pairwise: All p-values > 0.05 → There is no significant difference in the Shannon index between any pair of groups. This indicates that no group has significantly higher or lower microbial diversity compared to the others.    
 **Conclusion: The groups have equivalent microbial diversity, suggesting that the grouping factor (e.g., experimental condition) does not strongly influence gut microbiome diversity in this dataset**
 ## Pielou's Evenness Index
 Pielou's Evenness Index measures the evenness of species distribution in a community. It indicates how evenly the species are distributed, with values ranging from 0 (completely uneven) to 1 (completely even).
@@ -222,7 +221,7 @@ qiime metadata tabulate \
 [evenness_boxplot.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/evenness-boxplot.qzv) file is generated
 ![image](https://github.com/user-attachments/assets/a0d29b65-06ec-4551-8f86-258f9d953cd3)
 Overall: H = 6.78, p-value = 0.148 → No significant difference in evenness between groups.
-Pairwise: All pairwise comparisons have p-value > 0.05, indicating no significant differences in evenness between any pair of groups.
+Pairwise: All pairwise comparisons have p-value > 0.05, indicating no significant differences in evenness between any pair of groups.    
 **Conclusion:There is no significant difference in Pielou's Evenness Index across groups, suggesting that the evenness of microbial distribution is similar in all groups**
 
 ## Faith's Phylogenetic Diversity (Faith's PD) 
@@ -291,7 +290,7 @@ qiime diversity beta-group-significance \
 [jaccard_permanova.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/jaccard_permanova.qzv) is generated
 ![image](https://github.com/user-attachments/assets/bfbb646b-d7bd-45dd-8353-c7d7966b9bbd)
     p-value = 0.643: Since the p-value is greater than 0.05, this indicates that there is no significant difference in the microbial community structure between the Treatment groups.
-    Test Statistic (pseudo-F) = 0.9941: This is the statistical value used to assess the difference between groups. However, the result is not strong enough to indicate a clear distinction, as reflected by the large p-value.
+    Test Statistic (pseudo-F) = 0.9941: This is the statistical value used to assess the difference between groups. However, the result is not strong enough to indicate a clear distinction, as reflected by the large p-value.    
 **Conclusion:There is no significant differentiation between the Treatment groups in this dataset based on the Jaccard index and PERMANOVA analysis.**
 
 ## Weighted UniFrac 
