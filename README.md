@@ -3,7 +3,7 @@
 ## Workflow overview and output
 (Insert the workflow)
 
-## [Quality check of raw reads](https://raw.githubusercontent.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/refs/heads/main/Quality_Check.md)
+## [Quality check of raw reads](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/refs/heads/main/Quality_Check.md)
 
 ## Step in Qiime 2
 ### 1. Importing raw data into Qiime2
