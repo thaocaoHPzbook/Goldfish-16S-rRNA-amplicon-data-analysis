@@ -191,8 +191,13 @@ The Kruskal-Wallis test results indicate:
         Most group comparisons have p-values > 0.05, suggesting no statistically significant differences.
         However, RP-20 vs RP-40 and RP-20 vs RP-5 have p-values = 0.0495, indicating a potential difference.
         Yet, the q-values are > 0.05 (after multiple testing correction), meaning the observed differences may not be strong enough to be considered statistically significant.
+**Conclusion**: There is no significant difference in Chao1 alpha diversity among the groups after multiple comparison correction.
 
-*Conclusion*: There is no significant difference in Chao1 alpha diversity among the groups after multiple comparison correction.
+## Shannon index
+The Shannon index measures alpha diversity, accounting for both species richness (number of species) and evenness (distribution of species abundances).
+    Higher Shannon index → More diverse and evenly distributed microbial community.
+    Lower Shannon index → A community dominated by a few species, indicating lower diversity.
+It helps assess how microbial diversity changes across different conditions or treatment groups.
 
 
 
