@@ -73,7 +73,7 @@ write.csv(res_ancombc2$res_pair, "pairwise_comparisons_results.csv", row.names =
 ```
 [pairwise_comparisons_results.csv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/pairwise_comparisons_results.csv) file is created.
 
-# 2. Analysis of chemical biomarkers for gut microbiome: Heatmap correlation
+# 2. Analysis of biomarkers for gut microbiome
 ## 2.1. Filtering Taxa with Significant p-value<0.05
 ```bash
 # Filter taxa with p-value < 0.05
