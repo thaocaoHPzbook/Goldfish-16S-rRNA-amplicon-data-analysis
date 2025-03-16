@@ -259,7 +259,7 @@ qiime emperor plot \
 ```
 ![image](https://github.com/user-attachments/assets/58a66a9c-99f1-419a-a07c-f771008fdd07)
 
-The PCoA plot ([bray_curtis_emperor.qzv]) does not show clear clustering between the treatments,further PERMANOVA analysis for a more detailed examination and reveals significant differences in microbial communities across the groups.
+The PCoA plot ([bray_curtis_emperor.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/bray_curtis_emperor.qzv)) does not show clear clustering between the treatments,further PERMANOVA analysis for a more detailed examination and reveals significant differences in microbial communities across the groups.
 **PERMANOVA analysis**
 ```bash
 qiime diversity beta-group-significance \
