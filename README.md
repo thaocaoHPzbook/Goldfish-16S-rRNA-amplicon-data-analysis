@@ -14,13 +14,11 @@
 
 ### [4. Creating a phylogenetic tree using align-to-tree-MAFFT-FastTree](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/4.%20Creating%20a%20phylogenetic%20tree%20using%20align-to-tree-MAFFT-FastTree.md)
 
-### [5.  Rarefaction Analysis](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/5.%20Rarefraction%20curve%20analysis.md)
+### [5.  Rarefaction Analysis and Core Diversity Metrics Calculation](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/5.%20Rarefraction%20curve%20analysis.md)
 
-### 6. Core Diversity Metrics Calculation
+### [6. Alpha Diversity analysis](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/6.%20Alpha%20Diversity%20analysis.md) 
 
-### 7. Alpha Diversity analysis 
-
-### 8. Beta Diversity analysis
+### [7. Beta Diversity analysis](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/7.%20Beta%20Diversity%20analysis.md)
 
 ## Steps in R/Rstudio
 ### 1. Differential abundance analysis of taxa by ANCOMBC
