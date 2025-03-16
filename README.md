@@ -10,9 +10,9 @@
 
 ### [2. Filtering, dereplication, sample inference, chimera identification, and merging of paired-end reads by DADA2 package in qiime2](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/2.%20Filtering%2C%20dereplication%2C%20sample%20inference%2C%20chimera%20identification%2C%20and%20merging%20of%20paired-end%20reads%20by%20DADA2%20package%20in%20qiime2.md)
 
-### [3. Training a primer-based region-specific classifier for taxonomic classification by Naïve-Bayes method](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/tree/main/Qiime_steps.md)
+### [3. Training a primer-based region-specific classifier for taxonomic classification by Naïve-Bayes method](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/3.%20Training%20a%20primer-based%20region-specific%20classifier%20for%20taxonomic%20classification%20by%20Na%C3%AFve-Bayes%20method%20(in%20Qiime2).md)
 
-### 4. Creating a phylogenetic tree using align-to-tree-MAFFT-FastTree(https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/4.%20Creating%20a%20phylogenetic%20tree%20using%20align-to-tree-MAFFT-FastTree.md)
+### [4. Creating a phylogenetic tree using align-to-tree-MAFFT-FastTree](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/4.%20Creating%20a%20phylogenetic%20tree%20using%20align-to-tree-MAFFT-FastTree.md)
 
 ### 5.  Rarefaction Analysis
 
