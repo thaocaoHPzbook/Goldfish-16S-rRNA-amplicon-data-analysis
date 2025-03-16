@@ -1,0 +1,52 @@
+For taxonomic classifications, you need to have a classifier to which you blast your sequences against to find out which taxonomic groups each sequence belongs to. This is also called reference phylogeny, which is a cruitial step in identifying the marker genes (in this case 16S rRNA) taken from different environmental a in saco samples. In order to do so, there are different 16S rRNA databases, of which Greengens and SILVA are well-known databases for the full length of 16S rRNA genes. You can always download the pre-trained classifiers at the Data Resources of qiime2 website with the follwoing command:
+```bash
+wget https://data.qiime2.org/2023.7/common/silva-138-99-seqs.qza -O silva_data/silva-138-99-seqs.qza
+wget https://data.qiime2.org/2023.7/common/silva-138-99-tax.qza -O silva_data/silva-138-99-tax.qza
+```
+**Train the downloaded database**
+```bash
+qiime feature-classifier fit-classifier-naive-bayes \
+  --i-reference-reads silva_data/silva-138-99-seqs.qza \
+  --i-reference-taxonomy silva_data/silva-138-99-tax.qza \
+  --o-classifier silva_data/silva-classifier.qza
+```
+After you got **silva-classifier.qza** classifier file, you can use it for your taxonomic classifications as follows:
+## Taxonomic clasification
+```bash
+qiime feature-classifier classify-sklearn \
+  --i-classifier silva_data/silva-classifier.qza \
+  --i-reads rep-seqs-no-chimera.qza \
+  --o-classification taxonomy.qza
+```
+**Generate taxa bar plot**
+```bash
+qiime taxa barplot \
+  --i-table filtered-table.qza \
+  --i-taxonomy taxonomy.qza \
+  --m-metadata-file metadata.tsv \
+  --o-visualization taxa-barplot.qzv
+```
+![image](https://github.com/user-attachments/assets/75829c6a-9148-4f92-88c2-a55da47c00b5)
+**Figure 6. Taxonomy classification bar plot at level 6**
+
+You can see in the [taxa barplot](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/taxa-barplot-0.7.qzv) that most samples have similar microbial compositions, except for one **control sample** and one **RP-20 sample**, which show abnormal patterns. This could be due to low sequencing depth, leading to an inaccurate representation of microbial diversity in these samples.    
+
+To investigate further, we will examine the summary statistics after chimera filtering and perform rarefaction curve analysis in the next steps.    
+
+# Creating a phylogenetic tree using align-to-tree-MAFFT-FastTree
+```bash
+qiime phylogeny align-to-tree-mafft-fasttree \
+  --i-sequences rep-seqs-no-chimera.qza \
+  --o-alignment aligned-rep-seqs-no-chimera.qza \
+  --o-masked-alignment masked-aligned-rep-seqs-no-chimera.qza \
+  --o-tree unrooted-tree-no-chimera.qza \
+  --o-rooted-tree tree-no-chimera.qza
+```
+**Visualization**
+```bash
+qiime tools export \
+  --input-path tree-no-chimera.qza \
+  --output-path exported_tree
+```
+The Newick file will be in the exported_tree/tree.nwk folder. You can upload [tree.nwk](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/tree.nwk) to [iTOL](https://itol.embl.de/upload.cgi) to view it.
+![image](https://github.com/user-attachments/assets/20474d10-c2fd-4cf6-a923-b7e20afb4f00)
