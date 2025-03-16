@@ -53,7 +53,7 @@ qiime vsearch uchime-denovo \
   --i-sequences rep-seqs.qza \
   --o-chimeras chimeras.qza \
   --o-nonchimeras rep-seqs-no-chimera.qza \
-  --o-stats chimera-s```tats.qza
+  --o-stats chimera-stats.qza
 ```
 **Check the chimera filtering summary**
 ```bash
@@ -77,4 +77,42 @@ qiime feature-table summarize \
 ```
 If you drag and drop the **table-no-chimera.qzv** file in qiime2 view, you can see three main menues; Overview, Interactive Sample Detail and Feature Detail. If you click on Feature detail Detail you can see a slider to the left of the picture which could be changed, based which you can arbiterarily decide, to which depth of reading you can do your rarefaction.
 ![image](https://github.com/user-attachments/assets/5ba5e1a4-054f-4989-b556-cb4f779ee42e)
+**Figure 5. ASV table indicating number of samples per treatment and number of ASVs per sample**
+
+# 3. Training a primer-based region-specific classifier for taxonomic classification by Naïve-Bayes method (in Qiime2)
+For taxonomic classifications, you need to have a classifier to which you blast your sequences against to find out which taxonomic groups each sequence belongs to. This is also called reference phylogeny, which is a cruitial step in identifying the marker genes (in this case 16S rRNA) taken from different environmental a in saco samples. In order to do so, there are different 16S rRNA databases, of which Greengens and SILVA are well-known databases for the full length of 16S rRNA genes. You can always download the pre-trained classifiers at the Data Resources of qiime2 website with the follwoing command:
+```bash
+wget https://data.qiime2.org/2023.7/common/silva-138-99-seqs.qza -O silva_data/silva-138-99-seqs.qza
+wget https://data.qiime2.org/2023.7/common/silva-138-99-tax.qza -O silva_data/silva-138-99-tax.qza
+```
+**Train the downloaded database**
+```bash
+qiime feature-classifier fit-classifier-naive-bayes \
+  --i-reference-reads silva_data/silva-138-99-seqs.qza \
+  --i-reference-taxonomy silva_data/silva-138-99-tax.qza \
+  --o-classifier silva_data/silva-classifier.qza
+```
+After you got **silva-classifier.qza** classifier file, you can use it for your taxonomic classifications as follows:
+# Taxonomic clasification
+```bash
+qiime feature-classifier classify-sklearn \
+  --i-classifier silva_data/silva-classifier.qza \
+  --i-reads rep-seqs-no-chimera.qza \
+  --o-classification taxonomy.qza
+```
+**Generate taxa bar plot**
+```bash
+qiime taxa barplot \
+  --i-table filtered-table.qza \
+  --i-taxonomy taxonomy.qza \
+  --m-metadata-file metadata.tsv \
+  --o-visualization taxa-barplot.qzv
+```
+![image](https://github.com/user-attachments/assets/75829c6a-9148-4f92-88c2-a55da47c00b5)
+**Figure 6. Taxonomy classification bar plot at level 6**
+
+You can see in the taxa barplot that most samples have similar microbial compositions, except for one control sample and one RP-20 sample, which show abnormal patterns. This could be due to low sequencing depth, leading to an inaccurate representation of microbial diversity in these samples.
+
+To investigate further, we will examine the summary statistics after chimera filtering and perform rarefaction curve analysis in the next steps. 
+
 
