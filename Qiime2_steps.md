@@ -162,12 +162,40 @@ qiime diversity core-metrics-phylogenetic \
   --output-dir core-metrics-results-4000
 ```
 # Alpha diversity analysis
+## Chao1
+Chao1 alpha diversity analysis estimates species richness in a sample. It focuses on rare ASVs (appearing only once or twice), helping to assess how many species might be undetected due to limited sequencing depth. This is useful for comparing microbial richness across sample groups.
 ```bash
 qiime diversity alpha \
   --i-table filtered-table.qza \
   --p-metric chao1 \
   --o-alpha-diversity chao1-diversity.qza
 ```
+```bash
+qiime metadata tabulate \
+  --m-input-file chao1-diversity.qza \
+  --o-visualization chao1-diversity.qzv
+```
+![image](https://github.com/user-attachments/assets/41a865d0-0e3e-4cf3-badb-3b6a511bfa0d)
+
+```bash
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity chao1-diversity.qza \
+  --m-metadata-file metadata.tsv \
+  --o-visualization chao1-group-significance.qzv
+```
+![image](https://github.com/user-attachments/assets/420ce7d1-21bd-45b6-9258-c629552e0223)
+The Kruskal-Wallis test results indicate:
+    *Overall comparison (all groups)*
+        H = 7.43, p-value = 0.115 → No significant difference in Chao1 alpha diversity among the groups (p > 0.05).
+    *Pairwise comparisons*
+        Most group comparisons have p-values > 0.05, suggesting no statistically significant differences.
+        However, RP-20 vs RP-40 and RP-20 vs RP-5 have p-values = 0.0495, indicating a potential difference.
+        Yet, the q-values are > 0.05 (after multiple testing correction), meaning the observed differences may not be strong enough to be considered statistically significant.
+
+*Conclusion*: There is no significant difference in Chao1 alpha diversity among the groups after multiple comparison correction.
+
+
+
 
 
 
