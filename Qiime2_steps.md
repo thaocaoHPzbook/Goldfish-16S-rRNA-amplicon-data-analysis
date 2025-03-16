@@ -44,7 +44,8 @@ qiime metadata tabulate \
   --o-visualization denoising-stats.qzv
 ```
 ![image](https://github.com/user-attachments/assets/6de3099b-4481-401a-acf4-d81eeb8ddb72)
-Figure 3. The denoising status of the reads for each sample. You can see the number of filtered reads and also the percentage of non-chimeric sequences after denoising.
+**Figure 3. The denoising status of the reads for each sample.**    
+You can see the number of filtered reads and also the percentage of non-chimeric sequences after denoising.
 The filtered reads and also the percentage of non-chimeric sequences are quite low. You may need to adjust the chimera filtering process in DADA2 or apply an alternative approach as below:
 **Perform de novo chimera filtering using VSEARCH in QIIME 2**
 ```bash
@@ -75,7 +76,7 @@ qiime feature-table summarize \
   --i-table table-no-chimera.qza \
   --o-visualization table-no-chimera.qzv
 ```
-If you drag and drop the **table-no-chimera.qzv** file in qiime2 view, you can see three main menues; Overview, Interactive Sample Detail and Feature Detail. If you click on Feature detail Detail you can see a slider to the left of the picture which could be changed, based which you can arbiterarily decide, to which depth of reading you can do your rarefaction.
+If you drag and drop the [table-no-chimera.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/table-no-chimera.qzv) file in qiime2 view, you can see three main menues; Overview, Interactive Sample Detail and Feature Detail. If you click on Feature detail Detail you can see a slider to the left of the picture which could be changed, based which you can arbiterarily decide, to which depth of reading you can do your rarefaction.
 ![image](https://github.com/user-attachments/assets/5ba5e1a4-054f-4989-b556-cb4f779ee42e)
 **Figure 5. ASV table indicating number of samples per treatment and number of ASVs per sample**
 
@@ -92,7 +93,7 @@ qiime feature-classifier fit-classifier-naive-bayes \
   --i-reference-taxonomy silva_data/silva-138-99-tax.qza \
   --o-classifier silva_data/silva-classifier.qza
 ```
-After you got **silva-classifier.qza** classifier file, you can use it for your taxonomic classifications as follows:
+After you got [silva-classifier.qza](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/upload/main/Qiime_steps) classifier file, you can use it for your taxonomic classifications as follows:
 ## Taxonomic clasification
 ```bash
 qiime feature-classifier classify-sklearn \
