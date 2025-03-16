@@ -33,7 +33,7 @@ The script file named [run_fastqc.sh](https://github.com/thaocaoHPzbook/Goldfish
 chmod +x run_fastqc.sh
 ./run_fastqc.sh
 ```
-QC results will be genenerate in folder named **fastqc_results**, find **multiqc_report.html** file to read the results.
+QC results will be genenerate in folder named **fastqc_results**, find **[multiqc_report.html](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Quality_Check/multiqc_report.html)** file to read the results.
 
 ![image](https://github.com/user-attachments/assets/01848d8e-5dfc-4298-baa5-73a32b2490fb)
 
