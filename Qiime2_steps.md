@@ -197,7 +197,7 @@ The Kruskal-Wallis test results indicate:
 The Shannon index measures alpha diversity, accounting for both species richness (number of species) and evenness (distribution of species abundances).
     Higher Shannon index → More diverse and evenly distributed microbial community.
     Lower Shannon index → A community dominated by a few species, indicating lower diversity.
-It helps assess how microbial diversity changes across different conditions or treatment groups.
+It helps assess how microbial diversity changes across different conditions or treatment groups.j
 
 
 
