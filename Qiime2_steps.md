@@ -197,10 +197,42 @@ The Kruskal-Wallis test results indicate:
 The Shannon index measures alpha diversity, accounting for both species richness (number of species) and evenness (distribution of species abundances).
     Higher Shannon index → More diverse and evenly distributed microbial community.
     Lower Shannon index → A community dominated by a few species, indicating lower diversity.
-It helps assess how microbial diversity changes across different conditions or treatment groups.j
+![image](https://github.com/user-attachments/assets/16ed9d07-b543-4eb6-8c06-f32130231ffc)
+Overall: p-value = 0.6476 → There is no significant difference in the Shannon index between groups overall. This means that the microbial diversity structure across all groups is similar.
+Pairwise: All p-values > 0.05 → There is no significant difference in the Shannon index between any pair of groups. This indicates that no group has significantly higher or lower microbial diversity compared to the others.
 
+**Conclusion: The groups have equivalent microbial diversity, suggesting that the grouping factor (e.g., experimental condition) does not strongly influence gut microbiome diversity in this dataset**
+## Pielou's Evenness Index
+Pielou's Evenness Index measures the evenness of species distribution in a community. It indicates how evenly the species are distributed, with values ranging from 0 (completely uneven) to 1 (completely even).
 
+```bash
+qiime metadata tabulate \
+  --m-input-file evenness_vector.qza \
+  --m-metadata-file metadata.tsv \
+  --o-visualization evenness_boxplot.qzv
+```
+![image](https://github.com/user-attachments/assets/a0d29b65-06ec-4551-8f86-258f9d953cd3)
+Overall: H = 6.78, p-value = 0.148 → No significant difference in evenness between groups.
 
+Pairwise: All pairwise comparisons have p-value > 0.05, indicating no significant differences in evenness between any pair of groups.
+
+**Conclusion:There is no significant difference in Pielou's Evenness Index across groups, suggesting that the evenness of microbial distribution is similar in all groups**
+
+## Faith's Phylogenetic Diversity (Faith's PD) 
+Faith's PD measures the total branch length of a phylogenetic tree that connects all species in a sample. It reflects both species richness and phylogenetic diversity, considering evolutionary relationships.
+A higher Faith’s PD indicates a more diverse microbial community with greater evolutionary variety, while a lower Faith’s PD suggests a more phylogenetically constrained community.
+```bash
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity faith-pd.qza \
+  --m-metadata-file metadata.tsv \
+  --o-visualization faith-pd-group-significance.qzv
+```
+![image](https://github.com/user-attachments/assets/ce48b47b-18c9-4934-b5f3-a40cc7e0bcdc)
+Overall (All groups):
+        H-statistic = 1.33, p-value = 0.8563 → No significant difference in Faith's PD between the groups.
+Pairwise (Between groups):
+        All pairwise comparisons have p-value > 0.05, indicating no significant differences in Faith's PD between any of the groups.
+**Conclusion: There is no significant difference in Faith's PD between the groups, suggesting that the phylogenetic diversity is similar across all groups in this study.**
 
 
 
