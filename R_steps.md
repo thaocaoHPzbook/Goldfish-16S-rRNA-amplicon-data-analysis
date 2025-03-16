@@ -17,29 +17,29 @@ metadata <- read.table("metadata.tsv", header = TRUE, row.names = 1, sep = "\t")
 library(phyloseq)
 
 # Create an ASV table object
-otu_phyloseq <- asv_table(feature_table, taxa_are_rows = TRUE)
+asv_phyloseq <- asv_table(feature_table, taxa_are_rows = TRUE)
 
 # Create a sample_data object from metadata
 sample_metadata <- sample_data(metadata)
 
 # Check the structure of the ASV table
-str(otu_phyloseq)
+str(asv_phyloseq)
 
-# Combine OTU table and metadata into a Phyloseq object
-ps <- phyloseq(ASV_phyloseq, sample_metadata)
+# Combine ASV table and metadata into a Phyloseq object
+ps <- phyloseq(asv_phyloseq, sample_metadata)
 ```
 
 ## 1.4. Matching Sample Names
 ```bash
 # Check sample names in ASV table and metadata
-sample_names(ASV_phyloseq)
+sample_names(asv_phyloseq)
 rownames(sample_metadata)
 
 # Rename sample names in OTU table to match metadata
-sample_names(ASV_phyloseq) <- rownames(sample_metadata)
+sample_names(asv_phyloseq) <- rownames(sample_metadata)
 
 # Verify the sample names in the OTU table
-sample_names(ASV_phyloseq)
+sample_names(asv_phyloseq)
 ```
 
 ## 1.5.  ANCOM-BC2 Analysis
@@ -57,10 +57,10 @@ res_ancombc2 <- ancombc2(
 ## 1.6 Add a pseudo-count to the ASV table to handle zero values
 ```bash
 # Add a pseudo-count to the ASV table to handle zero values
-otu_table_with_pseudo <- otu_table(ps) + 1
+asv_table_with_pseudo <- asv_table(ps) + 1
 
 # Create a new phyloseq object with the updated OTU table
-ps_with_pseudo <- phyloseq(ASV_table(otu_table_with_pseudo, taxa_are_rows = TRUE), sample_data(ps))
+ps_with_pseudo <- phyloseq(asv_table(otu_table_with_pseudo, taxa_are_rows = TRUE), sample_data(ps))
 ```
 
 ## 1.7 Save the ANCOM-BC2 results to a CSV file
