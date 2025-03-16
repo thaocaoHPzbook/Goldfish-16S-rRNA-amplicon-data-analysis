@@ -14,7 +14,7 @@
 
 ### [4. Creating a phylogenetic tree using align-to-tree-MAFFT-FastTree](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/4.%20Creating%20a%20phylogenetic%20tree%20using%20align-to-tree-MAFFT-FastTree.md)
 
-### 5.  Rarefaction Analysis
+### [5.  Rarefaction Analysis](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/5.%20Rarefraction%20curve%20analysis.md)
 
 ### 6. Core Diversity Metrics Calculation
 
