@@ -45,12 +45,36 @@ qiime metadata tabulate \
 ```
 ![image](https://github.com/user-attachments/assets/6de3099b-4481-401a-acf4-d81eeb8ddb72)
 Figure 3. The denoising status of the reads for each sample. You can see the number of filtered reads and also the percentage of non-chimeric sequences after denoising.
-The filtered reads and also the percentage of non-chimeric sequences are quite low. You may need to adjust the chimera filtering process in DADA2 or apply an alternative approach
+The filtered reads and also the percentage of non-chimeric sequences are quite low. You may need to adjust the chimera filtering process in DADA2 or apply an alternative approach as below:
+**Perform de novo chimera filtering using VSEARCH in QIIME 2**
 ```bash
 qiime vsearch uchime-denovo \
   --i-table table.qza \
   --i-sequences rep-seqs.qza \
   --o-chimeras chimeras.qza \
   --o-nonchimeras rep-seqs-no-chimera.qza \
-  --o-stats chimera-stats.qza
+  --o-stats chimera-s```tats.qza
 ```
+**Check the chimera filtering summary**
+```bash
+qiime metadata tabulate \
+  --m-input-file chimera-stats.qza \
+  --o-visualization chimera-stats.qzv
+```
+Then use the non-chimeric sequences for further analysis.
+**Filter the feature table to remove chimeric sequences**
+```bash
+qiime feature-table filter-features \
+  --i-table table.qza \
+  --m-metadata-file rep-seqs-no-chimera.qza \
+  --o-filtered-table table-no-chimera.qza
+```
+**Visualize feature table after remove chimeric sequences**
+```bash
+qiime feature-table summarize \
+  --i-table table-no-chimera.qza \
+  --o-visualization table-no-chimera.qzv
+```
+If you drag and drop the **table-no-chimera.qzv** file in qiime2 view, you can see three main menues; Overview, Interactive Sample Detail and Feature Detail. If you click on Feature detail Detail you can see a slider to the left of the picture which could be changed, based which you can arbiterarily decide, to which depth of reading you can do your rarefaction.
+![image](https://github.com/user-attachments/assets/5ba5e1a4-054f-4989-b556-cb4f779ee42e)
+
