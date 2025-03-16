@@ -1,7 +1,7 @@
 # Analysis of gut microbiota in Qiime2 and Rstudio/R.
 
 ## Workflow overview and output
-(Insert the workflow)
+![image](https://github.com/user-attachments/assets/09e8edd4-5e80-4dcc-a491-55861abe9d4c)
 
 ## [Quality check of raw reads](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Quality_Check.md)
 
