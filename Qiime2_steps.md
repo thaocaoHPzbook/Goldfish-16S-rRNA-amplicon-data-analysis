@@ -116,7 +116,7 @@ You can see in the [taxa barplot](https://github.com/thaocaoHPzbook/Goldfish-16S
 
 To investigate further, we will examine the summary statistics after chimera filtering and perform rarefaction curve analysis in the next steps.    
 
-# Creating a phylogenetic tree using align-to-tree-MAFFT-FastTree
+# 4. Creating a phylogenetic tree using align-to-tree-MAFFT-FastTree
 ```bash
 qiime phylogeny align-to-tree-mafft-fasttree \
   --i-sequences rep-seqs-no-chimera.qza \
@@ -134,7 +134,7 @@ qiime tools export \
 The Newick file will be in the exported_tree/tree.nwk folder. You can upload [tree.nwk](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/tree.nwk) to [iTOL](https://itol.embl.de/upload.cgi) to view it.
 ![image](https://github.com/user-attachments/assets/20474d10-c2fd-4cf6-a923-b7e20afb4f00)
 
-# Rarefraction curve analysis
+# 5. Rarefraction curve analysis
 Rarefaction curves assess sequencing depth sufficiency and microbial diversity saturation in samples. This helps (1) Ensure adequate sequencing depth for reliable diversity estimation (2) Compare samples to detect under-sequenced ones; (3) Evaluate data stability—a plateauing curve indicates sufficient sampling.
 **Generate rarefraction curve chart**
 ```bash
@@ -161,7 +161,7 @@ qiime diversity core-metrics-phylogenetic \
   --m-metadata-file metadata.tsv \
   --output-dir core-metrics-results-4000
 ```
-# Alpha diversity analysis
+# 6. Alpha diversity analysis
 ## Chao1
 Chao1 alpha diversity analysis estimates species richness in a sample. It focuses on rare ASVs (appearing only once or twice), helping to assess how many species might be undetected due to limited sequencing depth. This is useful for comparing microbial richness across sample groups.
 ```bash
@@ -239,7 +239,7 @@ Overall (All groups): H-statistic = 1.33, p-value = 0.8563 → No significant di
 Pairwise (Between groups):All pairwise comparisons have p-value > 0.05, indicating no significant differences in Faith's PD between any of the groups.    
 **Conclusion: There is no significant difference in Faith's PD between the groups, suggesting that the phylogenetic diversity is similar across all groups in this study.**
 
-# Beta diversity analysis
+# 7. Beta diversity analysis
 ## 1. Bray-Curtis Index
 This index is used to measure the difference between two microbial communities. The value ranges from 0 to 1:
     0 means the two communities are completely identical.
@@ -324,3 +324,26 @@ qiime diversity beta-group-significance \
     p-value = 0.662: Since the p-value is greater than 0.05, there is no significant difference in the microbial community structure between the groups based on the unweighted UniFrac distance.
     Test Statistic (pseudo-F) = 0.9676: This value indicates the variation between groups relative to the variation within groups. However, the result does not show a significant difference, as reflected by the high p-value.
 **Conclusion: There is no significant difference in microbial community structure across the treatment groups based on the unweighted UniFrac distance, suggesting that the presence/absence of species is not strongly influenced by the treatments in this dataset.**
+
+# 8. Export file from Qimme2 for R steps
+```bash
+qiime tools export \
+  --input-path table.qza \
+  --output-path exported_feature_table
+```
+The above command will export the table.qza file as a temporary file (like a .biom file) in the exported_feature_table directory.
+
+Then, to convert the .biom file into a data table format that R can handle (CSV/TSV) - [feature_table.tsv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/feature-table.tsv), you can use the following command:
+```bash
+biom convert \
+  -i exported_feature_table/feature-table.biom \
+  -o feature_table.csv \
+  --to-tsv
+```
+
+```bash
+qiime taxa export \
+  --i-classification taxonomy.qza \
+  --output-dir taxonomy_exported
+```
+The above command will export the [taxanomy.tsv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/taxonomy.tsv) file in the taxonomy_exported directory.
