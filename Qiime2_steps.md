@@ -303,6 +303,8 @@ qiime diversity beta-group-significance \
   --p-method permanova \
   --m-metadata-column Treatment \
   --o-visualization core-metrics-results/weighted_unifrac_permanova.qzv
+```
+[weighted_unifrac_permanova.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/weighted_unifrac_permanova.qzv) file is generated
 ![image](https://github.com/user-attachments/assets/10ff8cc4-1869-47b7-bbbf-3a061383b80b)
     p-value = 0.484: The p-value is greater than 0.05, indicating that there is no significant difference in the microbial community structure between the treatment groups.
     Test Statistic (pseudo-F) = 0.9428: This value indicates the degree of separation between the groups. However, since the p-value is large, it suggests that the difference is not statistically significant.
@@ -318,6 +320,7 @@ qiime diversity beta-group-significance \
   --m-metadata-column Treatment \
   --o-visualization unweighted_unifrac_permanova.qzv
 ```
+[unweighted_unifrac_permanova.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/unweighted_unifrac_permanova.qzv) file is generated.
 ![image](https://github.com/user-attachments/assets/c264b117-059f-46da-b583-d43f1ea01df2)
     p-value = 0.662: Since the p-value is greater than 0.05, there is no significant difference in the microbial community structure between the groups based on the unweighted UniFrac distance.
     Test Statistic (pseudo-F) = 0.9676: This value indicates the variation between groups relative to the variation within groups. However, the result does not show a significant difference, as reflected by the high p-value.
