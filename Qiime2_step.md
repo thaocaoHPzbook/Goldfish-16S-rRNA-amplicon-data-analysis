@@ -115,5 +115,25 @@ You can see in the taxa barplot that most samples have similar microbial composi
 
 To investigate further, we will examine the summary statistics after chimera filtering and perform rarefaction curve analysis in the next steps. 
 
+#
+
+# Creating a phylogenetic tree using align-to-tree-MAFFT-FastTree
+```bash
+qiime phylogeny align-to-tree-mafft-fasttree \
+  --i-sequences rep-seqs-no-chimera.qza \
+  --o-alignment aligned-rep-seqs-no-chimera.qza \
+  --o-masked-alignment masked-aligned-rep-seqs-no-chimera.qza \
+  --o-tree unrooted-tree-no-chimera.qza \
+  --o-rooted-tree tree-no-chimera.qza
+```
+**Visualization**
+```bash
+qiime tools export \
+  --input-path tree-no-chimera.qza \
+  --output-path exported_tree
+```
+The Newick file will be in the exported_tree/tree.nwk folder. You can upload it to [iTOL](https://itol.embl.de/upload.cgi) to view it.
+![image](https://github.com/user-attachments/assets/20474d10-c2fd-4cf6-a923-b7e20afb4f00)
+
 
 
