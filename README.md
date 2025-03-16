@@ -20,6 +20,9 @@
 
 ### [7. Beta Diversity analysis](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/7.%20Beta%20Diversity%20analysis.md)
 
+### 8. Export file from Qiime2 for steps in R/Rstudio
+
+
 ## Steps in R/Rstudio
 ### 1. Differential abundance analysis of taxa by ANCOMBC
 
