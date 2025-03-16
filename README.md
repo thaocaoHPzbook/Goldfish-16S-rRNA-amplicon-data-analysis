@@ -3,6 +3,8 @@
 ## Workflow overview and output
 (Insert the workflow)
 
+## Quality check of raw reads
+
 ## Step in Qiime 2
 ### 1. Importing raw data into Qiime2
 
