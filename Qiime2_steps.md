@@ -112,9 +112,9 @@ qiime taxa barplot \
 ![image](https://github.com/user-attachments/assets/75829c6a-9148-4f92-88c2-a55da47c00b5)
 **Figure 6. Taxonomy classification bar plot at level 6**
 
-You can see in the taxa barplot that most samples have similar microbial compositions, except for one **control sample** and one **RP-20 sample**, which show abnormal patterns. This could be due to low sequencing depth, leading to an inaccurate representation of microbial diversity in these samples.
+You can see in the [taxa barplot](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/taxa-barplot-0.7.qzv) that most samples have similar microbial compositions, except for one **control sample** and one **RP-20 sample**, which show abnormal patterns. This could be due to low sequencing depth, leading to an inaccurate representation of microbial diversity in these samples.    
 
-To investigate further, we will examine the summary statistics after chimera filtering and perform rarefaction curve analysis in the next steps. 
+To investigate further, we will examine the summary statistics after chimera filtering and perform rarefaction curve analysis in the next steps.    
 
 # Creating a phylogenetic tree using align-to-tree-MAFFT-FastTree
 ```bash
@@ -147,7 +147,7 @@ qiime diversity alpha-rarefaction \
   --m-metadata-file metadata.tsv \
   --o-visualization alpha-rarefaction.qzv
 ```
-You can view the chart **alpha-rarefaction.qzv** by qiime view as method explained previously.
+You can view the chart [alpha-rarefaction.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/alpha-rarefaction.qzv) by qiime view as method explained previously.
 ![image](https://github.com/user-attachments/assets/7bdadcb9-a4c5-4cfd-a2f4-f231d4f37a40)
 At a depth of 4000, the rarefaction curve reaches saturation, indicating that increasing reads will not detect many new ASVs.
 
