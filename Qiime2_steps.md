@@ -149,10 +149,9 @@ qiime diversity alpha-rarefaction \
 ```
 You can view the chart [alpha-rarefaction.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/alpha-rarefaction.qzv) by qiime view as method explained previously.
 ![image](https://github.com/user-attachments/assets/7bdadcb9-a4c5-4cfd-a2f4-f231d4f37a40)
-At a depth of 4000, the rarefaction curve reaches saturation, indicating that increasing reads will not detect many new ASVs.
-
+At a depth of 4000, the rarefaction curve reaches saturation, indicating that increasing reads will not detect many new ASVs.    
 ![image](https://github.com/user-attachments/assets/0efd2bda-dbdf-4a18-b38b-58b9512bfedd)
-At a depth of 4000, 2 out of 15 samples are removed, it means that over 80% of the samples (13/15) are retained. This suggests that normalization at this depth would keep most of the dataset for analysis.
+At a depth of 4000, 2 out of 15 samples are removed, it means that over 80% of the samples (13/15) are retained. This suggests that normalization at this depth would keep most of the dataset for analysis.    
 **Proceed with normalization at a subsampling depth of 4000**
 ```bash
 qiime diversity core-metrics-phylogenetic \
@@ -184,6 +183,7 @@ qiime diversity alpha-group-significance \
   --m-metadata-file metadata.tsv \
   --o-visualization chao1-group-significance.qzv
 ```
+[chao1-group-significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/chao1-diversity-significance.qzv) is generated.
 ![image](https://github.com/user-attachments/assets/420ce7d1-21bd-45b6-9258-c629552e0223)
 The Kruskal-Wallis test results indicate:
     *Overall comparison (all groups)*
@@ -198,6 +198,13 @@ The Kruskal-Wallis test results indicate:
 The Shannon index measures alpha diversity, accounting for both species richness (number of species) and evenness (distribution of species abundances).
     Higher Shannon index → More diverse and evenly distributed microbial community.
     Lower Shannon index → A community dominated by a few species, indicating lower diversity.
+```bash
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity shannon-diversity.qza \
+  --m-metadata-file metadata.tsv \
+  --o-visualization shannon-group-significance.qzv
+```
+[shannon-group-significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/shannon-group-significance.qzv) file is generated.
 ![image](https://github.com/user-attachments/assets/16ed9d07-b543-4eb6-8c06-f32130231ffc)
 Overall: p-value = 0.6476 → There is no significant difference in the Shannon index between groups overall. This means that the microbial diversity structure across all groups is similar.
 Pairwise: All p-values > 0.05 → There is no significant difference in the Shannon index between any pair of groups. This indicates that no group has significantly higher or lower microbial diversity compared to the others.
@@ -212,11 +219,10 @@ qiime metadata tabulate \
   --m-metadata-file metadata.tsv \
   --o-visualization evenness_boxplot.qzv
 ```
+[evenness_boxplot.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/evenness-boxplot.qzv) file is generated
 ![image](https://github.com/user-attachments/assets/a0d29b65-06ec-4551-8f86-258f9d953cd3)
 Overall: H = 6.78, p-value = 0.148 → No significant difference in evenness between groups.
-
 Pairwise: All pairwise comparisons have p-value > 0.05, indicating no significant differences in evenness between any pair of groups.
-
 **Conclusion:There is no significant difference in Pielou's Evenness Index across groups, suggesting that the evenness of microbial distribution is similar in all groups**
 
 ## Faith's Phylogenetic Diversity (Faith's PD) 
@@ -228,11 +234,10 @@ qiime diversity alpha-group-significance \
   --m-metadata-file metadata.tsv \
   --o-visualization faith-pd-group-significance.qzv
 ```
+[faith-pd-group-significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/faith_pd_group_significance.qzv) is generated
 ![image](https://github.com/user-attachments/assets/ce48b47b-18c9-4934-b5f3-a40cc7e0bcdc)
-Overall (All groups):
-        H-statistic = 1.33, p-value = 0.8563 → No significant difference in Faith's PD between the groups.
-Pairwise (Between groups):
-        All pairwise comparisons have p-value > 0.05, indicating no significant differences in Faith's PD between any of the groups.
+Overall (All groups): H-statistic = 1.33, p-value = 0.8563 → No significant difference in Faith's PD between the groups.    
+Pairwise (Between groups):All pairwise comparisons have p-value > 0.05, indicating no significant differences in Faith's PD between any of the groups.    
 **Conclusion: There is no significant difference in Faith's PD between the groups, suggesting that the phylogenetic diversity is similar across all groups in this study.**
 
 # Beta diversity analysis
@@ -255,7 +260,7 @@ qiime emperor plot \
 ```
 ![image](https://github.com/user-attachments/assets/58a66a9c-99f1-419a-a07c-f771008fdd07)
 
-The PCoA plot does not show clear clustering between the treatments,further PERMANOVA analysis for a more detailed examination and reveals significant differences in microbial communities across the groups.
+The PCoA plot ([bray_curtis_emperor.qzv]) does not show clear clustering between the treatments,further PERMANOVA analysis for a more detailed examination and reveals significant differences in microbial communities across the groups.
 **PERMANOVA analysis**
 ```bash
 qiime diversity beta-group-significance \
@@ -265,6 +270,7 @@ qiime diversity beta-group-significance \
   --p-method permanova \
   --o-visualization bray_curtis_group_significance.qzv
 ```
+[bray_curtis_group_significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/bray_curtis_group_significance.qzv) file is generated.
 ![image](https://github.com/user-attachments/assets/efec7fb7-6697-4740-b5d7-337bc7f399d3)
 With a p-value greater than 0.05, the conclusion is that there is no significant difference between the groups based on the Bray-Curtis index. This suggests that the treatments or groupings do not have a strong influence on the differences in microbial community structure between the groups.
 
@@ -282,6 +288,7 @@ qiime diversity beta-group-significance \
   --m-metadata-column Treatment \
   --o-visualization jaccard_permanova.qzv
 ```
+[jaccard_permanova.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/jaccard_permanova.qzv) is generated
 ![image](https://github.com/user-attachments/assets/bfbb646b-d7bd-45dd-8353-c7d7966b9bbd)
     p-value = 0.643: Since the p-value is greater than 0.05, this indicates that there is no significant difference in the microbial community structure between the Treatment groups.
     Test Statistic (pseudo-F) = 0.9941: This is the statistical value used to assess the difference between groups. However, the result is not strong enough to indicate a clear distinction, as reflected by the large p-value.
