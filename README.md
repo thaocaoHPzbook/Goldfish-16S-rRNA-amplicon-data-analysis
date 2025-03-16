@@ -6,7 +6,7 @@
 ## [Quality check of raw reads](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Quality_Check.md)
 
 ## [Step in Qiime 2](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime2_steps.md)
-### 1. [Importing raw data into Qiime2](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/Importing-raw-data-into-Qiime2.md
+### 1. [Importing raw data into Qiime2](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/Importing-raw-data-into-Qiime2.md)
 
 ### 2. Filtering, dereplication, sample inference, chimera identification, and merging of paired-end reads by DADA2 package in qiime2
 
