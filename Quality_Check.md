@@ -15,7 +15,7 @@ wget -P Home/hp/Goldfish/Raw_data <URL_FILE>
 
 ## Find all .fastq files in Goldfish/Raw_data and save their filenames to IDs.list
 ```bash
-find Home/hpGoldfish/Raw_data -name "*.fastq" | sed 's|.*/||' > Home/hp/Goldfish/Raw_data/IDs.list
+find Home/hpGoldfish/Raw_data -name "*.fq" | sed 's|.*/||' > Home/hp/Goldfish/Raw_data/IDs.list
 ```
 ## Set read permissions for the IDs.list file
 ```bash
