@@ -1,0 +1,62 @@
+"Metadata","Phylum","Avg_Correlation","Min_P_value"
+"Final weight","Bacteroidota",-0.551819267971412,0.0210884709753865
+"Final weight","Cloacimonadota",-0.59622998589339,0.0189819096392809
+"Final weight","Cyanobacteria",0.659039356198857,0.007534267944596
+"Final weight","Patescibacteria",-0.598022847425173,0.00677794401030862
+"Final weight","Proteobacteria",-0.530595449972511,0.041862760259072
+"Final weight","Spirochaetota",-0.532103760355109,0.0411762630385559
+"Final weight","WS2",0.52056416073295,0.0466466567297705
+"Specific growth rate","Bacteroidota",-0.550333883667492,0.0215242612422428
+"Specific growth rate","Cloacimonadota",-0.567074861351264,0.0274887518266618
+"Specific growth rate","Cyanobacteria",0.657265357405807,0.00775483545420519
+"Specific growth rate","Patescibacteria",-0.596413092560657,0.00698296198209092
+"Specific growth rate","Planctomycetota",0.54641221458138,0.03507322414282
+"Specific growth rate","Proteobacteria",-0.529167195834127,0.0425206208553597
+"Specific growth rate","WS2",0.552409794551185,0.0327274645995779
+"Feed conversion ratio","Bacteroidota",-0.537276633363128,0.0388853141534864
+"Feed conversion ratio","Cloacimonadota",0.701274350226582,0.00357830433974682
+"Feed conversion ratio","Patescibacteria",0.59657851384671,0.0162818687280029
+"Feed conversion ratio","Planctomycetota",0.627938470464325,0.0121924577846229
+"Feed conversion ratio","WS2",0.585571162204758,0.0218166015952796
+"Weight gain","Bacteroidota",-0.550333883667492,0.0215242612422428
+"Weight gain","Cloacimonadota",-0.594625057044442,0.0193896003360927
+"Weight gain","Cyanobacteria",0.657265357405807,0.00775483545420519
+"Weight gain","Patescibacteria",-0.596413092560657,0.00698296198209092
+"Weight gain","Proteobacteria",-0.529167195834127,0.0425206208553597
+"Weight gain","Spirochaetota",-0.514048003262908,0.0499631851059101
+"Weight gain","WS2",0.519162908768011,0.0473457202797674
+"Survival rate","Acidobacteriota",-0.559016994374947,0.0302818727265981
+"Survival rate","Actinobacteriota",-0.559016994374947,0.0302818727265981
+"Survival rate","Armatimonadota",-0.559016994374947,0.0302818727265981
+"Survival rate","Bacteroidota",-0.559016994374947,0.0302818727265981
+"Survival rate","Chloroflexi",-0.559016994374947,0.0302818727265981
+"Survival rate","Cloacimonadota",-0.559016994374947,0.0302818727265981
+"Survival rate","Crenarchaeota",-0.559016994374947,0.0302818727265981
+"Survival rate","Cyanobacteria",-0.559016994374947,0.0302818727265981
+"Survival rate","Euryarchaeota",-0.559016994374947,0.0302818727265981
+"Survival rate","Firmicutes",-0.571532923449283,0.0030688151705438
+"Survival rate","Halanaerobiaeota",-0.559016994374947,0.0302818727265981
+"Survival rate","Halobacterota",-0.559016994374947,0.0302818727265981
+"Survival rate","Myxococcota",-0.559016994374947,0.0302818727265981
+"Survival rate","Nanoarchaeota",-0.559016994374947,0.0302818727265981
+"Survival rate","Nitrospirota",-0.559016994374947,0.0302818727265981
+"Survival rate","Patescibacteria",-0.565328582939294,5.16677338291416e-05
+"Survival rate","Planctomycetota",-0.582424098511283,0.0030688151705438
+"Survival rate","Proteobacteria",-0.559016994374947,0.0302818727265981
+"Survival rate","Spirochaetota",-0.559016994374947,0.0302818727265981
+"Survival rate","Thermoplasmatota",-0.559016994374947,0.0302818727265981
+"Survival rate","Verrucomicrobiota",-0.559016994374947,0.0302818727265981
+"Percentage weight gain","Bacteroidota",-0.550333883667492,0.0215242612422428
+"Percentage weight gain","Cloacimonadota",-0.567074861351264,0.0274887518266618
+"Percentage weight gain","Cyanobacteria",0.657265357405807,0.00775483545420519
+"Percentage weight gain","Patescibacteria",-0.596413092560657,0.00698296198209092
+"Percentage weight gain","Planctomycetota",0.54641221458138,0.03507322414282
+"Percentage weight gain","Proteobacteria",-0.529167195834127,0.0425206208553597
+"Percentage weight gain","WS2",0.552409794551185,0.0327274645995779
+"Daily weight gain","Bacteroidota",-0.550333883667492,0.0215242612422428
+"Daily weight gain","Cloacimonadota",-0.594625057044442,0.0193896003360927
+"Daily weight gain","Cyanobacteria",0.657265357405807,0.00775483545420519
+"Daily weight gain","Patescibacteria",-0.596413092560657,0.00698296198209092
+"Daily weight gain","Proteobacteria",-0.529167195834127,0.0425206208553597
+"Daily weight gain","Spirochaetota",-0.514048003262908,0.0499631851059101
+"Daily weight gain","WS2",0.519162908768011,0.0473457202797674
