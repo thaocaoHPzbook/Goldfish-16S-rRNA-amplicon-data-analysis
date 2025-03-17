@@ -35,10 +35,10 @@ ps <- phyloseq(asv_phyloseq, sample_metadata)
 sample_names(asv_phyloseq)
 rownames(sample_metadata)
 
-# Rename sample names in OTU table to match metadata
+# Rename sample names in ASV table to match metadata
 sample_names(asv_phyloseq) <- rownames(sample_metadata)
 
-# Verify the sample names in the OTU table
+# Verify the sample names in the ASV table
 sample_names(asv_phyloseq)
 ```
 [pairwise_comparisons_results.csv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/pairwise_comparisons_results.csv) file is created.
@@ -61,7 +61,7 @@ res_ancombc2 <- ancombc2(
 asv_table_with_pseudo <- asv_table(ps) + 1
 
 # Create a new phyloseq object with the updated OTU table
-ps_with_pseudo <- phyloseq(asv_table(otu_table_with_pseudo, taxa_are_rows = TRUE), sample_data(ps))
+ps_with_pseudo <- phyloseq(asv_table(asv_table_with_pseudo, taxa_are_rows = TRUE), sample_data(ps))
 ```
 
 ## 1.7 Save the ANCOM-BC2 results to a CSV file
