@@ -68,12 +68,12 @@ Then use the non-chimeric sequences for further analysis.
 qiime feature-table filter-features \
   --i-table table.qza \
   --m-metadata-file rep-seqs-no-chimera.qza \
-  --o-filtered-table table-no-chimera.qza
+  --o-filtered-table filtered-table.qza
 ```
 **Visualize feature table after remove chimeric sequences**
 ```bash
 qiime feature-table summarize \
-  --i-table table-no-chimera.qza \
+  --i-table filtered-table.qza \
   --o-visualization table-no-chimera.qzv
 ```
 If you drag and drop the [table-no-chimera.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/table-no-chimera.qzv) file in qiime2 view, you can see three main menues; Overview, Interactive Sample Detail and Feature Detail. If you click on Feature detail Detail you can see a slider to the left of the picture which could be changed, based which you can arbiterarily decide, to which depth of reading you can do your rarefaction.
