@@ -263,7 +263,7 @@ The PCoA plot ([bray_curtis_emperor.qzv](https://github.com/thaocaoHPzbook/Goldf
 **PERMANOVA analysis**
 ```bash
 qiime diversity beta-group-significance \
-  --i-distance-matrix beta-diversity.qza \
+  --i-distance-matrix core-metrics-results-4000/bray_curtis_distance_matrix.qza \
   --m-metadata-file metadata.tsv \
   --m-metadata-column Treatment \
   --p-method permanova \
@@ -281,7 +281,7 @@ Jaccard index is a measure of similarity between two sets. In microbiome studies
 Jaccard index focuses on the presence/absence of species, rather than their abundance, making it useful for studies where the presence of specific species is more important than their relative abundance.
 ```bash
 qiime diversity beta-group-significance \
-  --i-distance-matrix jaccard_distance_matrix.qza \
+  --i-distance-matrix core-metrics-results-4000/jaccard_distance_matrix.qza \
   --m-metadata-file metadata.tsv \
   --p-method permanova \
   --m-metadata-column Treatment \
@@ -297,11 +297,11 @@ qiime diversity beta-group-significance \
 Weighted UniFrac is better at detecting differences in community structure by considering the relative abundance of each species, not just whether or not they are present in a sample.
 ```bash
 qiime diversity beta-group-significance \
-  --i-distance-matrix core-metrics-results/weighted_unifrac_distance_matrix.qza \
+  --i-distance-matrix core-metrics-results-4000/weighted_unifrac_distance_matrix.qza \
   --m-metadata-file metadata.tsv \
   --p-method permanova \
   --m-metadata-column Treatment \
-  --o-visualization core-metrics-results/weighted_unifrac_permanova.qzv
+  --o-visualization core-metrics-results-4000/weighted_unifrac_permanova.qzv
 ```
 [weighted_unifrac_permanova.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/weighted_unifrac_permanova.qzv) file is generated
 ![image](https://github.com/user-attachments/assets/10ff8cc4-1869-47b7-bbbf-3a061383b80b)
@@ -313,7 +313,7 @@ qiime diversity beta-group-significance \
 Unweighted UniFrac measures the differences between microbial communities based on the presence or absence of species, without considering their abundance or frequency. It is useful for comparing the community structure and detecting shifts in species diversity between samples, especially when the focus is not on the abundance of each species.
 ```bash
 qiime diversity beta-group-significance \
-  --i-distance-matrix unweighted_unifrac_distance_matrix.qza \
+  --i-distance-matrix core-metrics-results-4000/unweighted_unifrac_distance_matrix.qza \
   --m-metadata-file metadata.tsv \
   --p-method permanova \
   --m-metadata-column Treatment \
