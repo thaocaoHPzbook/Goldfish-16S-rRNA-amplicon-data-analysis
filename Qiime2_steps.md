@@ -199,6 +199,12 @@ The Shannon index measures alpha diversity, accounting for both species richness
     Higher Shannon index → More diverse and evenly distributed microbial community.
     Lower Shannon index → A community dominated by a few species, indicating lower diversity.
 ```bash
+qiime diversity alpha \
+  --i-table filtered-table.qza \
+  --p-metric shannon \
+  --o-alpha-diversity shannon-diversity.qza
+```
+```bash
 qiime diversity alpha-group-significance \
   --i-alpha-diversity shannon-diversity.qza \
   --m-metadata-file metadata.tsv \
@@ -211,10 +217,15 @@ Pairwise: All p-values > 0.05 → There is no significant difference in the Shan
 **Conclusion: The groups have equivalent microbial diversity, suggesting that the grouping factor (e.g., experimental condition) does not strongly influence gut microbiome diversity in this dataset**
 ## Pielou's Evenness Index
 Pielou's Evenness Index measures the evenness of species distribution in a community. It indicates how evenly the species are distributed, with values ranging from 0 (completely uneven) to 1 (completely even).
-
 ```bash
-qiime metadata tabulate \
-  --m-input-file evenness_vector.qza \
+qiime diversity alpha \
+  --i-table filtered-table.qza \
+  --p-metric pielou_e \
+  --o-alpha-diversity evenness_vector.qza
+```
+```bash
+qiime diversity alpha-group-significance \
+  --i-alpha-diversity evenness_vector.qza \
   --m-metadata-file metadata.tsv \
   --o-visualization evenness_boxplot.qzv
 ```
@@ -227,6 +238,13 @@ Pairwise: All pairwise comparisons have p-value > 0.05, indicating no significan
 ## Faith's Phylogenetic Diversity (Faith's PD) 
 Faith's PD measures the total branch length of a phylogenetic tree that connects all species in a sample. It reflects both species richness and phylogenetic diversity, considering evolutionary relationships.
 A higher Faith’s PD indicates a more diverse microbial community with greater evolutionary variety, while a lower Faith’s PD suggests a more phylogenetically constrained community.
+```bash
+qiime diversity alpha-phylogenetic \
+  --i-table filtered-table.qza \
+  --i-phylogeny tree-no-chimera.qza \
+  --p-metric faith_pd \
+  --o-alpha-diversity faith-pd.qza
+```
 ```bash
 qiime diversity alpha-group-significance \
   --i-alpha-diversity faith-pd.qza \
