@@ -145,50 +145,53 @@ Rarefaction curves assess sequencing depth sufficiency and microbial diversity s
 qiime diversity alpha-rarefaction \
   --i-table filtered-table.qza \
   --i-phylogeny tree-no-chimera.qza \
-  --p-max-depth 14007 \
+  --p-max-depth 25000 \
   --p-steps 20 \
   --p-iterations 10 \
   --m-metadata-file metadata.tsv \
   --o-visualization alpha-rarefaction.qzv
 ```
 You can view the chart [alpha-rarefaction.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/alpha-rarefaction.qzv) by qiime view as method explained previously.
-![image](https://github.com/user-attachments/assets/7bdadcb9-a4c5-4cfd-a2f4-f231d4f37a40)
-At a depth of 4000, the rarefaction curve reaches saturation, indicating that increasing reads will not detect many new ASVs.    
-![image](https://github.com/user-attachments/assets/0efd2bda-dbdf-4a18-b38b-58b9512bfedd)
-At a depth of 4000, 2 out of 15 samples are removed, it means that over 80% of the samples (13/15) are retained. This suggests that normalization at this depth would keep most of the dataset for analysis.    
-**Proceed with normalization at a subsampling depth of 4000**
+![image](https://github.com/user-attachments/assets/17745783-82e3-4938-aecb-8c9540d007e2)
+
+At a depth of 20000, the rarefaction curve reaches saturation, indicating that increasing reads will not detect many new ASVs, and 15 samples are removed, it means that 100% of the samples are retained. This suggests that normalization at this depth would keep all of the dataset for analysis.    
+**Proceed with normalization at a subsampling depth of 20000**
 ```bash
 qiime diversity core-metrics-phylogenetic \
   --i-table filtered-table.qza \
   --i-phylogeny tree-no-chimera.qza \
-  --p-sampling-depth 4000 \
+  --p-sampling-depth 20000 \
   --m-metadata-file metadata.tsv \
-  --output-dir core-metrics-results-4000
+  --output-dir core-metrics-results-20000
 ```
 # 6. Alpha diversity analysis
 ## Chao1
 Chao1 alpha diversity analysis estimates species richness in a sample. It focuses on rare ASVs (appearing only once or twice), helping to assess how many species might be undetected due to limited sequencing depth. This is useful for comparing microbial richness across sample groups.
 ```bash
 qiime diversity alpha \
-  --i-table filtered-table.qza \
+  --i-table core-metrics-results-20000/rarefied_table.qza \
   --p-metric chao1 \
-  --o-alpha-diversity chao1-diversity.qza
+  --o-alpha-diversity core-metrics-results-20000/chao1_vector.qza
 ```
 ```bash
 qiime metadata tabulate \
-  --m-input-file chao1-diversity.qza \
-  --o-visualization chao1-diversity.qzv
+  --m-input-file core-metrics-results-20000/chao1_vector.qza \
+  --o-visualization core-metrics-results-20000/chao1_vector.qzv
 ```
-![image](https://github.com/user-attachments/assets/41a865d0-0e3e-4cf3-badb-3b6a511bfa0d)
+[chao1_vector.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/chao1_vector.qzv) is generated.
+![image](https://github.com/user-attachments/assets/3efb70bb-01fb-4f2f-92ec-d1cd1c9d2b30)
 
+
+Analysis Chao1 between groups of treatment
 ```bash
 qiime diversity alpha-group-significance \
-  --i-alpha-diversity chao1-diversity.qza \
+  --i-alpha-diversity core-metrics-results-20000/chao1_vector.qza \
   --m-metadata-file metadata.tsv \
-  --o-visualization chao1-group-significance.qzv
+  --o-visualization core-metrics-results-20000/chao1_group_significance.qzv
 ```
-[chao1-group-significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/chao1-diversity-significance.qzv) is generated.
-![image](https://github.com/user-attachments/assets/420ce7d1-21bd-45b6-9258-c629552e0223)
+[chao1-group-significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/chao1_group_significance.qzv) is generated.
+![image](https://github.com/user-attachments/assets/60b5ead9-2414-433d-acd8-bb15ba935eca)
+
 The Kruskal-Wallis test results indicate:
     *Overall comparison (all groups)*
         H = 7.43, p-value = 0.115 → No significant difference in Chao1 alpha diversity among the groups (p > 0.05).
