@@ -62,7 +62,7 @@ qiime metadata tabulate \
   --m-input-file chimera-stats.qza \
   --o-visualization chimera-stats.qzv
 ```
-Then use the non-chimeric sequences for further analysis.
+Then use the non-chimeric sequences for further analysis.    
 **Filter the feature table to remove chimeric sequences**
 ```bash
 qiime feature-table filter-features \
