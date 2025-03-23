@@ -1,4 +1,4 @@
-# 1. Importing raw data into Qiime2
+![image](https://github.com/user-attachments/assets/1f70b81e-939d-4b48-a45f-76dcef3fc4d4)# 1. Importing raw data into Qiime2
 ## Generate manifest.csv
 Sequence data are paired end in the format of FASTA with good quality score; therefore, in qiime2 the type will be "SampleData[PairedEndSequencesWithQuality]" and their imput format asigned as PairedEndFastqManifestPhred33.
 Before importing, [manifest.csv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/manifest.csv) file must be prepared.
@@ -23,7 +23,7 @@ This [short_reads_demux.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA
 On this overview page you can see counts of demultiplexed sequences for the entire samples for both forward and reverse reads, with min, median, mean and max and total counts.
 ![image](https://github.com/user-attachments/assets/352add1e-abed-404b-83dc-12a7d0200684)
 **Figure 2. Interacvive plot for demultiplexed pairedEnd reads**    
-Understanding this plot is crucial for the denoising step, as you need to determine the truncation length for both forward and reverse reads in a way that ensures at least 50% of the reads have a quality score (Q) ≥ 30. You can observe these changes by hovering over the interactive box plots. In this case, the quality of both forward and reverse reads starts to decline significantly after approximately 220 nt.
+Understanding this plot is crucial for the denoising step, as it allows you to determine the appropriate truncation length for both forward and reverse reads, ensuring that at least 50% of the reads maintain a quality score (Q) of ≥ 30. You can observe these changes by hovering over the interactive box plots. In this case, the quality of both forward and reverse reads remained consistently high, indicating that minimal (at 246nt) or no truncation may be necessary.
 
 # 2. Filtering, dereplication, sample inference, chimera identification, and merging of paired-end reads by DADA2 package in qiime2.
 ```bash
@@ -31,11 +31,11 @@ qiime dada2 denoise-paired \
   --i-demultiplexed-seqs short_reads_demux.qza \
   --p-trim-left-f 0 \
   --p-trim-left-r 0 \
-  --p-trunc-len-f 220 \
-  --p-trunc-len-r 220 \
-  --o-table table.qza \
-  --o-representative-sequences rep-seqs.qza \
-  --o-denoising-stats denoising-stats.qza
+  --p-trunc-len-f 0 \
+  --p-trunc-len-r 0 \
+  --o-table dada2/table.qza \
+  --o-representative-sequences dada2/rep-seqs.qza \
+  --o-denoising-stats dada2/denoising-stats.qza
 ```
 You can convert the denoising-stats.qza file into a [denoising-stats.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/denoising-stats.qzv) file and visualize it on qiime viewer as explained earlier
 ```bash
@@ -43,7 +43,8 @@ qiime metadata tabulate \
   --m-input-file denoising-stats.qza \
   --o-visualization denoising-stats.qzv
 ```
-![image](https://github.com/user-attachments/assets/6de3099b-4481-401a-acf4-d81eeb8ddb72)
+![image](https://github.com/user-attachments/assets/11c8e699-d193-46e3-840f-bd042194580f)
+
 **Figure 3. The denoising status of the reads for each sample.**    
 You can see the number of filtered reads and also the percentage of non-chimeric sequences after denoising.
 The filtered reads and also the percentage of non-chimeric sequences are quite low. You may need to adjust the chimera filtering process in DADA2 or apply an alternative approach as below:
@@ -77,10 +78,11 @@ qiime feature-table summarize \
   --o-visualization table-no-chimera.qzv
 ```
 If you drag and drop the [table-no-chimera.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/table-no-chimera.qzv) file in qiime2 view, you can see three main menues; Overview, Interactive Sample Detail and Feature Detail. If you click on Feature detail Detail you can see a slider to the left of the picture which could be changed, based which you can arbiterarily decide, to which depth of reading you can do your rarefaction.
-![image](https://github.com/user-attachments/assets/5ba5e1a4-054f-4989-b556-cb4f779ee42e)
+![image](https://github.com/user-attachments/assets/5e1cdc75-645f-4d19-8e0d-e63f5fe5e188)
+
 **Figure 5. ASV table indicating number of samples per treatment and number of ASVs per sample**
 
-# 3. Training a primer-based region-specific classifier for taxonomic classification by Naïve-Bayes method (in Qiime2)
+# 3. Training a full-length 16S rRNA classifier for taxonomic classification using the Naïve Bayes method in QIIME 2
 For taxonomic classifications, you need to have a classifier to which you blast your sequences against to find out which taxonomic groups each sequence belongs to. This is also called reference phylogeny, which is a cruitial step in identifying the marker genes (in this case 16S rRNA) taken from different environmental a in saco samples. In order to do so, there are different 16S rRNA databases, of which Greengens and SILVA are well-known databases for the full length of 16S rRNA genes. You can always download the pre-trained classifiers at the Data Resources of qiime2 website with the follwoing command:
 ```bash
 wget https://data.qiime2.org/2023.7/common/silva-138-99-seqs.qza -O silva_data/silva-138-99-seqs.qza
@@ -94,11 +96,12 @@ qiime feature-classifier fit-classifier-naive-bayes \
   --o-classifier silva_data/silva-classifier.qza
 ```
 After you got **silva-classifier.qza** classifier file, you can use it for your taxonomic classifications as follows:
-## Taxonomic clasification
+## Taxonomic classification with a confidence score threshold of 90%
 ```bash
 qiime feature-classifier classify-sklearn \
-  --i-classifier silva_data/silva-classifier.qza \
+  --i-classifier silva_data/silva-138-99-nb-classifier.qza \
   --i-reads rep-seqs-no-chimera.qza \
+  --p-confidence 0.9 \
   --o-classification taxonomy.qza
 ```
 **Generate taxa bar plot**
@@ -109,10 +112,10 @@ qiime taxa barplot \
   --m-metadata-file metadata.tsv \
   --o-visualization taxa-barplot.qzv
 ```
-![image](https://github.com/user-attachments/assets/75829c6a-9148-4f92-88c2-a55da47c00b5)
-**Figure 6. Taxonomy classification bar plot at level 6**
+![image](https://github.com/user-attachments/assets/87310d82-f336-44cc-9638-9a41d90ed04c)
+**Figure 6. Taxonomy classification bar plot at genus level**
 
-You can see in the [taxa barplot](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/taxa-barplot-0.7.qzv) that most samples have similar microbial compositions, except for one **control sample** and one **RP-20 sample**, which show abnormal patterns. This could be due to low sequencing depth, leading to an inaccurate representation of microbial diversity in these samples.    
+You can see in the [taxa barplot](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/taxa-barplot.qzv) that most samples have similar microbial compositions, except for one **control sample** and one **RP-20 sample**, which show abnormal patterns. This could be due to low sequencing depth, leading to an inaccurate representation of microbial diversity in these samples. Further analysis is needed to determine whether the microbial compositions in these samples, particularly in the control sample and RP-20 sample, differ significantly in a statistically meaningful way.
 
 To investigate further, we will examine the summary statistics after chimera filtering and perform rarefaction curve analysis in the next steps.    
 
@@ -132,7 +135,8 @@ qiime tools export \
   --output-path exported_tree
 ```
 The Newick file will be in the exported_tree/tree.nwk folder. You can upload [tree.nwk](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/tree.nwk) to [iTOL](https://itol.embl.de/upload.cgi) to view it.
-![image](https://github.com/user-attachments/assets/20474d10-c2fd-4cf6-a923-b7e20afb4f00)
+![image](https://github.com/user-attachments/assets/0c598a16-3795-41cf-a63b-3b19e65028e4)
+
 
 # 5. Rarefraction curve analysis
 Rarefaction curves assess sequencing depth sufficiency and microbial diversity saturation in samples. This helps (1) Ensure adequate sequencing depth for reliable diversity estimation (2) Compare samples to detect under-sequenced ones; (3) Evaluate data stability—a plateauing curve indicates sufficient sampling.
