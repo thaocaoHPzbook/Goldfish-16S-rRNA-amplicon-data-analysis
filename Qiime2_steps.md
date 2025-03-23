@@ -78,9 +78,9 @@ qiime feature-table summarize \
   --o-visualization table-no-chimera.qzv
 ```
 If you drag and drop the [table-no-chimera.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/table-no-chimera.qzv) file in qiime2 view, you can see three main menues; Overview, Interactive Sample Detail and Feature Detail. If you click on Feature detail Detail you can see a slider to the left of the picture which could be changed, based which you can arbiterarily decide, to which depth of reading you can do your rarefaction.
-![image](https://github.com/user-attachments/assets/5e1cdc75-645f-4d19-8e0d-e63f5fe5e188)
+![image](https://github.com/user-attachments/assets/5e1cdc75-645f-4d19-8e0d-e63f5fe5e188)    
 
-**Figure 5. ASV table indicating number of samples per treatment and number of ASVs per sample**
+**Figure 5. ASV table indicating number of samples per treatment and number of ASVs per sample**    
 
 # 3. Training a full-length 16S rRNA classifier for taxonomic classification using the Naïve Bayes method in QIIME 2
 For taxonomic classifications, you need to have a classifier to which you blast your sequences against to find out which taxonomic groups each sequence belongs to. This is also called reference phylogeny, which is a cruitial step in identifying the marker genes (in this case 16S rRNA) taken from different environmental a in saco samples. In order to do so, there are different 16S rRNA databases, of which Greengens and SILVA are well-known databases for the full length of 16S rRNA genes. You can always download the pre-trained classifiers at the Data Resources of qiime2 website with the follwoing command:
