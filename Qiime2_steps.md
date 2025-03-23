@@ -180,7 +180,7 @@ qiime metadata tabulate \
 ```
 [chao1_vector.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/chao1_vector.qzv) is generated.
 ![image](https://github.com/user-attachments/assets/3efb70bb-01fb-4f2f-92ec-d1cd1c9d2b30)
-
+Sample 4 has a Chao1 index of 209.25, and Sample 5 has a Chao1 index of 210.86, indicating a lower ASV richness compared to other samples. A statistical test is needed to determine whether this difference is statistically significant among groups.
 
 Analysis Chao1 between groups of treatment
 ```bash
@@ -192,53 +192,42 @@ qiime diversity alpha-group-significance \
 [chao1-group-significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/chao1_group_significance.qzv) is generated.
 ![image](https://github.com/user-attachments/assets/60b5ead9-2414-433d-acd8-bb15ba935eca)
 
-The Kruskal-Wallis test results indicate:
-    *Overall comparison (all groups)*
-        H = 7.43, p-value = 0.115 → No significant difference in Chao1 alpha diversity among the groups (p > 0.05).
-    *Pairwise comparisons*
-        Most group comparisons have p-values > 0.05, suggesting no statistically significant differences.
-        However, RP-20 vs RP-40 and RP-20 vs RP-5 have p-values = 0.0495, indicating a potential difference.
-        Yet, the q-values are > 0.05 (after multiple testing correction), meaning the observed differences may not be strong enough to be considered statistically significant.    
-**Conclusion**: There is no significant difference in Chao1 alpha diversity among the groups after multiple comparison correction.
+The Kruskal-Wallis test was performed to compare Chao1 richness across different treatment groups. The overall test statistic H=3.23H=3.23 with a p-value of 0.5196, indicating that there is no statistically significant difference in Chao1 richness among the groups.
+
+Pairwise comparisons using the Kruskal-Wallis test show that all p-values are greater than 0.05, suggesting no significant differences between any two groups. The lowest p-values (e.g., 0.1266) are still far from the significance threshold, further supporting that the observed variations in OTU richness are likely due to random fluctuations rather than meaningful biological differences.
+
+**Conclusion: The results indicate that there is no statistically significant difference in Chao1 richness among the Treatment groups.**
 
 ## Shannon index
 The Shannon index measures alpha diversity, accounting for both species richness (number of species) and evenness (distribution of species abundances).
     Higher Shannon index → More diverse and evenly distributed microbial community.
     Lower Shannon index → A community dominated by a few species, indicating lower diversity.
 ```bash
-qiime diversity alpha \
-  --i-table filtered-table.qza \
-  --p-metric shannon \
-  --o-alpha-diversity shannon-diversity.qza
-```
-```bash
 qiime diversity alpha-group-significance \
-  --i-alpha-diversity shannon-diversity.qza \
+  --i-alpha-diversity core-metrics-results-20000/shannon_vector.qza \
   --m-metadata-file metadata.tsv \
-  --o-visualization shannon-group-significance.qzv
+  --o-visualization core-metrics-results-20000/shannon_group_significance.qzv
 ```
-[shannon-group-significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/shannon-group-significance.qzv) file is generated.
-![image](https://github.com/user-attachments/assets/16ed9d07-b543-4eb6-8c06-f32130231ffc)
-Overall: p-value = 0.6476 → There is no significant difference in the Shannon index between groups overall. This means that the microbial diversity structure across all groups is similar.
+
+[shannon-group-significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/shannon_group_significance.qzv) file is generated.
+![image](https://github.com/user-attachments/assets/a7a975f0-0a76-4c85-bc84-be0db50dcb18)
+
+Overall: p-value =  	0.597 → There is no significant difference in the Shannon index between groups overall. This means that the microbial diversity structure across all groups is similar.
 Pairwise: All p-values > 0.05 → There is no significant difference in the Shannon index between any pair of groups. This indicates that no group has significantly higher or lower microbial diversity compared to the others.    
-**Conclusion: The groups have equivalent microbial diversity, suggesting that the grouping factor (e.g., experimental condition) does not strongly influence gut microbiome diversity in this dataset**
+**Conclusion: The groups have equivalent microbial diversity, suggesting that the grouping factor (e.g., experimental condition) does not strongly influence gut microbiome diversity in this dataset**    
+
 ## Pielou's Evenness Index
 Pielou's Evenness Index measures the evenness of species distribution in a community. It indicates how evenly the species are distributed, with values ranging from 0 (completely uneven) to 1 (completely even).
 ```bash
-qiime diversity alpha \
-  --i-table filtered-table.qza \
-  --p-metric pielou_e \
-  --o-alpha-diversity evenness_vector.qza
-```
-```bash
 qiime diversity alpha-group-significance \
-  --i-alpha-diversity evenness_vector.qza \
+  --i-alpha-diversity core-metrics-results-20000/evenness_vector.qza \
   --m-metadata-file metadata.tsv \
-  --o-visualization evenness_boxplot.qzv
+  --o-visualization core-metrics-results-20000/evenness_group_significance.qzv
 ```
-[evenness_boxplot.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/evenness-boxplot.qzv) file is generated
-![image](https://github.com/user-attachments/assets/a0d29b65-06ec-4551-8f86-258f9d953cd3)
-Overall: H = 6.78, p-value = 0.148 → No significant difference in evenness between groups.
+[evenness_group_significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/evenness_group_significance.qzv) file is generated
+![image](https://github.com/user-attachments/assets/28de76cb-ba44-402a-a521-b154e002d13a)
+
+Overall: H =	2.933, p-value = 0.569 → No significant difference in evenness between groups.
 Pairwise: All pairwise comparisons have p-value > 0.05, indicating no significant differences in evenness between any pair of groups.    
 **Conclusion:There is no significant difference in Pielou's Evenness Index across groups, suggesting that the evenness of microbial distribution is similar in all groups**
 
@@ -246,21 +235,15 @@ Pairwise: All pairwise comparisons have p-value > 0.05, indicating no significan
 Faith's PD measures the total branch length of a phylogenetic tree that connects all species in a sample. It reflects both species richness and phylogenetic diversity, considering evolutionary relationships.
 A higher Faith’s PD indicates a more diverse microbial community with greater evolutionary variety, while a lower Faith’s PD suggests a more phylogenetically constrained community.
 ```bash
-qiime diversity alpha-phylogenetic \
-  --i-table filtered-table.qza \
-  --i-phylogeny tree-no-chimera.qza \
-  --p-metric faith_pd \
-  --o-alpha-diversity faith-pd.qza
-```
-```bash
 qiime diversity alpha-group-significance \
-  --i-alpha-diversity faith-pd.qza \
+  --i-alpha-diversity core-metrics-results-20000/faith_pd_vector.qza \
   --m-metadata-file metadata.tsv \
-  --o-visualization faith-pd-group-significance.qzv
+  --o-visualization core-metrics-results-20000/faith_pd_group_significance.qzv
 ```
 [faith-pd-group-significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/faith_pd_group_significance.qzv) is generated
-![image](https://github.com/user-attachments/assets/ce48b47b-18c9-4934-b5f3-a40cc7e0bcdc)
-Overall (All groups): H-statistic = 1.33, p-value = 0.8563 → No significant difference in Faith's PD between the groups.    
+![image](https://github.com/user-attachments/assets/aa4215e4-6fa9-4c80-8892-d333ea0ed3d3)
+
+Overall (All groups): H-statistic = 5.566, p-value = 0.2339 → No significant difference in Faith's PD between the groups.    
 Pairwise (Between groups):All pairwise comparisons have p-value > 0.05, indicating no significant differences in Faith's PD between any of the groups.    
 **Conclusion: There is no significant difference in Faith's PD between the groups, suggesting that the phylogenetic diversity is similar across all groups in this study.**
 
