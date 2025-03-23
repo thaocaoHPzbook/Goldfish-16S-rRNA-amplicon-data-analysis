@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/1f70b81e-939d-4b48-a45f-76dcef3fc4d4)# 1. Importing raw data into Qiime2
+![image](https://github.com/user-attachments/assets/a7a09bb5-4aa6-40a4-bf86-89026c40b77a)![image](https://github.com/user-attachments/assets/1f70b81e-939d-4b48-a45f-76dcef3fc4d4)# 1. Importing raw data into Qiime2
 ## Generate manifest.csv
 Sequence data are paired end in the format of FASTA with good quality score; therefore, in qiime2 the type will be "SampleData[PairedEndSequencesWithQuality]" and their imput format asigned as PairedEndFastqManifestPhred33.
 Before importing, [manifest.csv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/manifest.csv) file must be prepared.
@@ -256,18 +256,19 @@ This index helps us understand the level of difference in microbial species betw
 **PCoA Plot**
 ```bash
 qiime diversity pcoa \
-  --i-distance-matrix core-metrics-results/bray_curtis_distance_matrix.qza \
-  --o-pcoa core-metrics-results/bray_curtis_pcoa_results.qza
+  --i-distance-matrix core-metrics-results-20000/bray_curtis_distance_matrix.qza \
+  --o-pcoa core-metrics-results-20000/bray_curtis_pcoa_results.qza
 ```
 ```bash
 qiime emperor plot \
-  --i-pcoa core-metrics-results/bray_curtis_pcoa_results.qza \
+  --i-pcoa core-metrics-results-20000/bray_curtis_pcoa_results.qza \
   --m-metadata-file metadata.tsv \
-  --o-visualization core-metrics-results/bray_curtis_emperor.qzv
+  --o-visualization core-metrics-results-20000/bray_curtis_emperor.qzv
 ```
-![image](https://github.com/user-attachments/assets/58a66a9c-99f1-419a-a07c-f771008fdd07)
+![image](https://github.com/user-attachments/assets/7c95322d-b373-45b6-9841-dca732f2cadb)
 
-The PCoA plot ([bray_curtis_emperor.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/bray_curtis_emperor.qzv)) does not show clear clustering between the treatments,further PERMANOVA analysis for a more detailed examination and reveals significant differences in microbial communities across the groups.
+
+The PCoA plot [bray_curtis_emperor.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/bray_curtis_emperor.qzv) does not show clear clustering between the treatments,further PERMANOVA analysis for a more detailed examination and reveals significant differences in microbial communities across the groups.
 **PERMANOVA analysis**
 ```bash
 qiime diversity beta-group-significance \
@@ -277,9 +278,11 @@ qiime diversity beta-group-significance \
   --p-method permanova \
   --o-visualization bray_curtis_group_significance.qzv
 ```
-[bray_curtis_group_significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/bray_curtis_group_significance.qzv) file is generated.
-![image](https://github.com/user-attachments/assets/efec7fb7-6697-4740-b5d7-337bc7f399d3)
-With a p-value greater than 0.05, the conclusion is that there is no significant difference between the groups based on the Bray-Curtis index. This suggests that the treatments or groupings do not have a strong influence on the differences in microbial community structure between the groups.
+[bray_curtis_group_significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/bray_curtis_significance.qzv) file is generated.
+![image](https://github.com/user-attachments/assets/ac60bc70-1fbd-469f-9256-8dcaad943654)
+![image](https://github.com/user-attachments/assets/b74d8b0d-661c-4f52-8eda-c5ddea82cc02)
+
+The overall PERMANOVA test (Bray-Curtis dissimilarity) shows a significant difference between groups (p = 0.017). However, all pairwise comparisons have p-values greater than 0.05, suggesting that while there is a global difference among groups, no specific pairwise comparison shows a statistically significant difference. This could be due to limited sample size or variability within groups.
 
 ## Jaccard index
 Jaccard index is a measure of similarity between two sets. In microbiome studies, it is used to compare the presence or absence of species across different samples.
