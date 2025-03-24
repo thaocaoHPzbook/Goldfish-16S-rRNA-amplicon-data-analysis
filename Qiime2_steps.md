@@ -33,9 +33,9 @@ qiime dada2 denoise-paired \
   --p-trim-left-r 0 \
   --p-trunc-len-f 0 \
   --p-trunc-len-r 0 \
-  --o-table dada2/table.qza \
-  --o-representative-sequences dada2/rep-seqs.qza \
-  --o-denoising-stats dada2/denoising-stats.qza
+  --o-table table.qza \
+  --o-representative-sequences rep-seqs.qza \
+  --o-denoising-stats denoising-stats.qza
 ```
 You can convert the denoising-stats.qza file into a [denoising-stats.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/denoising-stats.qzv) file and visualize it on qiime viewer as explained earlier
 ```bash
@@ -59,6 +59,7 @@ qiime vsearch uchime-denovo \
 ```
 **Check the chimera filtering summary**
 ```bash
+cd dada2
 qiime metadata tabulate \
   --m-input-file chimera-stats.qza \
   --o-visualization chimera-stats.qzv
