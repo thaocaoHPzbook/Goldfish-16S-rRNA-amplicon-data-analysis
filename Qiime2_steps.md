@@ -47,7 +47,7 @@ qiime metadata tabulate \
 
 **Figure 3. The denoising status of the reads for each sample.**    
 You can see the number of filtered reads and also the percentage of non-chimeric sequences after denoising.
-The filtered reads and also the percentage of non-chimeric sequences are quite low. You may need to adjust the chimera filtering process in DADA2 or apply an alternative approach as below:
+The filtered reads and also the percentage of non-chimeric sequences are quite low. You may need to adjust the chimera filtering process in DADA2 or apply an alternative approach as below:    
 **Perform de novo chimera filtering using VSEARCH in QIIME 2**
 ```bash
 qiime vsearch uchime-denovo \
