@@ -47,7 +47,7 @@ qiime metadata tabulate \
 
 **Figure 3. The denoising status of the reads for each sample.**    
 You can see the number of filtered reads and also the percentage of non-chimeric sequences after denoising.
-The filtered reads and the percentage of non-chimeric sequences being >50% is quite good. However, you may need to adjust the chimera filtering process in DADA2 or apply an alternative approach if you want to improve the results, such as:
+The filtered reads and the percentage of non-chimeric sequences being >50% is quite good. However, you may need to adjust the chimera filtering process in DADA2 or apply an alternative approach if you want to improve the results, such as:    
 **Perform de novo chimera filtering using VSEARCH in QIIME 2**
 ```bash
 qiime vsearch uchime-denovo \
