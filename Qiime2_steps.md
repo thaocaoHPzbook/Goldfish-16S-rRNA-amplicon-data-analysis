@@ -37,7 +37,7 @@ qiime dada2 denoise-paired \
   --o-representative-sequences rep-seqs.qza \
   --o-denoising-stats denoising-stats.qza
 ```
-You can convert the denoising-stats.qza file into a [denoising-stats.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/denoising-stats.qzv) file and visualize it on qiime viewer as explained earlier
+You can convert the [denoising-stats.qza](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/denoising-stats.qza) file into a [denoising-stats.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/denoising-stats.qzv) file and visualize it on qiime viewer as explained earlier
 ```bash
 qiime metadata tabulate \
   --m-input-file denoising-stats.qza \
