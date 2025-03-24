@@ -10,7 +10,7 @@ qiime tools import \
   --output-path short_reads_demux.qza \
   --input-format PairedEndFastqManifestPhred33
 ```
-This might take a while before you get the results. The output of this, is a .qza file that you have already specified it in the command, in this example demuxed-dss.qza. You can then create a visualized file from this artifact, with the following command:
+This might take a while before you get the results. The output of this command is a short_reads_demux.qza file, which you have already specified in the command. You can then create a visualized file from this artifact, with the following command:
 
 ```bash
 qiime demux summarize \
