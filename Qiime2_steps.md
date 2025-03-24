@@ -181,7 +181,7 @@ qiime metadata tabulate \
 ![image](https://github.com/user-attachments/assets/3efb70bb-01fb-4f2f-92ec-d1cd1c9d2b30)
 Sample 4 has a Chao1 index of 209.25, and Sample 5 has a Chao1 index of 210.86, indicating a lower ASV richness compared to other samples. A statistical test is needed to determine whether this difference is statistically significant among groups.
 
-Analysis Chao1 between groups of treatment
+**Analysis Chao1 between groups of treatment**
 ```bash
 qiime diversity alpha-group-significance \
   --i-alpha-diversity core-metrics-results-20000/chao1_vector.qza \
