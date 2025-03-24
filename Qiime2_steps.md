@@ -135,8 +135,7 @@ qiime tools export \
   --output-path exported_tree
 ```
 The Newick file will be in the exported_tree/tree.nwk folder. You can upload [tree.nwk](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/tree.nwk) to [iTOL](https://itol.embl.de/upload.cgi) to view it.
-![image](https://github.com/user-attachments/assets/0c598a16-3795-41cf-a63b-3b19e65028e4)
-
+![image](https://github.com/user-attachments/assets/127c7827-0201-43b2-aaff-df37807df5ba)
 
 # 5. Rarefraction curve analysis
 Rarefaction curves assess sequencing depth sufficiency and microbial diversity saturation in samples. This helps (1) Ensure adequate sequencing depth for reliable diversity estimation (2) Compare samples to detect under-sequenced ones; (3) Evaluate data stability—a plateauing curve indicates sufficient sampling.
@@ -192,7 +191,7 @@ qiime diversity alpha-group-significance \
 [chao1-group-significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/chao1_group_significance.qzv) is generated.
 ![image](https://github.com/user-attachments/assets/60b5ead9-2414-433d-acd8-bb15ba935eca)
 
-The Kruskal-Wallis test was performed to compare Chao1 richness across different treatment groups. The overall test statistic H=3.23H=3.23 with a p-value of 0.5196, indicating that there is no statistically significant difference in Chao1 richness among the groups.
+The Kruskal-Wallis test was performed to compare Chao1 richness across different treatment groups. The overall test statistic H=3.23 with a p-value of 0.5196, indicating that there is no statistically significant difference in Chao1 richness among the groups.
 
 Pairwise comparisons using the Kruskal-Wallis test show that all p-values are greater than 0.05, suggesting no significant differences between any two groups. The lowest p-values (e.g., 0.1266) are still far from the significance threshold, further supporting that the observed variations in OTU richness are likely due to random fluctuations rather than meaningful biological differences.
 
