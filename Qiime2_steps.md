@@ -322,8 +322,8 @@ qiime diversity beta-group-significance \
 ![image](https://github.com/user-attachments/assets/9e807173-6742-4ae7-a5d9-2af1bd28e229)
 ![image](https://github.com/user-attachments/assets/445616c1-eb2b-45fe-801d-f59fa51f64ea)
 
-    p-value = 0.113: The p-value is greater than 0.05, indicating that there is no significant difference in the microbial community structure between the treatment groups.
-    Test Statistic (pseudo-F) = 1.842749: suggests some variation among groups, but it is not strong enough to reach statistical significance. This could be due to small sample size or high within-group variability.
+p-value = 0.113: The p-value is greater than 0.05, indicating that there is no significant difference in the microbial community structure between the treatment groups.    
+Test Statistic (pseudo-F) = 1.842749: suggests some variation among groups, but it is not strong enough to reach statistical significance. This could be due to small sample size or high within-group variability.
 **Conclusion: There is no significant difference in the microbial community structure between the treatment groups based on the Weighted UniFrac distance matrix and the PERMANOVA test.**
 
 ## Unweighted UniFrac
