@@ -59,7 +59,6 @@ qiime vsearch uchime-denovo \
 ```
 **Check the chimera filtering summary**
 ```bash
-cd dada2
 qiime metadata tabulate \
   --m-input-file chimera-stats.qza \
   --o-visualization chimera-stats.qzv
