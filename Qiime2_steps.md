@@ -361,7 +361,7 @@ biom convert \
 ```
 
 ```bash
-qiime taxa export \
+qiime tools export \
   --i-classification taxonomy.qza \
   --output-dir taxonomy_exported
 ```
