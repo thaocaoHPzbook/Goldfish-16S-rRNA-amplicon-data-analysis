@@ -356,10 +356,12 @@ Then, to convert the .biom file into a data table format that R can handle (CSV/
 ```bash
 biom convert \
   -i exported_feature_table/feature-table.biom \
-  -o feature_table.csv \
+  -o exported_feature_table/feature_table.csv \
   --to-tsv
 ```
-
+```bash
+sed 's/\t/,/g' exported_feature_table/feature_table.tsv > exported_feature_table/feature_table.csv
+```
 ```bash
 qiime tools export \
   --i-classification taxonomy.qza \
