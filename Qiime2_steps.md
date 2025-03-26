@@ -363,7 +363,7 @@ biom convert \
 sed 's/\t/,/g' exported_feature_table/feature_table.tsv > exported_feature_table/feature_table.csv
 ```
 ```bash
-tail -n +2 exported_feature_table/feature_table.csv > exported_feature_table/feature_table_clean.csv
+sed -i '1d' exported_feature_table/feature_table.csv
 ```
 ```bash
 sed -i 's/^#//' exported_feature_table/feature_table.csv
