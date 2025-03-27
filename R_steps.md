@@ -99,7 +99,7 @@ write.csv(ancombc2_results, "ancombc2_results.csv", row.names = TRUE)
 # Save pairwise comparison results to a CSV file
 write.csv(res_ancombc2$res_pair, "pairwise_comparisons_results.csv", row.names = TRUE)
 ```
-[pairwise_comparisons_results.csv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/pairwise_comparisons_results.csv) file is created.
+[ancombc2_results.csv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/ancombc2_results.csv), [pairwise_comparisons_results.csv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/pairwise_comparisons_results.csv) files are created.
 
 # 2. Analysis of biomarkers for gut microbiome
 ## 2.1. Filtering Taxa with Significant p-value<0.05
