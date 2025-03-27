@@ -352,16 +352,18 @@ qiime tools export \
 ```
 The above command will export the table.qza file as a temporary file (like a .biom file) in the exported_feature_table directory.
 
-Then, to convert the .biom file into a data table format that R can handle (CSV/TSV) - [feature_table.tsv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/feature-table.tsv), you can use the following command:
+Then, to convert the .biom file into a data table format that R can handle (CSV/TSV) - [feature_table.tsv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/feature-table.tsv), you can use the following command:
 ```bash
 biom convert \
   -i exported_feature_table/feature-table.biom \
   -o exported_feature_table/feature_table.csv \
   --to-tsv
 ```
+**Convert into csv file and change format**
 ```bash
 sed 's/\t/,/g' exported_feature_table/feature_table.tsv > exported_feature_table/feature_table.csv
 ```
+
 ```bash
 sed -i '1d' exported_feature_table/feature_table.csv
 ```
