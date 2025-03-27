@@ -155,6 +155,7 @@ print(p)
 # Save the plot as a PNG file
 ggsave("lfc_by_treatment.png", plot = last_plot(), width = 8, height = 6)
 ```
-[lfc_by_treatment.png](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/lfc_by_treatment.png.png) is a visualization of taxa that have significant log fold change values.
+[lfc_by_treatment.png] is a visualization of taxa that have significant log fold change values.
+![image](https://github.com/user-attachments/assets/e77bcc2a-3309-4265-855a-0fa5b4aa3f24)
 
 
