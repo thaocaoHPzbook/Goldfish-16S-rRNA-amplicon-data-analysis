@@ -6,65 +6,92 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install("ANCOMBC")
 ```
 
-## 1.2. Dataset
+## 1.2. Read and Prepare Data
 ```bash
 feature_table <- read.table("feature-table.tsv", header = TRUE, row.names = 1, sep = "\t")
 metadata <- read.table("metadata.tsv", header = TRUE, row.names = 1, sep = "\t")
 ```
 
-## 1.3. Converting Data to Phyloseq Object
+## 1.3. Convert Data into Phyloseq Object
 ```bash
 library(phyloseq)
 
 # Create an ASV table object
-asv_phyloseq <- asv_table(feature_table, taxa_are_rows = TRUE)
+otu_phyloseq <- otu_table(feature_table, taxa_are_rows = TRUE)
 
 # Create a sample_data object from metadata
 sample_metadata <- sample_data(metadata)
 
 # Check the structure of the ASV table
-str(asv_phyloseq)
+str(otu_phyloseq)
 
 # Combine ASV table and metadata into a Phyloseq object
-ps <- phyloseq(asv_phyloseq, sample_metadata)
+ps <- phyloseq(otu_phyloseq, sample_metadata)
 ```
 
 ## 1.4. Matching Sample Names
 ```bash
-# Check sample names in ASV table and metadata
-sample_names(asv_phyloseq)
+# Check sample names in the OTU table
+sample_names(otu_phyloseq)
+
+# Check sample names in the metadata
 rownames(sample_metadata)
 
-# Rename sample names in ASV table to match metadata
-sample_names(asv_phyloseq) <- rownames(sample_metadata)
+# Rename OTU table sample names to match metadata sample names
+sample_names(otu_phyloseq) <- rownames(sample_metadata)
 
-# Verify the sample names in the ASV table
-sample_names(asv_phyloseq)
+# Removes any X prefixes that might have been introduced when importing data
+sample_names(otu_phyloseq) <- gsub("^X", "", sample_names(otu_phyloseq))
+
+# Ensure sample names are numeric (if applicable)
+sample_names(otu_phyloseq) <- as.character(as.numeric(sample_names(otu_phyloseq)))
+
+# Reorder samples in the OTU table to match metadata order
+otu_phyloseq <- prune_samples(rownames(sample_metadata), otu_phyloseq)
+
+# Transform sample counts without changing OTU values
+otu_phyloseq <- transform_sample_counts(otu_phyloseq, identity)
+
+# Reapply correct sample names
+sample_names(otu_phyloseq) <- rownames(sample_metadata)
+
+# Check sample names after processing
+print(sample_names(otu_phyloseq))
+print(rownames(sample_metadata))
+
+# Create a phyloseq object combining OTU table and metadata
+ps <- phyloseq(otu_phyloseq, sample_metadata)
 ```
-[pairwise_comparisons_results.csv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/pairwise_comparisons_results.csv) file is created.
 
-## 1.5.  ANCOM-BC2 Analysis
+## 1.5 Add a pseudo-count to the OUT table to handle zero values
+```bash
+# Add a pseudo-count to the ASV table to handle zero values
+otu_table_with_pseudo <- otu_table(ps) + 0.5
+
+# Create a new phyloseq object with pseudo-count added OTU table
+ps_with_pseudo <- phyloseq(otu_table(otu_table_with_pseudo, taxa_are_rows = TRUE), sample_data(ps))
+
+# Check the updated phyloseq object
+ps_with_pseudo
+```
+## 1.6 Convert Phyloseq Object into OTU Table and Metadata
+# Extract OTU table and metadata from phyloseq object
+otu_data <- otu_table(ps_with_pseudo)
+sample_data <- sample_data(ps_with_pseudo)
+
+##  1.7 Run ANCOM-BC2 with Pseudo-Count Adjusted Data
 ```bash
 res_ancombc2 <- ancombc2(
-  data = ps,
-  fix_formula = "Treatment",  # The variable for analysis
-  p_adj_method = "holm",      # Method for adjusting p-values
-  alpha = 0.05,               # Significance level
-  pairwise = TRUE,            # Enable pairwise comparisons
-  group = "Treatment"         # The group variable
+  data = ps_with_pseudo,    # Phyloseq object with pseudo-counts
+  fix_formula = "Treatment", # Variable for comparison
+  p_adj_method = "holm",     # Multiple testing correction
+  alpha = 0.05,              # Significance level
+  pairwise = TRUE,           # Enable pairwise comparison
+  group = "Treatment"        # Grouping variable
 )
 ```
 
-## 1.6 Add a pseudo-count to the ASV table to handle zero values
-```bash
-# Add a pseudo-count to the ASV table to handle zero values
-asv_table_with_pseudo <- asv_table(ps) + 1
-
-# Create a new phyloseq object with the updated OTU table
-ps_with_pseudo <- phyloseq(asv_table(asv_table_with_pseudo, taxa_are_rows = TRUE), sample_data(ps))
-```
-
-## 1.7 Save the ANCOM-BC2 results to a CSV file
+## 1.8 Save the ANCOM-BC2 results to a CSV file
 ```bash
 ancombc2_results <- res_ancombc2$res
 write.csv(ancombc2_results, "ancombc2_results.csv", row.names = TRUE)
