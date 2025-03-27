@@ -117,7 +117,7 @@ filtered_ancombc2_results <- ancombc2_results %>%
     (p_TreatmentRP.40 < 0.05 & q_TreatmentRP.40 < 0.05 & diff_TreatmentRP.40 == TRUE & passed_ss_TreatmentRP.40 == TRUE)
   )
 # Save filtered results to a CSV file
-write.csv(df_filtered, "filtered_taxon_results.csv", row.names = TRUE)
+write.csv(df_filtered, "filtered_ancombc2_results.csv", row.names = TRUE)
 ```
 ## 2.2. Visualization of Log Fold Changes of Taxa with Significant p-value<0.05
 ```bash
