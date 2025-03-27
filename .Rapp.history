@@ -1,0 +1,1417 @@
+# Chọn biến metadata để so sánh (ví dụ "Final weight")#
+target_variable <- "Final weight"#
+#
+# Hàm tính tương quan cho từng OTU#
+compute_spearman <- function(otu_id) {#
+  df <- merged_data %>%#
+    filter(OTU_ID == otu_id) %>%#
+    select(abundance, all_of(target_variable))#
+  result <- cor.test(df$abundance, df[[target_variable]], method = "spearman")#
+  return(tibble(OTU_ID = otu_id, Spearman_rho = result$estimate, p_value = result$p.value))#
+}#
+#
+# Tính tương quan cho tất cả OTU#
+otu_list <- unique(merged_data$OTU_ID)#
+cor_results <- map_dfr(otu_list, compute_spearman)#
+#
+# Lưu kết quả ra file#
+write_tsv(cor_results, "spearman_results.tsv")#
+#
+# In ra các OTU có tương quan đáng kể (p < 0.05)#
+cor_results %>% filter(p_value < 0.05)
+library(readr)#
+library(dplyr)#
+library(ggplot2)
+metadata <- read_tsv("/Users/truonganhtu/Downloads/metadata.tsv")
+head(metadata)
+metadata <- metadata %>%#
+  mutate(Treatment_binary = ifelse(Treatment == "Control", 0, 1))
+head(metadata)
+growth_metrics <- c("Final weight", "Specific growth rate", "Feed conversion ratio", #
+                    "Weight gain", "Survival rate", "Percentage weight gain", "Daily weight gain")
+cor_results <- data.frame(Metric = character(), Spearman_rho = numeric(), p_value = numeric())#
+#
+for (metric in growth_metrics) {#
+  cor_test <- cor.test(metadata$Treatment_binary, metadata[[metric]], method = "spearman")#
+  cor_results <- rbind(cor_results, #
+                       data.frame(Metric = metric, #
+                                  Spearman_rho = cor_test$estimate, #
+                                  p_value = cor_test$p.value))#
+}
+print(cor_results)
+library(ggplot2)#
+#
+# Chuyển Treatment_binary về dạng factor (nhóm)#
+metadata$Treatment_binary <- as.factor(metadata$Treatment_binary)#
+#
+# Vẽ boxplot cho từng chỉ số sinh trưởng#
+for (metric in growth_metrics) {#
+  p <- ggplot(metadata, aes(x = Treatment_binary, y = .data[[metric]], fill = Treatment_binary)) +#
+    geom_boxplot(alpha = 0.6) +#
+    geom_jitter(width = 0.2, alpha = 0.6) +#
+    labs(title = paste("Boxplot of", metric, "by Treatment"),#
+         x = "Treatment (0 = Control, 1 = Treatment)",#
+         y = metric) +#
+    theme_minimal() +#
+    scale_fill_manual(values = c("#E69F00", "#56B4E9"))  # Màu cho nhóm Control & Treatment#
+  print(p)#
+}
+for (metric in growth_metrics) {#
+  p <- ggplot(metadata, aes(x = Treatment_binary, y = .data[[metric]])) +#
+    geom_point(color = "blue", size = 3, alpha = 0.6) +#
+    geom_smooth(method = "lm", col = "red", se = FALSE) +#
+    labs(title = paste("Scatterplot:", metric, "vs. Treatment"),#
+         x = "Treatment (0 = Control, 1 = Treatment)",#
+         y = metric) +#
+    theme_minimal()#
+  print(p)#
+}
+library(ggcorrplot)#
+#
+# Tính ma trận tương quan Spearman#
+cor_matrix <- cor(metadata[, growth_metrics], method = "spearman", use = "pairwise.complete.obs")#
+#
+# Heatmap của hệ số tương quan#
+ggcorrplot(cor_matrix, #
+           method = "circle", #
+           type = "lower", #
+           lab = TRUE, #
+           colors = c("red", "white", "blue"), #
+           title = "Spearman Correlation Heatmap")
+# Cài đặt nếu chưa có#
+install.packages(c("ggplot2", "patchwork"))#
+#
+# Load thư viện#
+library(ggplot2)#
+library(patchwork)#
+#
+# Chuyển Treatment thành dạng factor để vẽ#
+metadata$Treatment_factor <- as.factor(metadata$Treatment_binary)#
+#
+# Danh sách chỉ số cần vẽ#
+growth_metrics <- c("Final weight", "Specific growth rate", "Feed conversion ratio", #
+                    "Weight gain", "Survival rate", "Percentage weight gain", "Daily weight gain")#
+#
+# Hàm tạo scatter plot cho từng chỉ số#
+plot_list <- lapply(growth_metrics, function(metric) {#
+  ggplot(metadata, aes(x = Treatment_factor, y = .data[[metric]])) +#
+    geom_jitter(width = 0.2, alpha = 0.7, color = "blue") +  # Điểm dữ liệu#
+    geom_boxplot(alpha = 0.3, outlier.shape = NA) +  # Boxplot để thấy phân bố#
+    labs(title = metric, x = "Treatment", y = metric) +#
+    theme_minimal()#
+})#
+#
+# Kết hợp tất cả các biểu đồ#
+final_plot <- wrap_plots(plot_list) + plot_annotation(title = "Tương quan giữa Treatment và các chỉ số sinh trưởng")#
+#
+# Hiển thị biểu đồ#
+print(final_plot)
+# Cài đặt nếu chưa có#
+install.packages(c("ggplot2", "patchwork"))#
+#
+# Load thư viện#
+library(ggplot2)#
+library(patchwork)#
+#
+# Chuyển Treatment thành dạng factor để vẽ#
+metadata$Treatment_factor <- as.factor(metadata$Treatment_binary)#
+#
+# Danh sách chỉ số sinh trưởng#
+growth_metrics <- c("Final weight", "Specific growth rate", "Feed conversion ratio", #
+                    "Weight gain", "Survival rate", "Percentage weight gain", "Daily weight gain")#
+#
+# Dataframe lưu kết quả p-value#
+cor_results <- data.frame(Metric = character(), Spearman_rho = numeric(), p_value = numeric())#
+#
+# Tạo danh sách biểu đồ#
+plot_list <- lapply(growth_metrics, function(metric) {#
+  # Tính Spearman correlation#
+  cor_test <- cor.test(metadata$Treatment_binary, metadata[[metric]], method = "spearman")#
+  # Lưu kết quả vào dataframe#
+  cor_results <<- rbind(cor_results, #
+                        data.frame(Metric = metric, #
+                                   Spearman_rho = cor_test$estimate, #
+                                   p_value = cor_test$p.value))#
+  # Tạo biểu đồ scatter + boxplot#
+  ggplot(metadata, aes(x = Treatment_factor, y = .data[[metric]])) +#
+    geom_jitter(width = 0.2, alpha = 0.7, color = "blue") +  # Điểm dữ liệu#
+    geom_boxplot(alpha = 0.3, outlier.shape = NA) +  # Boxplot#
+    labs(title = paste0(metric, " (p = ", signif(cor_test$p.value, 3), ")"),#
+         x = "Treatment Group", y = metric) +#
+    theme_minimal()#
+})#
+#
+# Ghép tất cả biểu đồ thành một#
+final_plot <- wrap_plots(plot_list) + #
+  plot_annotation(title = "Correlation Between Treatment and Growth Metrics")#
+#
+# Hiển thị biểu đồ#
+print(final_plot)#
+#
+# Hiển thị bảng kết quả p-value#
+print(cor_results)
+metadata <- read_tsv("/Users/truonganhtu/Downloads/metadata.tsv")
+library(readr)#
+library(dplyr)#
+library(ggplot2)
+metadata <- read_tsv("/Users/truonganhtu/Downloads/metadata.tsv")
+head(metadata)
+metadata <- metadata %>%#
+  mutate(Treatment_binary = ifelse(Treatment == "Control", 0, 1))
+# Chọn các chỉ số sinh trưởng cần phân tích#
+growth_metrics <- c("Final weight", "Specific growth rate", "Feed conversion ratio", #
+                    "Weight gain", "Survival rate", "Percentage weight gain", "Daily weight gain")#
+#
+# Dùng vòng lặp để tính hệ số tương quan Spearman#
+cor_results <- data.frame(Metric = character(), Spearman_rho = numeric(), p_value = numeric())#
+#
+for (metric in growth_metrics) {#
+  cor_test <- cor.test(metadata$Treatment_binary, metadata[[metric]], method = "spearman")#
+  cor_results <- rbind(cor_results, #
+                       data.frame(Metric = metric, #
+                                  Spearman_rho = cor_test$estimate, #
+                                  p_value = cor_test$p.value))#
+}#
+#
+# Hiển thị kết quả#
+print(cor_results)
+# Load thư viện#
+library(ggplot2)#
+library(patchwork)#
+#
+# Chuyển Treatment thành dạng factor để vẽ#
+metadata$Treatment_factor <- as.factor(metadata$Treatment_binary)#
+#
+# Danh sách chỉ số sinh trưởng#
+growth_metrics <- c("Final weight", "Specific growth rate", "Feed conversion ratio", #
+                    "Weight gain", "Survival rate", "Percentage weight gain", "Daily weight gain")#
+#
+# Dataframe lưu kết quả p-value#
+cor_results <- data.frame(Metric = character(), Spearman_rho = numeric(), p_value = numeric())#
+#
+# Tạo danh sách biểu đồ#
+plot_list <- lapply(growth_metrics, function(metric) {#
+  # Tính Spearman correlation#
+  cor_test <- cor.test(metadata$Treatment_binary, metadata[[metric]], method = "spearman")#
+  # Lưu kết quả vào dataframe#
+  cor_results <<- rbind(cor_results, #
+                        data.frame(Metric = metric, #
+                                   Spearman_rho = cor_test$estimate, #
+                                   p_value = cor_test$p.value))#
+  # Tạo biểu đồ scatter + boxplot#
+  ggplot(metadata, aes(x = Treatment_factor, y = .data[[metric]])) +#
+    geom_jitter(width = 0.2, alpha = 0.7, color = "blue") +  # Điểm dữ liệu#
+    geom_boxplot(alpha = 0.3, outlier.shape = NA) +  # Boxplot#
+    labs(title = paste0(metric, " (p = ", signif(cor_test$p.value, 3), ")"),#
+         x = "Treatment Group", y = metric) +#
+    theme_minimal()#
+})#
+#
+# Ghép tất cả biểu đồ thành một#
+final_plot <- wrap_plots(plot_list) + #
+  plot_annotation(title = "Correlation Between Treatment and Growth Metrics")#
+#
+# Hiển thị biểu đồ#
+print(final_plot)#
+#
+# Hiển thị bảng kết quả p-value#
+print(cor_results)
+# Load thư viện#
+library(ggplot2)#
+library(patchwork)#
+#
+# Chuyển Treatment thành dạng factor để vẽ#
+metadata$Treatment_factor <- as.factor(metadata$Treatment_binary)#
+#
+# Danh sách chỉ số sinh trưởng#
+growth_metrics <- c("Final weight", "Specific growth rate", "Feed conversion ratio", #
+                    "Weight gain", "Survival rate", "Percentage weight gain", "Daily weight gain")#
+#
+# Dataframe lưu kết quả p-value#
+cor_results <- data.frame(Metric = character(), Spearman_rho = numeric(), p_value = numeric())#
+#
+# Tạo danh sách biểu đồ#
+plot_list <- lapply(growth_metrics, function(metric) {#
+  # Tính Spearman correlation#
+  cor_test <- cor.test(metadata$Treatment_binary, metadata[[metric]], method = "spearman")#
+  # Lưu kết quả vào dataframe#
+  cor_results <<- rbind(cor_results, #
+                        data.frame(Metric = metric, #
+                                   Spearman_rho = cor_test$estimate, #
+                                   p_value = cor_test$p.value))#
+  # Tạo biểu đồ scatter + boxplot#
+  ggplot(metadata, aes(x = Treatment_factor, y = .data[[metric]], fill = Treatment_factor)) +#
+    geom_jitter(aes(color = Treatment_factor), width = 0.2, alpha = 0.7, size = 2) +  # Điểm dữ liệu#
+    geom_boxplot(alpha = 0.5, outlier.shape = NA) +  # Boxplot trong suốt#
+    scale_fill_manual(values = c("#1f77b4", "#ff7f0e")) +  # Màu xanh & cam#
+    scale_color_manual(values = c("#1f77b4", "#ff7f0e")) +  # Màu xanh & cam cho điểm dữ liệu#
+    labs(title = paste0(metric, "\n(p = ", signif(cor_test$p.value, 3), ")"),  # Xuống dòng cho p-value#
+         x = "Treatment Group", y = metric) +#
+    theme_minimal() +#
+    theme(plot.title = element_text(size = 10),  # Giảm kích thước chữ tiêu đề#
+          legend.position = "none")  # Ẩn legend#
+})#
+#
+# Ghép tất cả biểu đồ thành một#
+final_plot <- wrap_plots(plot_list) + #
+  plot_annotation(title = "Correlation Between Treatment and Growth Metrics",#
+                  theme = theme(plot.title = element_text(size = 14, face = "bold")))#
+#
+# Hiển thị biểu đồ#
+print(final_plot)#
+#
+# Hiển thị bảng kết quả p-value#
+print(cor_results)
+# Load thư viện#
+library(ggplot2)#
+library(patchwork)#
+#
+# Chuyển Treatment thành factor để vẽ#
+metadata$Treatment_factor <- as.factor(metadata$Treatment_binary)#
+#
+# Danh sách chỉ số sinh trưởng#
+growth_metrics <- c("Final weight", "Specific growth rate", "Feed conversion ratio", #
+                    "Weight gain", "Survival rate", "Percentage weight gain", "Daily weight gain")#
+#
+# Dataframe lưu kết quả p-value#
+cor_results <- data.frame(Metric = character(), Spearman_rho = numeric(), p_value = numeric())#
+#
+# Tạo danh sách biểu đồ#
+plot_list <- lapply(growth_metrics, function(metric) {#
+  # Tính Spearman correlation#
+  cor_test <- cor.test(metadata$Treatment_binary, metadata[[metric]], method = "spearman")#
+  # Lưu kết quả vào dataframe#
+  cor_results <<- rbind(cor_results, #
+                        data.frame(Metric = metric, #
+                                   Spearman_rho = cor_test$estimate, #
+                                   p_value = cor_test$p.value))#
+  # Tạo chuỗi p-value nhỏ hơn và in nghiêng#
+  p_text <- paste0("italic(p) == ", signif(cor_test$p.value, 3))#
+  # Tạo biểu đồ scatter + boxplot#
+  ggplot(metadata, aes(x = Treatment_factor, y = .data[[metric]], fill = Treatment_factor)) +#
+    geom_jitter(width = 0.2, alpha = 0.7, color = "black", size = 2) +  # Điểm dữ liệu#
+    geom_boxplot(alpha = 0.4, outlier.shape = NA, color = "black", lwd = 0.5) +  # Boxplot viền mỏng hơn#
+    scale_fill_manual(values = c("#377eb8", "#e41a1c")) +  # Màu xanh - đỏ chuyên nghiệp#
+    labs(title = metric, x = "Treatment Group", y = metric) +#
+    theme_minimal() +#
+    theme(#
+      plot.title = element_text(face = "bold", size = 14),  # Tiêu đề lớn hơn#
+      axis.title = element_text(size = 12),  # Tiêu đề trục lớn#
+      axis.text = element_text(size = 11),  # Chữ trục dễ đọc#
+      legend.position = "none"  # Ẩn legend vì chỉ có 2 nhóm#
+    ) +#
+    annotate("text", x = 1.5, y = max(metadata[[metric]], na.rm = TRUE), #
+             label = p_text, parse = TRUE, size = 4, hjust = 0.5)  # Thêm p-value in nghiêng#
+})#
+#
+# Ghép tất cả biểu đồ thành một#
+final_plot <- wrap_plots(plot_list) + #
+  plot_annotation(title = "Correlation Between Treatment and Growth Metrics")#
+#
+# Hiển thị biểu đồ#
+print(final_plot)#
+#
+# Hiển thị bảng kết quả p-value#
+print(cor_results)
+# Load thư viện#
+library(ggplot2)#
+library(patchwork)#
+#
+# Chuyển Treatment thành dạng factor để vẽ#
+metadata$Treatment_factor <- as.factor(metadata$Treatment_binary)#
+#
+# Danh sách chỉ số sinh trưởng#
+growth_metrics <- c("Final weight", "Specific growth rate", "Feed conversion ratio", #
+                    "Weight gain", "Survival rate", "Percentage weight gain", "Daily weight gain")#
+#
+# Dataframe lưu kết quả p-value#
+cor_results <- data.frame(Metric = character(), Spearman_rho = numeric(), p_value = numeric())#
+#
+# Tạo danh sách biểu đồ#
+plot_list <- lapply(growth_metrics, function(metric) {#
+  # Tính Spearman correlation#
+  cor_test <- cor.test(metadata$Treatment_binary, metadata[[metric]], method = "spearman")#
+  # Lưu kết quả vào dataframe#
+  cor_results <<- rbind(cor_results, #
+                        data.frame(Metric = metric, #
+                                   Spearman_rho = cor_test$estimate, #
+                                   p_value = cor_test$p.value))#
+  # Tạo biểu đồ scatter + boxplot#
+  ggplot(metadata, aes(x = Treatment_factor, y = .data[[metric]], fill = Treatment_factor)) +#
+    geom_jitter(aes(color = Treatment_factor), width = 0.2, alpha = 0.7, size = 2) +  # Điểm dữ liệu#
+    geom_boxplot(alpha = 0.5, outlier.shape = NA) +  # Boxplot trong suốt#
+    scale_fill_manual(values = c("#1f77b4", "#ff7f0e")) +  # Màu xanh & cam#
+    scale_color_manual(values = c("#1f77b4", "#ff7f0e")) +  # Màu xanh & cam cho điểm dữ liệu#
+    labs(title = paste0(metric, "\n(p = ", signif(cor_test$p.value, 3), ")"),  # Xuống dòng cho p-value#
+         x = "Treatment Group", y = metric) +#
+    theme_minimal() +#
+    theme(plot.title = element_text(size = 10),  # Giảm kích thước chữ tiêu đề#
+          legend.position = "none")  # Ẩn legend#
+})#
+#
+# Ghép tất cả biểu đồ thành một#
+final_plot <- wrap_plots(plot_list) + #
+  plot_annotation(title = "Correlation Between Treatment and Growth Metrics",#
+                  theme = theme(plot.title = element_text(size = 14, face = "bold")))#
+#
+# Hiển thị biểu đồ#
+print(final_plot)#
+#
+# Hiển thị bảng kết quả p-value#
+print(cor_results)
+# Load thư viện#
+library(ggplot2)#
+library(patchwork)#
+#
+# Chuyển Treatment thành dạng factor để vẽ#
+metadata$Treatment_factor <- as.factor(metadata$Treatment_binary)#
+#
+# Danh sách chỉ số sinh trưởng#
+growth_metrics <- c("Final weight", "Specific growth rate", "Feed conversion ratio", #
+                    "Weight gain", "Survival rate", "Percentage weight gain", "Daily weight gain")#
+#
+# Dataframe lưu kết quả p-value#
+cor_results <- data.frame(Metric = character(), Spearman_rho = numeric(), p_value = numeric())#
+#
+# Tạo danh sách biểu đồ#
+plot_list <- lapply(growth_metrics, function(metric) {#
+  # Tính Spearman correlation#
+  cor_test <- cor.test(metadata$Treatment_binary, metadata[[metric]], method = "spearman")#
+  # Lưu kết quả vào dataframe#
+  cor_results <<- rbind(cor_results, #
+                        data.frame(Metric = metric, #
+                                   Spearman_rho = cor_test$estimate, #
+                                   p_value = cor_test$p.value))#
+  # Tạo biểu đồ scatter + boxplot#
+  ggplot(metadata, aes(x = Treatment_factor, y = .data[[metric]], fill = Treatment_factor)) +#
+    geom_jitter(aes(color = Treatment_factor), width = 0.2, alpha = 0.7, size = 2) +  # Điểm dữ liệu#
+    geom_boxplot(alpha = 0.5, outlier.shape = NA, color = "black", lwd = 0.5) +  # Boxplot trong suốt#
+    scale_fill_manual(values = c("#1f77b4", "#ff7f0e")) +  # Màu xanh & cam#
+    scale_color_manual(values = c("#1f77b4", "#ff7f0e")) +  # Màu xanh & cam cho điểm dữ liệu#
+    labs(title = paste0(metric, "\n(p = ", signif(cor_test$p.value, 3), ")"),  # Xuống dòng cho p-value#
+         x = "Treatment Group", y = metric) +#
+    theme_minimal() +#
+    theme(plot.title = element_text(size = 10),  # Giảm kích thước chữ tiêu đề#
+          legend.position = "none")  # Ẩn legend#
+})#
+#
+# Ghép tất cả biểu đồ thành một#
+final_plot <- wrap_plots(plot_list) + #
+  plot_annotation(title = "Correlation Between Treatment and Growth Metrics",#
+                  theme = theme(plot.title = element_text(size = 14, face = "bold")))#
+#
+# Hiển thị biểu đồ#
+print(final_plot)#
+#
+# Hiển thị bảng kết quả p-value#
+print(cor_results)
+# Load thư viện#
+library(ggplot2)#
+library(patchwork)#
+#
+# Chuyển Treatment thành dạng factor để vẽ#
+metadata$Treatment_factor <- as.factor(metadata$Treatment_binary)#
+#
+# Danh sách chỉ số sinh trưởng#
+growth_metrics <- c("Final weight", "Specific growth rate", "Feed conversion ratio", #
+                    "Weight gain", "Survival rate", "Percentage weight gain", "Daily weight gain")#
+#
+# Dataframe lưu kết quả p-value#
+cor_results <- data.frame(Metric = character(), Spearman_rho = numeric(), p_value = numeric())#
+#
+# Tạo danh sách biểu đồ#
+plot_list <- lapply(growth_metrics, function(metric) {#
+  # Tính Spearman correlation#
+  cor_test <- cor.test(metadata$Treatment_binary, metadata[[metric]], method = "spearman")#
+  # Lưu kết quả vào dataframe#
+  cor_results <<- rbind(cor_results, #
+                        data.frame(Metric = metric, #
+                                   Spearman_rho = cor_test$estimate, #
+                                   p_value = cor_test$p.value))#
+  # Tạo biểu đồ scatter + boxplot#
+  ggplot(metadata, aes(x = Treatment_factor, y = .data[[metric]], fill = Treatment_factor)) +#
+    geom_jitter(aes(color = Treatment_factor), width = 0.2, alpha = 0.7, size = 2) +  # Điểm dữ liệu#
+    geom_boxplot(alpha = 0.5, outlier.shape = NA, color = "black", lwd = 0.25) +  # Boxplot trong suốt#
+    scale_fill_manual(values = c("#1f77b4", "#ff7f0e")) +  # Màu xanh & cam#
+    scale_color_manual(values = c("#1f77b4", "#ff7f0e")) +  # Màu xanh & cam cho điểm dữ liệu#
+    labs(title = paste0(metric, "\n(p = ", signif(cor_test$p.value, 3), ")"),  # Xuống dòng cho p-value#
+         x = "Treatment Group", y = metric) +#
+    theme_minimal() +#
+    theme(plot.title = element_text(size = 10),  # Giảm kích thước chữ tiêu đề#
+          legend.position = "none")  # Ẩn legend#
+})#
+#
+# Ghép tất cả biểu đồ thành một#
+final_plot <- wrap_plots(plot_list) + #
+  plot_annotation(title = "Correlation Between Treatment and Growth Metrics",#
+                  theme = theme(plot.title = element_text(size = 14, face = "bold")))#
+#
+# Hiển thị biểu đồ#
+print(final_plot)#
+#
+# Hiển thị bảng kết quả p-value#
+print(cor_results)
+library(readr)#
+library(dplyr)#
+library(ggplot2)
+metadata <- read_tsv("/Users/truonganhtu/Downloads/metadata.tsv")
+cor_test_result <- cor.test(metadata$`Rose petal`, metadata$`Final weight`, method = "spearman")#
+print(cor_test_result)
+cor.test(metadata$`Rose petal`, metadata$`Specific growth rate`, method = "spearman")#
+cor.test(metadata$`Rose petal`, metadata$`Feed conversion ratio`, method = "spearman")#
+cor.test(metadata$`Rose petal`, metadata$`Weight gain`, method = "spearman")#
+cor.test(metadata$`Rose petal`, metadata$`Survival rate`, method = "spearman")#
+cor.test(metadata$`Rose petal`, metadata$`Percentage weight gain`, method = "spearman")#
+cor.test(metadata$`Rose petal`, metadata$`Daily weight gain`, method = "spearman")
+ggplot(metadata, aes(x = `Rose petal`, y = `Final weight`)) +#
+  geom_point() +#
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +#
+  labs(title = "Correlation between Rose petal and Final weight",#
+       x = "Rose petal (mg/L)",#
+       y = "Final weight (g)") +#
+  theme_minimal()
+library(GGally)
+install.packages("GGally")
+library(readr)#
+library(dplyr)#
+library(GGally)#
+library(ggplot2)
+metadata <- read_tsv("/Users/truonganhtu/Downloads/metadata.tsv")#
+#
+# Chọn các biến cần phân tích tương quan#
+df_corr <- metadata %>%#
+  select(`Rose petal`, `Final weight`, `Specific growth rate`, `Feed conversion ratio`, #
+         `Weight gain`, `Survival rate`, `Percentage weight gain`, `Daily weight gain`)#
+#
+# Kiểm tra dữ liệu#
+head(df_corr)
+p <- ggpairs(df_corr,#
+             lower = list(continuous = wrap("cor", method = "spearman", size = 5, color = "blue")),#
+             upper = list(continuous = wrap("points", alpha = 0.6, color = "#2C3E50")),#
+             diag = list(continuous = wrap("densityDiag", fill = "#3498DB", color = "black"))#
+) +#
+  theme_minimal() +#
+  ggtitle("Pairwise Spearman Correlation Matrix of Rose Petal and Growth Indicators")#
+#
+print(p)
+p <- ggpairs(df_corr,#
+             lower = list(continuous = wrap("cor", method = "spearman", size = 4, color = "blue")),#
+             upper = list(continuous = wrap("smooth", method = "lm", color = "red", alpha = 0.7)),#
+             diag = list(continuous = wrap("densityDiag", fill = "#3498DB", color = "black"))#
+) +#
+  theme_minimal() +#
+  theme(text = element_text(size = 10)) +  # Giảm cỡ chữ toàn bộ#
+  ggtitle("Pairwise Spearman Correlation Matrix of Rose Petal and Growth Indicators")#
+#
+print(p)
+library(readr)#
+library(dplyr)#
+library(GGally)#
+library(ggplot2)#
+#
+# Đọc dữ liệu#
+metadata <- read_tsv("/Users/truonganhtu/Downloads/metadata.tsv")#
+#
+# Chọn các biến cần phân tích tương quan#
+df_corr <- metadata %>%#
+  select(`Rose petal`, `Final weight`, `Specific growth rate`, `Feed conversion ratio`, #
+         `Weight gain`, `Survival rate`, `Percentage weight gain`, `Daily weight gain`)#
+#
+# Vẽ biểu đồ tương quan#
+p <- ggpairs(df_corr,#
+             lower = list(continuous = wrap("cor", method = "spearman", size = 3, color = "blue")),#
+             upper = list(continuous = wrap("smooth", method = "lm", color = "red", size = 0.5, alpha = 0.7)), #
+             diag = list(continuous = wrap("densityDiag", fill = "#3498DB", color = "black", size = 0.25))#
+) +#
+  theme_minimal() +#
+  theme(text = element_text(size = 8)) +  # Giảm cỡ chữ toàn bộ#
+  ggtitle("Pairwise Spearman Correlation Matrix of Rose Petal and Growth Indicators")#
+#
+print(p)
+library(readr)#
+library(dplyr)#
+library(GGally)#
+library(ggplot2)#
+#
+# Đọc dữ liệu#
+metadata <- read_tsv("/Users/truonganhtu/Downloads/metadata.tsv")#
+#
+# Chọn các biến cần phân tích tương quan#
+df_corr <- metadata %>%#
+  select(`Rose petal`, `Final weight`, `Specific growth rate`, `Feed conversion ratio`, #
+         `Weight gain`, `Survival rate`, `Percentage weight gain`, `Daily weight gain`)#
+#
+# Vẽ biểu đồ tương quan#
+p <- ggpairs(df_corr,#
+             lower = list(continuous = wrap("cor", method = "spearman", size = 3, color = "blue")),#
+             upper = list(continuous = wrap("smooth", method = "lm", color = "red", size = 0.5, alpha = 0.7)), #
+             diag = list(continuous = wrap("densityDiag", fill = "#3498DB", color = "black"))#
+) +#
+  theme_minimal() +#
+  theme(text = element_text(size = 8)) +  # Giảm cỡ chữ toàn bộ#
+  ggtitle("Pairwise Spearman Correlation Matrix of Rose Petal and Growth Indicators")#
+#
+print(p)
+# Cài đặt các thư viện cần thiết#
+library(readr)#
+library(dplyr)#
+library(tidyr)#
+#
+# Đọc dữ liệu#
+metadata <- read_tsv("/Users/truonganhtu/Downloads/metadata.tsv")#
+feature_table <- read_tsv("/Users/truonganhtu/Downloads/feature-table.tsv")#
+#
+# Kiểm tra dữ liệu#
+head(metadata)#
+head(feature_table)
+# Chuyển feature_table từ wide sang long#
+feature_long <- feature_table %>%#
+  pivot_longer(cols = -OTU_ID, names_to = "sample-id", values_to = "abundance") %>%#
+  mutate(`sample-id` = as.numeric(`sample-id`))  # Chuyển về dạng số để join với metadata#
+#
+# Gộp dữ liệu feature_table và metadata theo sample-id#
+merged_data <- feature_long %>%#
+  inner_join(metadata, by = "sample-id")#
+#
+# Kiểm tra dữ liệu sau khi merge#
+head(merged_data)
+# Chọn OTU cần kiểm tra (ví dụ: OTU_1)#
+otu_of_interest <- "OTU_1"#
+#
+# Lọc dữ liệu cho OTU này#
+df <- merged_data %>%#
+  filter(OTU_ID == otu_of_interest) %>%#
+  select(abundance, `Final weight`)  # Có thể thay Final weight bằng các chỉ số khác#
+#
+# Tính Spearman correlation#
+cor.test(df$abundance, df$`Final weight`, method = "spearman")
+# Chọn OTU cần kiểm tra (ví dụ: OTU_1)#
+otu_of_interest <- "OTU_1"#
+#
+# Lọc dữ liệu cho OTU này#
+df <- merged_data %>%#
+  filter(OTU_ID == otu_of_interest) %>%#
+  select(abundance, `Percentage weight gain`)  # Có thể thay Final weight bằng các chỉ số khác#
+#
+# Tính Spearman correlation#
+cor.test(df$abundance, df$`Final weight`, method = "spearman")
+# Tạo danh sách các OTU#
+otu_list <- unique(merged_data$OTU_ID)#
+#
+# Tính tương quan Spearman giữa từng OTU và Final weight#
+cor_results <- data.frame(OTU_ID = character(), Correlation = numeric(), P_value = numeric())#
+#
+for (otu in otu_list) {#
+  df <- merged_data %>%#
+    filter(OTU_ID == otu) %>%#
+    select(abundance, `Final weight`)#
+  if (nrow(df) > 2) {  # Cần ít nhất 3 điểm để tính tương quan#
+    cor_test <- cor.test(df$abundance, df$`Final weight`, method = "spearman")#
+    cor_results <- rbind(cor_results, data.frame(OTU_ID = otu, Correlation = cor_test$estimate, P_value = cor_test$p.value))#
+  }#
+}#
+#
+# Xem kết quả#
+cor_results <- cor_results %>%#
+  arrange(P_value)  # Sắp xếp theo p-value để thấy OTU nào có ý nghĩa thống kê nhất#
+#
+print(cor_results)
+significant_otus <- cor_results %>%#
+  filter(P_value < 0.05) %>%#
+  arrange(desc(abs(Correlation)))  # Sắp xếp theo độ mạnh của tương quan#
+#
+print(significant_otus)
+library(ggplot2)#
+#
+# Chọn một OTU có tương quan mạnh#
+otu_top <- significant_otus$OTU_ID[1]#
+#
+# Lọc dữ liệu#
+df_plot <- merged_data %>%#
+  filter(OTU_ID == otu_top) %>%#
+  select(abundance, `Final weight`)#
+#
+# Vẽ scatter plot#
+ggplot(df_plot, aes(x = abundance, y = `Final weight`)) +#
+  geom_point() +#
+  geom_smooth(method = "lm", color = "blue") +#
+  labs(title = paste("Correlation between", otu_top, "and Final weight"),#
+       x = "OTU Abundance", y = "Final Weight") +#
+  theme_minimal()
+# Cài đặt các thư viện#
+library(ggplot2)#
+library(ggpubr)#
+#
+# Lấy OTU có tương quan dương mạnh nhất#
+otu_positive <- significant_otus$OTU_ID[1] #
+#
+# Lấy OTU có tương quan âm mạnh nhất#
+otu_negative <- significant_otus$OTU_ID[nrow(significant_otus)] #
+#
+# Hàm tạo biểu đồ#
+plot_correlation <- function(otu_id, data, variable) {#
+  df <- data %>%#
+    filter(OTU_ID == otu_id) %>%#
+    select(abundance, !!sym(variable))#
+  # Tính tương quan#
+  cor_test <- cor.test(df$abundance, df[[variable]], method = "spearman")#
+  # Vẽ biểu đồ#
+  ggplot(df, aes(x = abundance, y = .data[[variable]])) +#
+    geom_point(color = "#0072B2", size = 3, alpha = 0.7) +  # Màu xanh chuyên nghiệp#
+    geom_smooth(method = "lm", color = "#D55E00", se = FALSE) +  # Đường hồi quy màu cam#
+    labs(title = paste("Correlation:", otu_id),#
+         x = "OTU Abundance",#
+         y = variable) +#
+    annotate("text", x = max(df$abundance) * 0.8, #
+             y = max(df[[variable]]) * 0.9, #
+             label = paste0("r = ", round(cor_test$estimate, 2), #
+                            "\np = ", signif(cor_test$p.value, 3)),#
+             size = 5, color = "black") +#
+    theme_minimal() +#
+    theme(plot.title = element_text(size = 14, face = "bold"),#
+          axis.title = element_text(size = 12))#
+}#
+#
+# Vẽ hai biểu đồ#
+p1 <- plot_correlation(otu_positive, merged_data, "Final weight")#
+p2 <- plot_correlation(otu_negative, merged_data, "Final weight")#
+#
+# Gộp hai biểu đồ vào một hình#
+ggarrange(p1, p2, ncol = 2, nrow = 1)
+# Cài đặt thư viện#
+library(ggplot2)#
+library(ggpubr)#
+library(dplyr)#
+#
+# Hàm tạo biểu đồ với kiểm tra lỗi#
+plot_correlation <- function(otu_id, data, variable) {#
+  df <- data %>%#
+    filter(OTU_ID == otu_id) %>%#
+    select(abundance, !!sym(variable)) #
+  # Kiểm tra nếu dữ liệu rỗng#
+  if (nrow(df) == 0) {#
+    message(paste("⚠️ Không tìm thấy dữ liệu cho OTU:", otu_id))#
+    return(NULL)#
+  }#
+  # Tính tương quan, dùng exact = FALSE để tránh lỗi ties#
+  cor_test <- cor.test(df$abundance, df[[variable]], method = "spearman", exact = FALSE)#
+  # Vẽ biểu đồ#
+  ggplot(df, aes(x = abundance, y = .data[[variable]])) +#
+    geom_point(color = "#0072B2", size = 3, alpha = 0.7) +  # Màu xanh chuyên nghiệp#
+    geom_smooth(method = "lm", color = "#D55E00", se = FALSE) +  # Đường hồi quy màu cam#
+    labs(title = paste("Correlation:", otu_id),#
+         x = "OTU Abundance",#
+         y = variable) +#
+    annotate("text", x = max(df$abundance, na.rm = TRUE) * 0.8, #
+             y = max(df[[variable]], na.rm = TRUE) * 0.9, #
+             label = paste0("r = ", round(cor_test$estimate, 2), #
+                            "\np = ", signif(cor_test$p.value, 3)),#
+             size = 5, color = "black") +#
+    theme_minimal() +#
+    theme(plot.title = element_text(size = 14, face = "bold"),#
+          axis.title = element_text(size = 12))#
+}#
+#
+# Lấy OTU có tương quan dương mạnh nhất#
+otu_positive <- significant_otus$OTU_ID[1] #
+otu_negative <- significant_otus$OTU_ID[nrow(significant_otus)] #
+#
+# Vẽ hai biểu đồ, kiểm tra lỗi NULL#
+p1 <- plot_correlation(otu_positive, merged_data, "Final weight")#
+p2 <- plot_correlation(otu_negative, merged_data, "Final weight")#
+#
+# Gộp biểu đồ (chỉ gộp nếu cả hai biểu đồ tồn tại)#
+if (!is.null(p1) & !is.null(p2)) {#
+  ggarrange(p1, p2, ncol = 2, nrow = 1)#
+} else {#
+  message("⚠️ Không đủ dữ liệu để vẽ cả hai biểu đồ!")#
+}
+getwd()  # Xem thư mục làm việc hiện tại
+ls()  # Liệt kê tất cả biến trong môi trường làm việc
+load("~/.RData")  # Hoặc load("/Users/truonganhtu/.RData")
+ls()  # Liệt kê tất cả biến trong môi trường làm việc
+file.info("~/.RData")$mtime
+packageVersion("ANCOMBC")
+if (!requireNamespace("BiocManager", quietly = TRUE))#
+#
+    install.packages("BiocManager")#
+#
+BiocManager::install("metagenomeSeq")
+library(metagenomeSeq)
+rbinom(30,190,0.6)
+rbinom(100,190,0.6)
+barplot(dbinom(x=0:10, size=10, prob=0.5))
+barplot(dbinom(x=0:10, size=10, prob=0.9))
+barplot(dbinom(x=0:10, size=1000, prob=0.9))
+barplot(dbinom(x=0:10, size=100, prob=0.9))
+barplot(dbinom(x=0:100, size=100, prob=0.9))
+dbinom(3, size=10, prob=0.5)  # P(X = 3) for Binomial(10, 0.5)#
+rbinom(5, size=10, prob=0.5)  # Generate 5 random samples
+dbinom(3, size=10, prob=0.5)  # P(X = 3) for Binomial(10, 0.5)#
+rbinom(5, size=10, prob=0.5)
+dbinom(3, size=10, prob=0.5)#
+rbinom(5, size=10, prob=0.5)
+rgeom(5, prob=0.2)
+rnbinom(5, size=3, prob=0.5)
+dnbinom(5, size=3, prob=0.5)
+rbinom(10, 190, 0.6)
+mean(rbinom(10, 190, 0.6))
+mean(rbinom(100, 190, 0.6))
+mean(rbinom(1000000, 190, 0.6))
+mean(rbinom(100, 190, 0.6))
+mean(rbinom(1000000, 190, 0.6))
+set.seed(123)
+mean(rbinom(1000000, 190, 0.6))
+set.seed(123)
+mean(rbinom(1000000, 190, 0.6))
+set.seed(123)
+result <- rnorm(5)
+print(result)
+result <- rnorm(10)
+print(result)
+set.seed(123)
+print(set.seed(123))
+exercise <- c(0.25, 0.50, 0.75, 1.00, 1.50, 2.00)#
+weight <- c(78.0, 77.6, 77.1, 75, 70, 65)
+data <- data.frame(exercise, weight)
+print(data)
+correlation <- cor(data$exercise, data$weight)#
+print(correlation)
+library(ggplot2)
+ggplot(data, aes(x = exercise, y = weight)) +#
+  geom_point(color = "blue", size = 3) +  # Scatter points#
+  geom_smooth(method = "lm", color = "red", se = FALSE) +  # Linear regression#
+  labs(title = "Exercise vs Weight", x = "Exercise (hours/day)", y = "Weight (kg)") +#
+  theme_minimal()
+exercise <- (0.25, 0.5, 0.75, 1.0, 1.5, 2.0)
+exercise <- c(0.25, 0.5, 0.75, 1.0, 1.5, 2.0)
+weight <- c(78, 77.6, 77.1, 75, 70, 65)
+library(ggplot2)
+exercise <- c(0.25, 0.5, 0.75, 1, 1.5, 2)
+weight <- c(78, 77.6, 77.1, 75, 70, 65)
+data <- data.frame(exercise, weight)
+print(data)
+cor <- cor(data$exercise, data$weight)
+print(cor)
+ggplot(data, aes(x= excercise, y= weight)) + geom_point(color= "blue", size= 3) + geom_smooth(method= "lm", color= "red", se= FALSE) + labs(title= "Exercise vs Weight", x= "Exercise (hours/day)", y= "Weight (kg)") + theme_minimal() + annotate("text", x= 1.5, y= 78, label= paste("r= ", round(cor)), 2)), size= 5, color= "black")
+ggplot(data, aes(x= excercise, y= weight)) + geom_point(color= "blue", size= 3) + geom_smooth(method= "lm", color= "red", se= FALSE) + labs(title= "Exercise vs Weight", x= "Exercise (hours/day)", y= "Weight (kg)") + theme_minimal() + annotate("text", x= 1.5, y= 78, label= paste("r= ", round(cor)), 2), size= 5, color= "black")
+ggplot(data, aes(x= excercise, y= weight)) + geom_point(color= "blue", size= 3) + geom_smooth(method= "lm", color= "red", se= FALSE) + labs(title= "Exercise vs Weight", x= "Exercise (hours/day)", y= "Weight (kg)") + theme_minimal() + annotate("text", x = 1.5, y = 78, label = paste("R =", round(cor_value, 2)), size = 5, color = "black")
+ggplot(data, aes(x= excercise, y= weight)) + geom_point(color= "blue", size= 3) + geom_smooth(method= "lm", color= "red", se= FALSE) + labs(title= "Exercise vs Weight", x= "Exercise (hours/day)", y= "Weight (kg)") + theme_minimal() + annotate("text", x = 1.5, y = 78, label = paste("R =", round(cor, 2)), size = 5, color = "black")
+ggplot(data, aes(x= exercise, y= weight)) + geom_point(color= "blue", size= 3) + geom_smooth(method= "lm", color= "red", se= FALSE) + labs(title= "Exercise vs Weight", x= "Exercise (hours/day)", y= "Weight (kg)") + theme_minimal() + annotate("text", x = 1.5, y = 78, label = paste("R =", round(cor, 2)), size = 5, color = "black")
+library(ggplot2)
+exercise <- c(0.25, 0.5, 0.75, 1, 1.5, 2)
+library(ggplot2)
+exercise <- c(0.25, 0.5, 0.75, 1, 1.5, 2)
+weight <- c(78, 77.6, 77.1, 75, 70, 65)
+data <- data.frame(exercise, weight)
+print(data)
+cor <- cor(data$exercise, data$weight)
+print(cor)
+ggplot(data, aes(x= exercise, y= weight)) + geom_point(color= "blue", size= 3) + geom_smooth(method= "lm", color= "red", se= FALSE) + labs(title= "Exercise vs Weight", x= "Exercise (hours/day)", y= "Weight (kg)") + theme_minimal() + annotate("text", x = 1.5, y = 78, label = paste("R =", round(cor, 2)), size = 5, color = "black")
+val <- c(9, 10, 1, 0)
+prob <- dbinom(val, size = 10, prob = 0.5)
+sum(prob)
+print(prob)
+prob <- dbinom(val, 10, 0.5)
+print(prob)
+val <- c(9, 10, 1, 0)
+prob <- dbinom(val, 10, 0.5)
+print(prob)
+sum(prob)
+pbinom(65, 153, 0.5)
+pbinom(65, 153, 0.5) + pbinom(88, 153, 0.5)
+2*pbinom(65, 153, 0.5)
+pbinom(125, 190, 0.5)
+dbinom(125, 190, 0.5)
+dbinom(125, 190, 0.6)
+dbinom(125, 190, 0.658)
+dbinom(125, 190, 0.7)
+# Thiết lập tham số#
+size <- 190#
+x_obs <- 125#
+p_values <- seq(0.50, 0.80, by = 0.01)  # Dãy p từ 0.50 đến 0.80#
+likelihood <- numeric(length(p_values))  # Mảng lưu giá trị likelihood#
+#
+# Tính xác suất với vòng lặp for#
+for (i in 1:length(p_values)) {#
+  likelihood[i] <- dbinom(x_obs, size, p_values[i])#
+}#
+#
+# Vẽ đồ thị likelihood#
+plot(p_values, likelihood, type = "l", lwd = 2, col = "black",#
+     xlab = "p", ylab = "P(X = 125 | Binomial(190, p))",#
+     main = "Likelihood function for X = 125")
+pval <- seq(0.50, 0.80, by = 0.01)  #
+likeli <- numeric(length(pval))#
+#
+for (i in 1:length(pval)) {#
+  likeli[i] <- dbinom(125, 190, pval[i])#
+}#
+#
+plot(pval, likeli, type = "l", lwd = 2, col = "black",#
+     xlab = "p", ylab = "P(X = 125 | Binomial(190, p))")
+setwd("/Users/truonganhtu/Documents/Chula_gut_microbiome/GoldFish/script/Goldfish-16S-rRNA-amplicon-data-analysis")
+library(tidyverse)#
+library(Hmisc)#
+library(corrplot)#
+library(vegan)#
+library(ggplot2)#
+library(patchwork)
+metadata <- read_tsv("/Qiime_steps/metadata.tsv")#
+feature_table <- read_tsv("/Qiime_steps/feature-table.tsv")#
+taxonomy <- read_tsv("/Qiime_steps/taxonomy.tsv")
+metadata <- read_tsv("./Qiime_steps/metadata.tsv")#
+feature_table <- read_tsv("./Qiime_steps/feature-table.tsv")#
+taxonomy <- read_tsv("./Qiime_steps/taxonomy.tsv")
+sample_ids <- metadata$`sample-id`
+print(sample_ids)
+colnames(feature_table)[-1] <- sample_ids
+print(sample_ids)
+print(feature_table)
+feature_table_t <- feature_table %>%#
+  column_to_rownames(var = "OTU_ID") %>%#
+  t() %>%#
+  as.data.frame()
+print(feature_table_t)
+feature_table_t <- feature_table %>%#
+  column_to_rownames(var = "OTU ID") %>%#
+  t() %>%#
+  as.data.frame()
+print(feature_table_t)
+feature_table_normalized <- decostand(feature_table_t, method = "total")#
+feature_table_log <- log1p(feature_table_normalized)
+print(metadata)
+metadata_selected <- metadata %>%#
+  select(`sample-id`, `Final weight`, `Specific growth rate`, `Feed conversion ratio`, #
+         `Weight gain`, `Survival rate`, `Percentage weight gain`, `Daily weight gain`) %>%#
+  column_to_rownames(var = "sample-id")
+print(metadata_selected)
+print(feature_table_log)
+combined_data <- merge(metadata_selected, feature_table_log, by = "row.names")#
+rownames(combined_data) <- combined_data$Row.names#
+combined_data <- combined_data %>% select(-Row.names)
+metadata_vars <- combined_data[, 1:7]  # Metadata variables#
+otu_data <- combined_data[, 8:ncol(combined_data)]  # OTUs
+cor_result <- rcorr(as.matrix(cbind(metadata_vars, otu_data)), type = "spearman")#
+cor_matrix <- cor_result$r#
+p_matrix <- cor_result$P#
+#
+cor_metadata_otu <- cor_matrix[1:7, 8:ncol(cor_matrix)]#
+p_metadata_otu <- p_matrix[1:7, 8:ncol(p_matrix)]
+cor_df <- as.data.frame(as.table(cor_metadata_otu)) %>%#
+  rename(Metadata = Var1, OTU = Var2, Correlation = Freq) %>%#
+  mutate(P_value = as.vector(p_metadata_otu)) %>%#
+  filter(P_value < 0.05)
+cor_df_with_tax <- cor_df %>%#
+  left_join(taxonomy, by = c("OTU" = "Feature ID")) %>%#
+  filter(str_detect(Taxon, "g__") | str_detect(Taxon, "s__")) %>%#
+  filter(!str_detect(Taxon, "Unassigned")) %>%#
+  select(Metadata, OTU, Correlation, P_value, Taxon, Confidence)
+write.csv(cor_df_with_tax, "spearman_genus_species.csv", row.names = FALSE)
+head(cor_df_with_tax)#
+nrow(cor_df_with_tax)  # Number of significant taxa
+cor_df_unique <- cor_df_with_tax %>%#
+  group_by(Metadata, Taxon) %>%#
+  summarise(Correlation = Correlation[which.max(abs(Correlation))],#
+            P_value = P_value[which.max(abs(Correlation))],#
+            .groups = "drop") %>%#
+  ungroup() %>%#
+  filter(abs(Correlation) > 0.6)
+cor_df_unique <- cor_df_unique %>%#
+  arrange(desc(Taxon)) %>%#
+  mutate(Taxon = factor(Taxon, levels = unique(Taxon)))
+ggplot(cor_df_unique, aes(x = Taxon, y = Metadata, #
+                          size = abs(Correlation), color = Correlation)) +#
+  geom_point() +#
+  scale_color_gradient2(low = "blue", mid = "white", high = "red") +#
+  theme_minimal() +#
+  theme(#
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 4.1) #
+  ) +#
+  labs(title = "Strongest Correlations between Microbiome and Growth Parameters",#
+       x = "Taxon", y = "Growth Parameters",#
+       size = "Abs(Correlation)", color = "Correlation")
+ggplot(cor_df_unique, aes(x = Taxon, y = Metadata, #
+                          size = abs(Correlation), color = Correlation)) +#
+  geom_point() +#
+  scale_color_gradient2(low = "blue", mid = "white", high = "red") +#
+  theme_minimal() +#
+  theme(#
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 4.1) #
+  ) +#
+  labs(title = "Strongest Correlations between Microbiome and Growth Parameters",#
+       x = "Taxon", y = "Growth Parameters",#
+       size = "Abs(Correlation)", color = "Correlation")
+ggplot(cor_df_unique, aes(x = Taxon, y = Metadata, #
+                          size = abs(Correlation), color = Correlation)) +#
+  geom_point() +#
+  scale_color_gradient2(low = "blue", mid = "white", high = "red") +#
+  theme_minimal() +#
+  theme(#
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 4.1) #
+  ) +#
+  labs(title = "Strongest Correlations between Microbiome and Growth Parameters",#
+       x = "Taxon", y = "Growth Parameters",#
+       size = "Abs(Correlation)", color = "Correlation")
+ggplot(cor_df_unique, aes(x = Taxon, y = Metadata, #
+                          size = abs(Correlation), color = Correlation)) +#
+  geom_point() +#
+  scale_color_gradient2(low = "blue", mid = "white", high = "red") +#
+  theme_minimal() +#
+  theme(#
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 4.1) #
+    plot.title = element_text(hjust = 0.5)#
+  ) +#
+  labs(title = "Strongest Correlations between Microbiome and Growth Parameters",#
+       x = "Taxon", y = "Growth Parameters",#
+       size = "Abs(Correlation)", color = "Correlation")
+ggplot(cor_df_unique, aes(x = Taxon, y = Metadata, #
+                          size = abs(Correlation), color = Correlation)) +#
+  geom_point() +#
+  scale_color_gradient2(low = "blue", mid = "white", high = "red") +#
+  theme_minimal() +#
+  theme(#
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 4.1) #
+    plot.title = element_text(hjust = 0.5)#
+  ) +#
+  labs(title = "Strongest Correlations between Microbiome and Growth Parameters",#
+       x = "Taxon", y = "Growth Parameters",#
+       size = "Abs(Correlation)", color = "Correlation")
+ggplot(cor_df_unique, aes(x = Taxon, y = Metadata, #
+                          size = abs(Correlation), color = Correlation)) +#
+  geom_point() +#
+  scale_color_gradient2(low = "blue", mid = "white", high = "red") +#
+  theme_minimal() +#
+  theme(#
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 4.1) #
+  ) +#
+  labs(title = "Strongest Correlations between Microbiome and Growth Parameters",#
+       x = "Taxon", y = "Growth Parameters",#
+       size = "Abs(Correlation)", color = "Correlation")
+ggplot(cor_df_unique, aes(x = Taxon, y = Metadata, #
+                          size = abs(Correlation), color = Correlation)) +#
+  geom_point() +#
+  scale_color_gradient2(low = "blue", mid = "white", high = "red") +#
+  theme_minimal() +#
+  theme(#
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 4.1),#
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14)  # Căn giữa tiêu đề#
+  ) +#
+  labs(title = "Strongest Correlations between Microbiome and Growth Parameters",#
+       x = "Taxon", y = "Growth Parameters",#
+       size = "Abs(Correlation)", color = "Correlation")
+ggplot(cor_df_unique, aes(x = Taxon, y = Metadata, #
+                          size = abs(Correlation), color = Correlation)) +#
+  geom_point() +#
+  scale_color_gradient2(low = "blue", mid = "white", high = "red") +#
+  theme_minimal() +#
+  theme(#
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 4.1),#
+    plot.title = element_text(hjust = 0.5, size = 14)  #
+  ) +#
+  labs(title = "Strongest Correlations between Microbiome and Growth Parameters",#
+       x = "Taxon", y = "Growth Parameters",#
+       size = "Abs(Correlation)", color = "Correlation")
+cor_df_phylum <- cor_df_with_tax %>%#
+  mutate(Phylum = str_extract(Taxon, "p__[A-Za-z0-9_]+")) %>%#
+  filter(!is.na(Phylum)) %>%#
+  group_by(Metadata, Phylum) %>%#
+  summarise(Avg_Correlation = mean(Correlation),#
+            Min_P_value = min(P_value),#
+            .groups = "drop") %>%#
+  filter(Min_P_value < 0.05)
+cor_df_phylum <- cor_df_phylum %>%#
+  mutate(Phylum = gsub("^p__", "", Phylum))
+print("Summary of correlation by phylum:")#
+print(cor_df_phylum)#
+nrow(cor_df_phylum)
+write.csv(cor_df_phylum, "spearman_phylum_correlation.csv", row.names = FALSE)
+phylum_cor_matrix <- cor_df_phylum %>%#
+  pivot_wider(names_from = Phylum, values_from = Avg_Correlation, values_fill = 0, id_cols = Metadata) %>%#
+  column_to_rownames("Metadata") %>%#
+  as.matrix()#
+#
+phylum_p_matrix <- cor_df_phylum %>%#
+  pivot_wider(names_from = Phylum, values_from = Min_P_value, values_fill = 1, id_cols = Metadata) %>%#
+  column_to_rownames("Metadata") %>%#
+  as.matrix()
+corrplot(phylum_cor_matrix, #
+         method = "color", #
+         col = colorRampPalette(c("blue", "#FFFFFF", "red"))(100),#
+         tl.cex = 0.7,  #
+         tl.col = "black",#
+         tl.srt = 45,  #
+         p.mat = phylum_p_matrix,#
+         sig.level = 0.05,#
+         insig = "blank",#
+         addgrid.col = "gray80",  #
+         mar = c(5, 0, 2, 0),#
+         title = "Spearman Correlation Heatmap by Phylum (p < 0.05)")
+ggplot(cor_df_unique, aes(x = Taxon, y = Metadata, #
+                          size = abs(Correlation), color = Correlation)) +#
+  geom_point() +#
+  scale_color_gradient2(low = "blue", mid = "white", high = "red") +#
+  theme_minimal() +#
+  theme(#
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 4.1),#
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14)  #
+  ) +#
+  labs(title = "Strongest Correlations between Microbiome and Growth Parameters",#
+       x = "Taxon", y = "Growth Parameters",#
+       size = "Abs(Correlation)", color = "Correlation")
+cor_df_final_weight <- cor_df_with_tax %>%#
+  filter(Metadata == "Final weight") %>%#
+  mutate(Genus = str_extract(Taxon, "g__[A-Za-z0-9_]+")) %>%#
+  mutate(Genus = str_replace(Genus, "g__", "")) %>%#
+  mutate(Genus = str_replace_all(Genus, "_", " ")) %>%#
+  select(Metadata, OTU, Correlation, P_value, Taxon, Genus)
+top_positive <- cor_df_final_weight %>%#
+  filter(Correlation > 0) %>%#
+  slice_max(Correlation, n = 1)
+top_negative <- cor_df_final_weight %>%#
+  filter(Correlation < 0) %>%#
+  slice_min(Correlation, n = 1)
+print("Genus with the strongest positive correlation with Final weight:")#
+print(top_positive)#
+print("Genus with the strongest negative correlation with Final weight:")#
+print(top_negative)
+otu_positive <- top_positive$OTU#
+plot_data_positive <- combined_data %>%#
+  select(`Final weight`, all_of(otu_positive)) %>%#
+  rename(Positive_Genus = all_of(otu_positive))
+plot_positive <- ggplot(plot_data_positive, aes(x = `Final weight`, y = Positive_Genus)) +#
+  geom_point(color = "darkblue", size = 3) +#
+  geom_smooth(method = "lm", color = "dodgerblue", fill = "lightblue", alpha = 0.3) +#
+  labs(title = bquote("Correlation with Final Weight:" ~ italic(.(top_positive$Genus))),#
+       subtitle = paste("(r =", round(top_positive$Correlation, 3), ", p =", format(top_positive$P_value, digits = 3), ")"),#
+       x = "Final Weight", #
+       y = bquote("Log Abundance (" ~ italic(.(top_positive$Genus)) ~ ")")) +#
+  theme_minimal() +#
+  theme(plot.title = element_text(hjust = 0.5, face= "bold", size = 12),#
+        plot.subtitle = element_text(hjust = 0.5, size = 8),#
+        axis.title = element_text(size = 10),#
+        axis.text = element_text(size = 10),#
+        panel.grid.major = element_line(color = "gray90"),#
+        panel.grid.minor = element_line(color = "gray95"))
+otu_negative <- top_negative$OTU#
+plot_data_negative <- combined_data %>%#
+  select(`Final weight`, all_of(otu_negative)) %>%#
+  rename(Negative_Genus = all_of(otu_negative))
+plot_negative <- ggplot(plot_data_negative, aes(x = `Final weight`, y = Negative_Genus)) +#
+  geom_point(color = "darkred", size = 3) +#
+  geom_smooth(method = "lm", color = "salmon", fill = "lightpink", alpha = 0.3) +#
+  labs(title = bquote("Correlation with Final Weight:" ~ italic(.(top_negative$Genus))),#
+       subtitle = paste("(r =", round(top_negative$Correlation, 3), ", p =", format(top_negative$P_value, digits = 3), ")"),#
+       x = "Final Weight", #
+       y = bquote("Log Abundance (" ~ italic(.(top_negative$Genus)) ~ ")")) +#
+  theme_minimal() +#
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 12),#
+        plot.subtitle = element_text(hjust = 0.5, size = 8),#
+        axis.title = element_text(size = 10),#
+        axis.text = element_text(size = 10),#
+        panel.grid.major = element_line(color = "gray90"),#
+        panel.grid.minor = element_line(color = "gray95"))
+combined_plot <- plot_positive / plot_negative +#
+  plot_layout(ncol = 1, heights = c(1, 1))
+print(combined_plot)
+print(combined_plot)
+plot_negative <- ggplot(plot_data_negative, aes(x = `Final weight`, y = Negative_Genus)) +#
+  geom_point(color = "darkred", size = 3) +#
+  geom_smooth(method = "lm", color = "salmon", fill = "lightpink", alpha = 0.3) +#
+  labs(title = bquote("Correlation with Final Weight:" ~ italic(.(top_negative$Genus))),#
+       subtitle = paste("(r =", round(top_negative$Correlation, 3), ", p =", format(top_negative$P_value, digits = 3), ")"),#
+       x = "Final Weight", #
+       y = bquote("Log Abundance (" ~ italic(.(top_negative$Genus)) ~ ")")) +#
+  theme_minimal() +#
+  theme(plot.title = element_text(hjust = 0.5, size = 12),#
+        plot.subtitle = element_text(hjust = 0.5, size = 8),#
+        axis.title = element_text(size = 10),#
+        axis.text = element_text(size = 10),#
+        panel.grid.major = element_line(color = "gray90"),#
+        panel.grid.minor = element_line(color = "gray95"))
+combined_plot <- plot_positive / plot_negative +#
+  plot_layout(ncol = 1, heights = c(1, 1))
+print(combined_plot)
+otu_negative <- top_negative$OTU#
+plot_data_negative <- combined_data %>%#
+  select(`Final weight`, all_of(otu_negative)) %>%#
+  rename(Negative_Genus = all_of(otu_negative))
+plot_negative <- ggplot(plot_data_negative, aes(x = `Final weight`, y = Negative_Genus)) +#
+  geom_point(color = "darkred", size = 3) +#
+  geom_smooth(method = "lm", color = "salmon", fill = "lightpink", alpha = 0.3) +#
+  labs(title = bquote("Correlation with Final Weight:" ~ italic(.(top_negative$Genus))),#
+       subtitle = paste("(r =", round(top_negative$Correlation, 3), ", p =", format(top_negative$P_value, digits = 3), ")"),#
+       x = "Final Weight", #
+       y = bquote("Log Abundance (" ~ italic(.(top_negative$Genus)) ~ ")")) +#
+  theme_minimal() +#
+  theme(plot.title = element_text(hjust = 0.5, size = 12),#
+        plot.subtitle = element_text(hjust = 0.5, size = 8),#
+        axis.title = element_text(size = 10),#
+        axis.text = element_text(size = 10),#
+        panel.grid.major = element_line(color = "gray90"),#
+        panel.grid.minor = element_line(color = "gray95"))
+combined_plot <- plot_positive / plot_negative +#
+  plot_layout(ncol = 1, heights = c(1, 1))
+print(combined_plot)
+cor_df_final_weight <- cor_df_with_tax %>%#
+  filter(Metadata == "Final weight") %>%#
+  mutate(Genus = str_extract(Taxon, "g__[A-Za-z0-9_]+")) %>%#
+  mutate(Genus = str_replace(Genus, "g__", "")) %>%#
+  mutate(Genus = str_replace_all(Genus, "_", " ")) %>%#
+  select(Metadata, OTU, Correlation, P_value, Taxon, Genus)
+top_positive <- cor_df_final_weight %>%#
+  filter(Correlation > 0) %>%#
+  slice_max(Correlation, n = 1)
+top_negative <- cor_df_final_weight %>%#
+  filter(Correlation < 0) %>%#
+  slice_min(Correlation, n = 1)
+print("Genus with the strongest positive correlation with Final weight:")#
+print(top_positive)#
+print("Genus with the strongest negative correlation with Final weight:")#
+print(top_negative)
+otu_positive <- top_positive$OTU#
+plot_data_positive <- combined_data %>%#
+  select(`Final weight`, all_of(otu_positive)) %>%#
+  rename(Positive_Genus = all_of(otu_positive))
+plot_positive <- ggplot(plot_data_positive, aes(x = `Final weight`, y = Positive_Genus)) +#
+  geom_point(color = "darkblue", size = 3) +#
+  geom_smooth(method = "lm", color = "dodgerblue", fill = "lightblue", alpha = 0.3) +#
+  labs(title = bquote("Correlation with Final Weight:" ~ italic(.(top_positive$Genus))),#
+       subtitle = paste("(r =", round(top_positive$Correlation, 3), ", p =", format(top_positive$P_value, digits = 3), ")"),#
+       x = "Final Weight", #
+       y = bquote("Log Abundance (" ~ italic(.(top_positive$Genus)) ~ ")")) +#
+  theme_minimal() +#
+  theme(plot.title = element_text(hjust = 0.5, size = 12),#
+        plot.subtitle = element_text(hjust = 0.5, size = 8),#
+        axis.title = element_text(size = 10),#
+        axis.text = element_text(size = 10),#
+        panel.grid.major = element_line(color = "gray90"),#
+        panel.grid.minor = element_line(color = "gray95"))
+otu_negative <- top_negative$OTU#
+plot_data_negative <- combined_data %>%#
+  select(`Final weight`, all_of(otu_negative)) %>%#
+  rename(Negative_Genus = all_of(otu_negative))
+plot_negative <- ggplot(plot_data_negative, aes(x = `Final weight`, y = Negative_Genus)) +#
+  geom_point(color = "darkred", size = 3) +#
+  geom_smooth(method = "lm", color = "salmon", fill = "lightpink", alpha = 0.3) +#
+  labs(title = bquote("Correlation with Final Weight:" ~ italic(.(top_negative$Genus))),#
+       subtitle = paste("(r =", round(top_negative$Correlation, 3), ", p =", format(top_negative$P_value, digits = 3), ")"),#
+       x = "Final Weight", #
+       y = bquote("Log Abundance (" ~ italic(.(top_negative$Genus)) ~ ")")) +#
+  theme_minimal() +#
+  theme(plot.title = element_text(hjust = 0.5, size = 12),#
+        plot.subtitle = element_text(hjust = 0.5, size = 8),#
+        axis.title = element_text(size = 10),#
+        axis.text = element_text(size = 10),#
+        panel.grid.major = element_line(color = "gray90"),#
+        panel.grid.minor = element_line(color = "gray95"))
+combined_plot <- plot_positive / plot_negative +#
+  plot_layout(ncol = 1, heights = c(1, 1))
+print(combined_plot)
+otu_negative %in% colnames(combined_data)
+print(top_negative$OTU)
+print(colnames(plot_data_negative))
+print(otu_negative)#
+print(length(otu_negative))
+otu_negative <- otu_negative[1]
+print(top_negative)
+otu_negative <- otu_negative[1]  # Chỉ lấy một OTU duy nhất
+otu_negative <- top_negative$OTU#
+plot_data_negative <- combined_data %>%#
+  select(`Final weight`, all_of(otu_negative)) %>%#
+  rename(Negative_Genus = all_of(otu_negative))#
+otu_negative <- otu_negative[1]
+plot_negative <- ggplot(plot_data_negative, aes(x = `Final weight`, y = Negative_Genus)) +#
+  geom_point(color = "darkred", size = 3) +#
+  geom_smooth(method = "lm", color = "salmon", fill = "lightpink", alpha = 0.3) +#
+  labs(title = bquote("Correlation with Final Weight:" ~ italic(.(top_negative$Genus))),#
+       subtitle = paste("(r =", round(top_negative$Correlation, 3), ", p =", format(top_negative$P_value, digits = 3), ")"),#
+       x = "Final Weight", #
+       y = bquote("Log Abundance (" ~ italic(.(top_negative$Genus)) ~ ")")) +#
+  theme_minimal() +#
+  theme(plot.title = element_text(hjust = 0.5, size = 12),#
+        plot.subtitle = element_text(hjust = 0.5, size = 8),#
+        axis.title = element_text(size = 10),#
+        axis.text = element_text(size = 10),#
+        panel.grid.major = element_line(color = "gray90"),#
+        panel.grid.minor = element_line(color = "gray95"))
+combined_plot <- plot_positive / plot_negative +#
+  plot_layout(ncol = 1, heights = c(1, 1))
+print(combined_plot)
+print(plot_positive)
+plot_positive <- ggplot(plot_data_positive, aes(x = `Final weight`, y = Positive_Genus)) +#
+  geom_point(color = "darkblue", size = 3) +#
+  geom_smooth(method = "lm", color = "dodgerblue", fill = "lightblue", alpha = 0.3) +#
+  labs(title = bquote("Correlation with Final Weight:" ~ italic(.(top_positive$Genus))),#
+       subtitle = paste("(r =", round(top_positive$Correlation, 3), ", p =", format(top_positive$P_value, digits = 3), ")"),#
+       x = "Final Weight", #
+       y = bquote("Log Abundance (" ~ italic(.(top_positive$Genus)) ~ ")")) +#
+  theme_minimal() +#
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 12),#
+        plot.subtitle = element_text(hjust = 0.5, size = 8),#
+        axis.title = element_text(size = 10),#
+        axis.text = element_text(size = 10),#
+        panel.grid.major = element_line(color = "gray90"),#
+        panel.grid.minor = element_line(color = "gray95"))
+print(plot_positive)
+print(plot_positive)
+plot_positive <- ggplot(plot_data_positive, aes(x = `Final weight`, y = Positive_Genus)) +#
+  geom_point(color = "darkblue", size = 3) +#
+  geom_smooth(method = "lm", color = "dodgerblue", fill = "lightblue", alpha = 0.3) +#
+  labs(title = bquote("Correlation with Final Weight:" ~ italic(.(top_positive$Genus))),#
+       subtitle = paste("(r =", round(top_positive$Correlation, 3), ", p =", format(top_positive$P_value, digits = 3), ")"),#
+       x = "Final Weight", #
+       y = bquote("Log Abundance (" ~ italic(.(top_positive$Genus)) ~ ")")) +#
+  theme_minimal() +#
+  theme(plot.title = element_text(hjust = 0.5, size = 12),#
+        plot.subtitle = element_text(hjust = 0.5, face = "bold", size = 8),#
+        axis.title = element_text(size = 10),#
+        axis.text = element_text(size = 10),#
+        panel.grid.major = element_line(color = "gray90"),#
+        panel.grid.minor = element_line(color = "gray95"))
+print(plot_positive)
+otu_negative <- top_negative$OTU#
+plot_data_negative <- combined_data %>%#
+  select(`Final weight`, all_of(otu_negative)) %>%#
+  rename(Negative_Genus = all_of(otu_negative))
+print(otu_negative)
+otu_negative <- top_negative$OTU#
+plot_data_negative <- combined_data %>%#
+  select(`Final weight`, all_of(otu_negative)) %>%#
+  rename(Negative_Genus = all_of(otu_negative))#
+otu_negative <- otu_negative[1]
+print(otu_negative)
+plot_negative <- ggplot(plot_data_negative, aes(x = `Final weight`, y = Negative_Genus)) +#
+  geom_point(color = "darkred", size = 3) +#
+  geom_smooth(method = "lm", color = "salmon", fill = "lightpink", alpha = 0.3) +#
+  labs(title = bquote("Correlation with Final Weight:" ~ italic(.(top_negative$Genus))),#
+       subtitle = paste("(r =", round(top_negative$Correlation, 3), ", p =", format(top_negative$P_value, digits = 3), ")"),#
+       x = "Final Weight", #
+       y = bquote("Log Abundance (" ~ italic(.(top_negative$Genus)) ~ ")")) +#
+  theme_minimal() +#
+  theme(plot.title = element_text(hjust = 0.5, size = 12),#
+        plot.subtitle = element_text(hjust = 0.5, size = 8),#
+        axis.title = element_text(size = 10),#
+        axis.text = element_text(size = 10),#
+        panel.grid.major = element_line(color = "gray90"),#
+        panel.grid.minor = element_line(color = "gray95"))
+combined_plot <- plot_positive / plot_negative +#
+  plot_layout(ncol = 1, heights = c(1, 1))
+print(combined_plot)
+print(colnames(combined_data))
+print(head(plot_data_negative))
+if (!otu_negative %in% colnames(combined_data)) {#
+  stop(paste("Column", otu_negative, "not found in combined_data"))#
+}
+plot_data_negative <- combined_data %>%#
+  select(`Final weight`, all_of(otu_negative)) %>%#
+  rename(Negative_Genus = all_of(otu_negative))
+print(head(plot_data_negative))
+plot_negative <- ggplot(plot_data_negative, aes(x = `Final weight`, y = Negative_Genus)) +#
+  geom_point(color = "darkred", size = 3) +#
+  geom_smooth(method = "lm", color = "salmon", fill = "lightpink", alpha = 0.3) +#
+  labs(#
+    title = bquote("Correlation with Final Weight:" ~ italic(.(top_negative$Genus))),#
+    subtitle = paste("(r =", round(top_negative$Correlation, 3), ", p =", format(top_negative$P_value, digits = 3), ")"),#
+    x = "Final Weight", #
+    y = bquote("Log Abundance (" ~ italic(.(top_negative$Genus)) ~ ")")#
+  ) +#
+  theme_minimal() +#
+  theme(#
+    plot.title = element_text(hjust = 0.5, size = 12),#
+    plot.subtitle = element_text(hjust = 0.5, size = 8),#
+    axis.title = element_text(size = 10),#
+    axis.text = element_text(size = 10),#
+    panel.grid.major = element_line(color = "gray90"),#
+    panel.grid.minor = element_line(color = "gray95")#
+  )#
+#
+print(plot_negative)
+ggplot(plot_data_negative, aes(x = `Final weight`, y = .data[[otu_negative]])) +
+# 📝 Chọn OTU có tương quan âm mạnh nhất#
+otu_negative <- top_negative$OTU[1]  # Chỉ lấy 1 giá trị đầu tiên#
+print(paste("OTU selected:", otu_negative))  # Kiểm tra giá trị OTU#
+#
+# 🔍 Kiểm tra OTU có trong combined_data không#
+if (!otu_negative %in% colnames(combined_data)) {#
+  stop(paste("Column", otu_negative, "not found in combined_data"))#
+}#
+#
+# 📊 Chuẩn bị dữ liệu cho biểu đồ scatter plot#
+plot_data_negative <- combined_data %>%#
+  select(`Final weight`, all_of(otu_negative)) %>%#
+  rename(Negative_Genus = all_of(otu_negative))#
+#
+print(head(plot_data_negative))  # Kiểm tra dữ liệu sau khi rename#
+#
+# 🎨 Vẽ scatter plot cho OTU có tương quan âm#
+plot_negative <- ggplot(plot_data_negative, aes(x = `Final weight`, y = Negative_Genus)) +#
+  geom_point(color = "darkred", size = 3) +#
+  geom_smooth(method = "lm", color = "salmon", fill = "lightpink", alpha = 0.3) +#
+  labs(title = bquote("Correlation with Final Weight:" ~ italic(.(top_negative$Genus))),#
+       subtitle = paste("(r =", round(top_negative$Correlation, 3), ", p =", format(top_negative$P_value, digits = 3), ")"),#
+       x = "Final Weight", #
+       y = bquote("Log Abundance (" ~ italic(.(top_negative$Genus)) ~ ")")) +#
+  theme_minimal() +#
+  theme(plot.title = element_text(hjust = 0.5, size = 12),#
+        plot.subtitle = element_text(hjust = 0.5, size = 8),#
+        axis.title = element_text(size = 10),#
+        axis.text = element_text(size = 10),#
+        panel.grid.major = element_line(color = "gray90"),#
+        panel.grid.minor = element_line(color = "gray95"))#
+#
+# 🖼 Hiển thị biểu đồ#
+print(plot_negative)
+otu_negative <- otu_negative[1]#
+plot_data_negative <- combined_data %>%#
+  select(`Final weight`, all_of(otu_negative)) %>%#
+  rename(Negative_Genus = all_of(otu_negative))
+plot_negative <- ggplot(plot_data_negative, aes(x = `Final weight`, y = Negative_Genus)) +#
+  geom_point(color = "darkred", size = 3) +#
+  geom_smooth(method = "lm", color = "salmon", fill = "lightpink", alpha = 0.3) +#
+  labs(title = bquote("Correlation with Final Weight:" ~ italic(.(top_negative$Genus))),#
+       subtitle = paste("(r =", round(top_negative$Correlation, 3), ", p =", format(top_negative$P_value, digits = 3), ")"),#
+       x = "Final Weight", #
+       y = bquote("Log Abundance (" ~ italic(.(top_negative$Genus)) ~ ")")) +#
+  theme_minimal() +#
+  theme(plot.title = element_text(hjust = 0.5, size = 12),#
+        plot.subtitle = element_text(hjust = 0.5, size = 8),#
+        axis.title = element_text(size = 10),#
+        axis.text = element_text(size = 10),#
+        panel.grid.major = element_line(color = "gray90"),#
+        panel.grid.minor = element_line(color = "gray95"))
+print(plot_negative)
+combined_plot <- plot_positive / plot_negative +#
+  plot_layout(ncol = 1, heights = c(1, 1))
+print(combined_plot)
+plot_positive <- ggplot(plot_data_positive, aes(x = `Final weight`, y = Positive_Genus)) +#
+  geom_point(color = "darkblue", size = 3) +#
+  geom_smooth(method = "lm", color = "dodgerblue", fill = "lightblue", alpha = 0.3) +#
+  labs(title = bquote("Correlation with Final Weight:" ~ italic(.(top_positive$Genus))),#
+       subtitle = paste("(r =", round(top_positive$Correlation, 3), ", p =", format(top_positive$P_value, digits = 3), ")"),#
+       x = "Final Weight", #
+       y = bquote("Log Abundance (" ~ italic(.(top_positive$Genus)) ~ ")")) +#
+  theme_minimal() +#
+  theme(plot.title = element_text(hjust = 0.5, size = 12),#
+        plot.subtitle = element_text(hjust = 0.5, size = 8),#
+        axis.title = element_text(size = 10),#
+        axis.text = element_text(size = 10),#
+        panel.grid.major = element_line(color = "gray90"),#
+        panel.grid.minor = element_line(color = "gray95"))
+print(combined_plot)
+cor_df_final_weight <- cor_df_with_tax %>%#
+  filter(Metadata == "Final weight") %>%#
+  mutate(Genus = str_extract(Taxon, "g__[A-Za-z0-9_]+")) %>%#
+  mutate(Genus = str_replace(Genus, "g__", "")) %>%#
+  mutate(Genus = str_replace_all(Genus, "_", " ")) %>%#
+  select(Metadata, OTU, Correlation, P_value, Taxon, Genus)
+top_positive <- cor_df_final_weight %>%#
+  filter(Correlation > 0) %>%#
+  slice_max(Correlation, n = 1)
+top_negative <- cor_df_final_weight %>%#
+  filter(Correlation < 0) %>%#
+  slice_min(Correlation, n = 1)
+print("Genus with the strongest positive correlation with Final weight:")#
+print(top_positive)#
+print("Genus with the strongest negative correlation with Final weight:")#
+print(top_negative)
