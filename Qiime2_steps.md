@@ -356,7 +356,7 @@ Then, to convert the .biom file into a data table format that R can handle (CSV/
 ```bash
 biom convert \
   -i exported_feature_table/feature-table.biom \
-  -o exported_feature_table/feature_table.csv \
+  -o exported_feature_table/feature_table.tsv \
   --to-tsv
 ```
 **Convert into csv file and change format**
