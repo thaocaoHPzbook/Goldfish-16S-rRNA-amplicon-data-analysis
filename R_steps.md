@@ -76,8 +76,10 @@ ps_with_pseudo
 ```
 ## 1.6 Convert Phyloseq Object into OTU Table and Metadata
 # Extract OTU table and metadata from phyloseq object
+```bash
 otu_data <- otu_table(ps_with_pseudo)
 sample_data <- sample_data(ps_with_pseudo)
+```
 
 ##  1.7 Run ANCOM-BC2 with Pseudo-Count Adjusted Data
 ```bash
