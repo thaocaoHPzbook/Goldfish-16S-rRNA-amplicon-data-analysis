@@ -347,7 +347,7 @@ The results from unweighted_unifrac_significance.qzv (test statistic = 0.91104, 
 # 8. Export file from Qimme2 for R steps
 ```bash
 qiime tools export \
-  --input-path table.qza \
+  --input-path filtered-table.qza \
   --output-path exported_feature_table
 ```
 The above command will export the table.qza file as a temporary file (like a .biom file) in the exported_feature_table directory.
