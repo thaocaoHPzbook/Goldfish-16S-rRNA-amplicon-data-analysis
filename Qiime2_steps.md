@@ -101,7 +101,7 @@ After you got **silva-classifier.qza** classifier file, you can use it for your 
 qiime feature-classifier classify-sklearn \
   --i-classifier silva_data/silva-138-99-nb-classifier.qza \
   --i-reads rep-seqs-no-chimera.qza \
-  --p-confidence 0.9 \
+  --p-confidence 0.8 \
   --o-classification taxonomy.qza
 ```
 **Generate taxa bar plot**
