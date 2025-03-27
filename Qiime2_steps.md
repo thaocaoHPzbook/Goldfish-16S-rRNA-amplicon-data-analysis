@@ -375,4 +375,4 @@ qiime tools export \
   --i-classification taxonomy.qza \
   --output-dir taxonomy_exported
 ```
-The above command will export the [taxanomy.tsv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/taxonomy.tsv) file in the taxonomy_exported directory.
+The above command will export the [taxanomy.tsv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/taxonomy.tsv) file in the taxonomy_exported directory.
