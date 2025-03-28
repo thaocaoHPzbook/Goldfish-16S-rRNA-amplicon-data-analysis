@@ -119,10 +119,37 @@ filtered_ancombc2_results <- ancombc2_results %>%
 # Save filtered results to a CSV file
 write.csv(df_filtered, "filtered_ancombc2_results.csv", row.names = TRUE)
 ```
+**Merge taxomomy.tsv with filtered_ancombc2_results.csv**
+```bash
+library(dplyr)
+library(readr)
+
+# Read taxonomy.tsv file
+taxonomy <- read_tsv("taxonomy.tsv")
+
+# Read filtered_ancombc2_parirwise_results.csv file
+filtered_results <- read_csv("filtered_ancombc2_results.csv")
+
+# Join data
+merged_results <- filtered_results %>%
+  left_join(taxonomy, by = c("taxon" = "Feature ID"))
+
+# Check the results
+head(merged_results)
+
+# Replace taxon with Taxon name
+final_results <- merged_results %>%
+  select(-taxon) %>%
+  rename(taxon = Taxon)
+
+# Exporting csv file
+write_csv(final_results, "filtered_ancombc2_results_with_taxonomy.csv")
+```
+
 ## 2.2. Visualization of Log Fold Changes of Taxa with Significant p-value<0.05
 ```bash
 llibrary(readr)
-filtered_ancombc2_results <- read_csv("filtered_ancombc2_results.csv")
+filtered_ancombc2_results <- read_csv("ffiltered_ancombc2_results_with_taxonomy.csv")
 library(ggplot2)
 library(stringr)
 
@@ -158,7 +185,7 @@ ggsave("lfc_by_treatment.png", plot = last_plot(), width = 8, height = 6)
 [lfc_by_treatment.png] is a visualization of taxa that have significant log fold change values.
 ![image](https://github.com/user-attachments/assets/e77bcc2a-3309-4265-855a-0fa5b4aa3f24)
 
-# 2.3  Visualization of Log Fold Changes of Taxa with Significant p-value<0.05 - pairwise comparision
+## 2.3  Visualization of Log Fold Changes of Taxa with Significant p-value<0.05 - pairwise comparision
 ```bash
 # Filter taxa with p-value < 0.05, q-value<0.5, diff=TRUE, and passed_ss=TRUE
 filtered_ancombc2_results <- ancombc2_results %>%
