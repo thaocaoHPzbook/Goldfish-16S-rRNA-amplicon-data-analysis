@@ -1,0 +1,6 @@
+sample-id	Treatment	Final weight	Specific growth rate	Feed conversion ratio	Weight gain	Survival rate	Percentage weight gain	Daily weight gain
+RP-10	RP-10	55.9211	3.33563	3.3572	35.3711	98.3333	516.279	0.6316
+RP-20	RP-20	56.1	3.3466	3.59873	35.55	100	518.954	0.6348
+RP-40	RP-40	60.3947	3.59323	3.3143	39.8447	98.3333	581.92	0.7114
+RP-5	RP-5	54.05	3.22103	3.71203	33.5	96.6667	489.255	0.5983
+Control	Control	53.2737	3.19127	3.14277	32.8237	98.3333	481.633	0.5862
