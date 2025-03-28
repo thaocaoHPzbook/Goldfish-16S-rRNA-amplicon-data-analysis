@@ -117,7 +117,42 @@ qiime taxa barplot \
 
 You can see in the [taxa barplot](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/taxa-barplot.qzv) that most samples have similar microbial compositions, except for one **control sample** and one **RP-20 sample**, which show abnormal patterns. This could be due to low sequencing depth, leading to an inaccurate representation of microbial diversity in these samples. Further analysis is needed to determine whether the microbial compositions in these samples, particularly in the control sample and RP-20 sample, differ significantly in a statistically meaningful way.
 
-To investigate further, we will examine the summary statistics after chimera filtering and perform rarefaction curve analysis in the next steps.    
+To investigate further, we will examine the summary statistics after chimera filtering and perform rarefaction curve analysis in the next steps.  
+
+### **Grouping feature table by Treatment**
+To compare microbial compositions at the treatment group level, we first aggregate the feature table by the `Treatment` column in the metadata. This step sums the feature abundances within each treatment group.
+
+```bash
+qiime feature-table group \
+  --i-table Qiime_steps/filtered-table.qza \
+  --m-metadata-file Qiime_steps/metadata.tsv \
+  --m-metadata-column Treatment \
+  --p-mode sum \
+  --p-axis sample \
+  --o-grouped-table Qiime_steps/grouped-feature-table.qza
+```
+After grouping, we generate a summary of the grouped feature table to check the total frequency and number of features per treatment group.
+
+```bash
+qiime feature-table summarize \
+  --i-table Qiime_steps/grouped-feature-table.qza \
+  --o-visualization Qiime_steps/grouped-feature-table.qzv
+```
+
+### **Taxonomic Classification of Grouped Data**
+Once the feature table is grouped by treatment using [metadata_grouped.tsv](Qiime_steps/metadata_grouped.tsv), we can generate a taxa barplot to visualize the taxonomic composition of each treatment group.
+
+```bash
+qiime taxa barplot \
+  --i-table Qiime_steps/grouped-feature-table.qza \
+  --i-taxonomy Qiime_steps/taxonomy.qza \
+  --m-metadata-file Qiime_steps/metadata_grouped.tsv \
+  --o-visualization Qiime_steps/grouped-taxa-barplot.qzv
+```
+
+The grouped taxa barplot helps us compare microbial compositions across different treatment groups, allowing us to identify major taxonomic differences at various classification levels.
+
+![Grouped taxa barplot](<Qiime_steps/grouped-taxa-barplot.png>)
 
 # 4. Creating a phylogenetic tree using align-to-tree-MAFFT-FastTree
 ```bash
