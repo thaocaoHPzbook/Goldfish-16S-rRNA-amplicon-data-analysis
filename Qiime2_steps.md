@@ -152,7 +152,7 @@ qiime taxa barplot \
 
 The grouped taxa barplot helps us compare microbial compositions across different treatment groups, allowing us to identify major taxonomic differences at various classification levels.
 
-![Grouped taxa barplot](<Qiime_steps/grouped-taxa-barplot.png>)
+![Grouped taxa barplot](Qiime_steps/grouped-taxa-barplot.png)
 
 # 4. Creating a phylogenetic tree using align-to-tree-MAFFT-FastTree
 ```bash
