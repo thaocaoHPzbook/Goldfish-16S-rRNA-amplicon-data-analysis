@@ -75,7 +75,7 @@ ps_with_pseudo <- phyloseq(otu_table(otu_table_with_pseudo, taxa_are_rows = TRUE
 ps_with_pseudo
 ```
 ## 1.6 Convert Phyloseq Object into OTU Table and Metadata
-# Extract OTU table and metadata from phyloseq object
+**Extract OTU table and metadata from phyloseq object**
 ```bash
 otu_data <- otu_table(ps_with_pseudo)
 sample_data <- sample_data(ps_with_pseudo)
