@@ -145,6 +145,7 @@ final_results <- merged_results %>%
 # Exporting csv file
 write_csv(final_results, "filtered_ancombc2_results_with_taxonomy.csv")
 ```
+[filtered_ancombc2_results_with_taxonomy.csv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/filtered_ancombc2_results_with_taxonomy.csv) is generated.
 
 ## 2.2. Visualization of Log Fold Changes of Taxa with Significant p-value<0.05
 ```bash
@@ -224,6 +225,7 @@ filtered_ancombc2_results <- ancombc2_results %>%
 # Save filtered results to a CSV file
 write.csv(df_filtered, "filtered_ancombc2_parirwise_results.csv", row.names = TRUE)
 ```
+[filtered_ancombc2_parirwise_results.csv"](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/filtered_ancombc2_pairwise_results_with_taxonomy.csv) is generated.
 **Merge taxomomy.tsv with filtered_ancombc2_parirwise_results.csv**
 ```bash
 library(dplyr)
