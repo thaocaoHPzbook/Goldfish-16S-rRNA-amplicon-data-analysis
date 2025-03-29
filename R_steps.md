@@ -119,6 +119,7 @@ filtered_ancombc2_results <- ancombc2_results %>%
 # Save filtered results to a CSV file
 write.csv(df_filtered, "filtered_ancombc2_results.csv", row.names = TRUE)
 ```
+
 **Merge taxomomy.tsv with filtered_ancombc2_results.csv**
 ```bash
 library(dplyr)
