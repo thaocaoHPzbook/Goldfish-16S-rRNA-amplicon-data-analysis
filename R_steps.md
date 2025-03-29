@@ -149,15 +149,15 @@ write_csv(final_results, "filtered_ancombc2_results_with_taxonomy.csv")
 
 ## 2.2. Visualization of Log Fold Changes of Taxa with Significant p-value<0.05
 ```bash
-llibrary(readr)
-filtered_ancombc2_results <- read_csv("ffiltered_ancombc2_results_with_taxonomy.csv")
+library(readr)
+filtered_ancombc2_results <- read_csv("filtered_ancombc2_results_with_taxonomy.csv")
 library(ggplot2)
 library(stringr)
 
-# Extract the genus (g__) from the taxon column
+# Extract the genus (g__) part from the taxon column
 filtered_ancombc2_results$genus <- str_extract(filtered_ancombc2_results$taxon, "g__[^;]+")
 
-# Create a Volcano Plot using genus instead of the full taxon name
+# Plot a Volcano Plot using genus instead of the full taxon path
 p <- ggplot(filtered_ancombc2_results, 
             aes(x = lfc, y = genus, color = treatment, shape = treatment)) +
   geom_point(size = 3, alpha = 0.8) +
@@ -176,7 +176,7 @@ p <- ggplot(filtered_ancombc2_results,
   theme(plot.title = element_text(hjust = 0.5),
         axis.text.y = element_text(size = 8))
 
-# Display the plot
+# Display the piot
 print(p)
 ```
 ```bash
