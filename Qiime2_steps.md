@@ -282,11 +282,11 @@ Pairwise (Between groups):All pairwise comparisons have p-value > 0.05, indicati
 **Conclusion: There is no significant difference in Faith's PD between the groups, suggesting that the phylogenetic diversity is similar across all groups in this study.**
 
 # 7. Beta diversity analysis
-## 1. Bray-Curtis Index
+## Bray-Curtis Index
 This index is used to measure the difference between two microbial communities. The value ranges from 0 to 1:
     0 means the two communities are completely identical.
     1 means the two communities are completely different.
-This index helps us understand the level of difference in microbial species between samples.
+This index helps us understand the level of difference in microbial species between samples.    
 **PCoA Plot**
 ```bash
 qiime diversity pcoa \
