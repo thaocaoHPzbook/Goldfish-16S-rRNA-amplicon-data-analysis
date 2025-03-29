@@ -252,7 +252,7 @@ write_csv(final_results, "filtered_ancombc2_pairwise_results_with_taxonomy.csv")
 ```
 
 
-** Plotting
+**Plotting**
 ```bash
 library(tidyr)
 library(dplyr)
@@ -322,7 +322,7 @@ print(p)
 # Save the plot as a PNG file
 ggsave("lfc_by_treatment_pairwise.png", plot = last_plot(), width = 8, height = 6)
 ```
-
+[lfc_by_treatment_pairwise.png](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/lfc_by_treatment_pairwise.png)
 ![image](https://github.com/user-attachments/assets/1bd29715-74b6-4665-a4bf-fde622f44aa7)
 
 
