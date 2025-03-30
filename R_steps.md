@@ -156,13 +156,13 @@ library(tidyr)
 library(dplyr)
 library(readr)
 
-# Đọc dữ liệu
+# Read data
 filtered_ancombc2_results <- read_csv("filtered_ancombc2_results_with_taxonomy.csv")
 
-# Trích xuất genus từ taxon
+# Extract genus level name from taxon
 filtered_ancombc2_results$genus <- str_extract(filtered_ancombc2_results$taxon, "g__[^;]+")
 
-# Chuyển dữ liệu từ wide format sang long format
+# Covert data to long format
 filtered_long <- filtered_ancombc2_results %>%
   pivot_longer(cols = starts_with("lfc_TreatmentRP"),
                names_to = "treatment",
@@ -174,18 +174,18 @@ filtered_long <- filtered_ancombc2_results %>%
   filter(str_replace(p_treatment, "p_Treatment", "") == treatment) %>% # Ghép đúng lfc với p-value
   select(-p_treatment)
 
-# Xác định dấu * cho các điểm có p-value < 0.05
+# Mark * at p-value < 0.05
 filtered_long$significance <- ifelse(filtered_long$p_value < 0.05, "*", "")
 
-# Vẽ biểu đồ
+# Plotting
 p <- ggplot(filtered_long, aes(x = genus, y = lfc, fill = treatment)) +
-    geom_col(position = position_dodge(width = 0.7),  # Xếp cột sát nhau
+    geom_col(position = position_dodge(width = 0.7),
              width = 0.6,  # Điều chỉnh kích thước cột
              color = "black") +  
-    geom_text(aes(label = significance, y = lfc + sign(lfc) * 0.4),  # Đẩy dấu * cao hơn
+    geom_text(aes(label = significance, y = lfc + sign(lfc) * 0.4), 
               position = position_dodge(width = 0.7), 
               size = 6, color = "black") +
-    geom_hline(yintercept = 0, linetype = "dashed", color = "gray30") +  # Đường tham chiếu
+    geom_hline(yintercept = 0, linetype = "dashed", color = "gray30") + 
     scale_fill_manual(values = c("RP.5" = "red",
                                  "RP.10" = "blue",
                                  "RP.20" = "green",
@@ -196,9 +196,9 @@ p <- ggplot(filtered_long, aes(x = genus, y = lfc, fill = treatment)) +
          fill = "Treatment") +
     theme_minimal(base_size = 14) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10),  # Xoay label trục X
-          legend.position = "right")  # Giữ legend bên phải
+          legend.position = "right")  #
 
-# Hiển thị biểu đồ
+# Display the plot
 print(p)
 ```
 ```bash
@@ -285,7 +285,7 @@ library(dplyr)
 library(stringr)
 library(ggplot2)
 
-# 1. Danh sách các so sánh cần thiết
+# 1. List of comparison
 target_cols <- c(
     "lfc_TreatmentRP.20_TreatmentRP.10",
     "lfc_TreatmentRP.40_TreatmentRP.10",
@@ -295,9 +295,9 @@ target_cols <- c(
     "lfc_TreatmentRP.5_TreatmentRP.40"
 )
 
-pval_cols <- str_replace(target_cols, "lfc_", "p_")  # Tạo danh sách cột p-value
+pval_cols <- str_replace(target_cols, "lfc_", "p_")  # Create p-value column
 
-# 2. Lọc taxon đến cấp genus và chuyển sang dạng long format
+# 2. Filter taxon to genus level and convert to long format
 long_results <- filtered_ancombc2_results %>%
     filter(!is.na(taxon)) %>%
     pivot_longer(
@@ -325,15 +325,18 @@ long_results <- filtered_ancombc2_results %>%
         lfc = mean(lfc, na.rm = TRUE),  # Lấy trung bình nếu có nhiều giá trị lặp
         pvalue = mean(pvalue, na.rm = TRUE)
     ) %>%
-    mutate(significant = ifelse(pvalue < 0.05, "*", "")) %>%
+    mutate(
+        significant = ifelse(pvalue < 0.05, "*", ""),
+        offset = ifelse(lfc >= 0, lfc + 0.2, lfc - 0.4)  # Cột dương: +0.2 | Cột âm: -0.4
+    ) %>%
     ungroup()
 
-# 3. Vẽ biểu đồ cột
+# 3. Plotting
 p <- ggplot(long_results, aes(x = genus, y = lfc, fill = comparison)) +
-    geom_col(position = position_dodge(width = 0.8), color = "black") +  # Cột không bị trùng
-    geom_text(aes(label = significant), 
-              position = position_dodge(width = 0.8), 
-              vjust = -0.5, size = 6, color = "black") +  # Giữ dấu * đúng vị trí
+    geom_col(position = position_dodge(width = 0.7), width = 0.6, color = "black") +  # Cột to hơn
+    geom_text(aes(label = significant, y = offset),  
+              position = position_dodge(width = 0.7),  
+              size = 6, fontface = "bold", color = "black") +  # Đặt dấu sao đúng vị trí
     geom_hline(yintercept = 0, linetype = "dashed", color = "gray30") +  # Đường tham chiếu
     scale_fill_manual(
         values = c(
@@ -357,7 +360,7 @@ p <- ggplot(long_results, aes(x = genus, y = lfc, fill = comparison)) +
         legend.position = "bottom"
     )
 
-# Hiển thị biểu đồ
+# Display the plot
 print(p)
 ```
 **Save the plot**
@@ -365,8 +368,8 @@ print(p)
 # Save the plot as a PNG file
 ggsave("lfc_by_treatment_pairwise.png", plot = last_plot(), width = 8, height = 6)
 ```
-[lfc_by_treatment_pairwise.png]
-![image](https://github.com/user-attachments/assets/99fb8b7a-45b8-4e55-80fa-a3396530a5a1)
+[lfc_by_treatment_pairwise.png](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/lfc_by_treatment_pairwise.png)
+![image](https://github.com/user-attachments/assets/ca54fc29-893d-4fce-9569-28706db0350c)
 
 
 
