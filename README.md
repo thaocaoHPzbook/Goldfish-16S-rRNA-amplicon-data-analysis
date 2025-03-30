@@ -29,3 +29,5 @@
 ### [2. Analysis of biomarkers for gut microbiome](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/2.%20Analysis%20of%20biomarkers%20for%20gut%20microbiome.md)
 
 ### [3. Spearman Correlation Analysis](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/3.%20Spearman%20correlation%20analysis.md)
+
+### [4. Visualization of Gut Microbiome Analysis Results](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/4.%20Visualization%20of%20microbiome%20analysis%20results.md)
