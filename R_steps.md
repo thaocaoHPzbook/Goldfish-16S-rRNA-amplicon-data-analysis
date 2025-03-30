@@ -150,42 +150,65 @@ write_csv(final_results, "filtered_ancombc2_results_with_taxonomy.csv")
 
 ## 2.2. Visualization of Log Fold Changes of Taxa with Significant p-value<0.05
 ```bash
-library(readr)
-filtered_ancombc2_results <- read_csv("filtered_ancombc2_results_with_taxonomy.csv")
 library(ggplot2)
 library(stringr)
+library(tidyr)
+library(dplyr)
+library(readr)
 
-# Extract the genus (g__) part from the taxon column
+# Đọc dữ liệu
+filtered_ancombc2_results <- read_csv("filtered_ancombc2_results_with_taxonomy.csv")
+
+# Trích xuất genus từ taxon
 filtered_ancombc2_results$genus <- str_extract(filtered_ancombc2_results$taxon, "g__[^;]+")
 
-# Plot a Volcano Plot using genus instead of the full taxon path
-p <- ggplot(filtered_ancombc2_results, 
-            aes(x = lfc, y = genus, color = treatment, shape = treatment)) +
-  geom_point(size = 3, alpha = 0.8) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "gray") +
-  scale_color_manual(values = c("RP.5" = "red",
-                                "RP.10" = "blue",
-                                "RP.20" = "green",
-                                "RP.40" = "orange",
-                                "RP.X" = "purple")) +
-  scale_shape_manual(values = c(16, 17, 15, 18, 3)) +
-  labs(x = "Log2 Fold Change",
-       y = "Genus",
-       color = "Treatment",
-       shape = "Treatment") +
-  theme_minimal() +
-  theme(plot.title = element_text(hjust = 0.5),
-        axis.text.y = element_text(size = 8))
+# Chuyển dữ liệu từ wide format sang long format
+filtered_long <- filtered_ancombc2_results %>%
+  pivot_longer(cols = starts_with("lfc_TreatmentRP"),
+               names_to = "treatment",
+               values_to = "lfc") %>%
+  mutate(treatment = str_replace(treatment, "lfc_Treatment", "")) %>%
+  pivot_longer(cols = starts_with("p_TreatmentRP"),
+               names_to = "p_treatment",
+               values_to = "p_value") %>%
+  filter(str_replace(p_treatment, "p_Treatment", "") == treatment) %>% # Ghép đúng lfc với p-value
+  select(-p_treatment)
 
-# Display the piot
+# Xác định dấu * cho các điểm có p-value < 0.05
+filtered_long$significance <- ifelse(filtered_long$p_value < 0.05, "*", "")
+
+# Vẽ biểu đồ
+p <- ggplot(filtered_long, aes(x = genus, y = lfc, fill = treatment)) +
+    geom_col(position = position_dodge(width = 0.7),  # Xếp cột sát nhau
+             width = 0.6,  # Điều chỉnh kích thước cột
+             color = "black") +  
+    geom_text(aes(label = significance, y = lfc + sign(lfc) * 0.4),  # Đẩy dấu * cao hơn
+              position = position_dodge(width = 0.7), 
+              size = 6, color = "black") +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "gray30") +  # Đường tham chiếu
+    scale_fill_manual(values = c("RP.5" = "red",
+                                 "RP.10" = "blue",
+                                 "RP.20" = "green",
+                                 "RP.40" = "orange",
+                                 "RP.X" = "purple")) +
+    labs(x = "Genus",
+         y = "Log2 Fold Change",
+         fill = "Treatment") +
+    theme_minimal(base_size = 14) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10),  # Xoay label trục X
+          legend.position = "right")  # Giữ legend bên phải
+
+# Hiển thị biểu đồ
 print(p)
 ```
 ```bash
 # Save the plot as a PNG file
 ggsave("lfc_by_treatment.png", plot = last_plot(), width = 8, height = 6)
 ```
-[lfc_by_treatment.png] is a visualization of taxa that have significant log fold change values.
-![image](https://github.com/user-attachments/assets/e77bcc2a-3309-4265-855a-0fa5b4aa3f24)
+[lfc_by_treatment.png](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/lfc_by_treatment.png) is a visualization of taxa that have significant log fold change values.
+![image](https://github.com/user-attachments/assets/ff26fbfd-5206-4a6e-ab86-1954ac640df5)
+
+
 
 ## 2.3  Visualization of Log Fold Changes of Taxa with Significant p-value<0.05 - pairwise comparision
 ```bash
@@ -262,62 +285,79 @@ library(dplyr)
 library(stringr)
 library(ggplot2)
 
-# 1. List of needed comparison
+# 1. Danh sách các so sánh cần thiết
 target_cols <- c(
-  "lfc_TreatmentRP-20_TreatmentRP-10",
-  "lfc_TreatmentRP-40_TreatmentRP-10",
-  "lfc_TreatmentRP-5_TreatmentRP-10",
-  "lfc_TreatmentRP-40_TreatmentRP-20",
-  "lfc_TreatmentRP-5_TreatmentRP-20",
-  "lfc_TreatmentRP-5_TreatmentRP-40"
+    "lfc_TreatmentRP.20_TreatmentRP.10",
+    "lfc_TreatmentRP.40_TreatmentRP.10",
+    "lfc_TreatmentRP.5_TreatmentRP.10",
+    "lfc_TreatmentRP.40_TreatmentRP.20",
+    "lfc_TreatmentRP.5_TreatmentRP.20",
+    "lfc_TreatmentRP.5_TreatmentRP.40"
 )
 
-# 2. Taxon (genus only) filtering + reshape long format
+pval_cols <- str_replace(target_cols, "lfc_", "p_")  # Tạo danh sách cột p-value
+
+# 2. Lọc taxon đến cấp genus và chuyển sang dạng long format
 long_results <- filtered_ancombc2_results %>%
-  filter(!is.na(taxon)) %>%
-  pivot_longer(
-    cols = all_of(target_cols),
-    names_to = "comparison",
-    values_to = "lfc"
-  ) %>%
-  mutate(
-    comparison = str_replace(comparison, "lfc_", ""),
-    genus = str_extract(taxon, "g__[^;]+")
-  ) %>%
-  filter(!is.na(genus))  # <--- bước loại bỏ taxon chưa phân loại tới genus
+    filter(!is.na(taxon)) %>%
+    pivot_longer(
+        cols = all_of(target_cols),
+        names_to = "comparison",
+        values_to = "lfc"
+    ) %>%
+    mutate(
+        comparison = str_replace(comparison, "lfc_", ""),
+        genus = str_extract(taxon, "g__[^;]+")
+    ) %>%
+    filter(!is.na(genus)) %>%  # Loại bỏ taxon chưa phân loại tới genus
+    inner_join(  # Dùng inner_join để chỉ lấy các giá trị phù hợp
+        filtered_ancombc2_results %>%
+            pivot_longer(
+                cols = all_of(pval_cols),
+                names_to = "comparison",
+                values_to = "pvalue"
+            ) %>%
+            mutate(comparison = str_replace(comparison, "p_", "")),
+        by = c("taxon", "comparison")
+    ) %>%
+    group_by(genus, comparison) %>%  # Nhóm theo genus và comparison
+    summarise(
+        lfc = mean(lfc, na.rm = TRUE),  # Lấy trung bình nếu có nhiều giá trị lặp
+        pvalue = mean(pvalue, na.rm = TRUE)
+    ) %>%
+    mutate(significant = ifelse(pvalue < 0.05, "*", "")) %>%
+    ungroup()
 
-# 3. Volcano plot
-p <- ggplot(long_results, 
-            aes(x = lfc, y = genus, color = comparison, shape = comparison)) +
-  geom_point(size = 3.5, alpha = 0.85) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "gray30") +
-  scale_color_manual(
-    values = c(
-      "TreatmentRP-20_TreatmentRP-10" = "#E41A1C",
-      "TreatmentRP-40_TreatmentRP-10" = "#377EB8",
-      "TreatmentRP-5_TreatmentRP-10"  = "#4DAF4A",
-      "TreatmentRP-40_TreatmentRP-20" = "#984EA3",
-      "TreatmentRP-5_TreatmentRP-20"  = "#FF7F00",
-      "TreatmentRP-5_TreatmentRP-40"  = "#A65628"
+# 3. Vẽ biểu đồ cột
+p <- ggplot(long_results, aes(x = genus, y = lfc, fill = comparison)) +
+    geom_col(position = position_dodge(width = 0.8), color = "black") +  # Cột không bị trùng
+    geom_text(aes(label = significant), 
+              position = position_dodge(width = 0.8), 
+              vjust = -0.5, size = 6, color = "black") +  # Giữ dấu * đúng vị trí
+    geom_hline(yintercept = 0, linetype = "dashed", color = "gray30") +  # Đường tham chiếu
+    scale_fill_manual(
+        values = c(
+            "TreatmentRP.20_TreatmentRP.10" = "#E41A1C",
+            "TreatmentRP.40_TreatmentRP.10" = "#377EB8",
+            "TreatmentRP.5_TreatmentRP.10"  = "#4DAF4A",
+            "TreatmentRP.40_TreatmentRP.20" = "#984EA3",
+            "TreatmentRP.5_TreatmentRP.20"  = "#FF7F00",
+            "TreatmentRP.5_TreatmentRP.40"  = "#A65628"
+        )
+    ) +
+    labs(
+        x = "Genus",
+        y = "Log2 Fold Change",
+        fill = "Comparison"
+    ) +
+    theme_minimal(base_size = 14) +
+    theme(
+        plot.title = element_text(hjust = 0.5, face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 10),  # Xoay label trục X để dễ đọc
+        legend.position = "bottom"
     )
-  ) +
-  scale_shape_manual(
-    values = c(16, 17, 15, 18, 3, 7)
-  ) +
-  labs(
-    x = "Log2 Fold Change",
-    y = "Genus",
-    color = "Comparison",
-    shape = "Comparison"
-  ) +
-  theme_minimal(base_size = 12) +
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold"),
-    axis.text.y = element_text(size = 8),
-    legend.position = "bottom"
-  )
 
-# Display the plot
+# Hiển thị biểu đồ
 print(p)
 ```
 **Save the plot**
@@ -325,8 +365,9 @@ print(p)
 # Save the plot as a PNG file
 ggsave("lfc_by_treatment_pairwise.png", plot = last_plot(), width = 8, height = 6)
 ```
-[lfc_by_treatment_pairwise.png](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/lfc_by_treatment_pairwise.png)
-![image](https://github.com/user-attachments/assets/1bd29715-74b6-4665-a4bf-fde622f44aa7)
+[lfc_by_treatment_pairwise.png]
+![image](https://github.com/user-attachments/assets/99fb8b7a-45b8-4e55-80fa-a3396530a5a1)
+
 
 
 
