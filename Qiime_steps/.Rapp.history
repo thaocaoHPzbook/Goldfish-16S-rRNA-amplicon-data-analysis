@@ -1,0 +1,70 @@
+setwd("/Users/truonganhtu/Documents/Chula_gut_microbiome/GoldFish/script/Goldfish-16S-rRNA-amplicon-data-analysis")
+library(tidyverse)#
+library(Hmisc)#
+library(corrplot)#
+library(vegan)#
+library(ggplot2)#
+library(patchwork)
+metadata <- read_tsv("metadata.tsv")#
+feature_table <- read_tsv("feature-table.tsv")#
+taxonomy <- read_tsv("taxonomy.tsv")
+setwd("/Users/truonganhtu/Documents/Chula_gut_microbiome/GoldFish/script/Goldfish-16S-rRNA-amplicon-data-analysis/Qiime_steps/")
+metadata <- read_tsv("metadata.tsv")#
+feature_table <- read_tsv("feature-table.tsv")#
+taxonomy <- read_tsv("taxonomy.tsv")
+sample_ids <- metadata$`sample-id`#
+colnames(feature_table)[-1] <- sample_ids  # Exclude OTU ID column
+feature_table_t <- feature_table %>%#
+  column_to_rownames(var = "OTU ID") %>%#
+  t() %>%#
+  as.data.frame()
+feature_table_normalized <- decostand(feature_table_t, method = "total")#
+feature_table_log <- log1p(feature_table_normalized)
+metadata_selected <- metadata %>%#
+  select(`sample-id`, `Final weight`, `Specific growth rate`, `Feed conversion ratio`, #
+         `Weight gain`, `Survival rate`, `Percentage weight gain`, `Daily weight gain`) %>%#
+  column_to_rownames(var = "sample-id")
+combined_data <- merge(metadata_selected, feature_table_log, by = "row.names")#
+rownames(combined_data) <- combined_data$Row.names#
+combined_data <- combined_data %>% select(-Row.names)
+metadata_vars <- combined_data[, 1:7]  # Metadata variables#
+otu_data <- combined_data[, 8:ncol(combined_data)]  # OTUs
+cor_result <- rcorr(as.matrix(cbind(metadata_vars, otu_data)), type = "spearman")#
+cor_matrix <- cor_result$r#
+p_matrix <- cor_result$P#
+#
+cor_metadata_otu <- cor_matrix[1:7, 8:ncol(cor_matrix)]#
+p_metadata_otu <- p_matrix[1:7, 8:ncol(p_matrix)]
+cor_df <- as.data.frame(as.table(cor_metadata_otu)) %>%#
+  rename(Metadata = Var1, OTU = Var2, Correlation = Freq) %>%#
+  mutate(P_value = as.vector(p_metadata_otu)) %>%#
+  filter(P_value < 0.05)
+cor_df_with_tax <- cor_df %>%#
+  left_join(taxonomy, by = c("OTU" = "Feature ID")) %>%#
+  filter(str_detect(Taxon, "g__") | str_detect(Taxon, "s__")) %>%#
+  filter(!str_detect(Taxon, "Unassigned")) %>%#
+  select(Metadata, OTU, Correlation, P_value, Taxon, Confidence)
+head(cor_df_with_tax)#
+nrow(cor_df_with_tax)  # Number of significant taxa
+cor_df_unique <- cor_df_with_tax %>%#
+  group_by(Metadata, Taxon) %>%#
+  summarise(Correlation = Correlation[which.max(abs(Correlation))],#
+            P_value = P_value[which.max(abs(Correlation))],#
+            .groups = "drop") %>%#
+  ungroup() %>%#
+  filter(abs(Correlation) > 0.6)
+cor_df_unique <- cor_df_unique %>%#
+  arrange(desc(Taxon)) %>%#
+  mutate(Taxon = factor(Taxon, levels = unique(Taxon)))
+ggplot(cor_df_unique, aes(x = Taxon, y = Metadata, #
+                          size = abs(Correlation), color = Correlation)) +#
+  geom_point() +#
+  scale_color_gradient2(low = "blue", mid = "white", high = "red") +#
+  theme_minimal() +#
+  theme(#
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 4.1),#
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14)  #
+  ) +#
+  labs(title = "Strongest Correlations between Gut Microbiota and Growth Parameters",#
+       x = "Taxon", y = "Growth Parameters",#
+       size = "Abs(Correlation)", color = "Correlation")
