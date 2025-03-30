@@ -119,7 +119,7 @@ filtered_ancombc2_results <- ancombc2_results %>%
 # Save filtered results to a CSV file
 write.csv(df_filtered, "filtered_ancombc2_results.csv", row.names = TRUE)
 ```
-
+    
 **Merge taxomomy.tsv with filtered_ancombc2_results.csv**
 ```bash
 library(dplyr)
@@ -249,7 +249,7 @@ filtered_ancombc2_results <- ancombc2_results %>%
 # Save filtered results to a CSV file
 write.csv(df_filtered, "filtered_ancombc2_parirwise_results.csv", row.names = TRUE)
 ```
-[filtered_ancombc2_parirwise_results.csv"](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/filtered_ancombc2_pairwise_results_with_taxonomy.csv) is generated.
+[filtered_ancombc2_parirwise_results.csv"](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/filtered_ancombc2_pairwise_results_with_taxonomy.csv) is generated.    
 **Merge taxomomy.tsv with filtered_ancombc2_parirwise_results.csv**
 ```bash
 library(dplyr)
@@ -368,7 +368,7 @@ print(p)
 # Save the plot as a PNG file
 ggsave("lfc_by_treatment_pairwise.png", plot = last_plot(), width = 8, height = 6)
 ```
-[lfc_by_treatment_pairwise.png](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/lfc_by_treatment_pairwise.png)
+[lfc_by_treatment_pairwise.png](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/lfc_by_treatment_pairwise.png) is generated
 ![image](https://github.com/user-attachments/assets/ca54fc29-893d-4fce-9569-28706db0350c)
 
 
