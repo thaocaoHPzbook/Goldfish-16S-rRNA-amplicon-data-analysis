@@ -195,7 +195,7 @@ p <- ggplot(filtered_long, aes(x = genus, y = lfc, fill = treatment)) +
     geom_hline(yintercept = 0, linetype = "dashed", color = "gray30") + 
     scale_fill_manual(values = vibrant_colors) +
     labs(x = "Genus",
-         y = "Log2 Fold Change",
+         y = "Log Fold Change",
          fill = "Treatment") +
     theme_minimal(base_size = 14) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
@@ -208,8 +208,9 @@ print(p)
 # Save the plot as a PNG file
 ggsave("lfc_by_treatment.png", plot = last_plot(), width = 8, height = 6)
 ```
-[lfc_by_treatment.png](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/lfc_by_treatment1.png) is a visualization of taxa that have significant log fold change values.
-![image](https://github.com/user-attachments/assets/dadc10f5-2fa6-4195-8b11-b2df76daf381)
+[lfc_by_treatment.png](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/lfc_by_treatment2.png) is a visualization of taxa that have significant log fold change values.
+![image](https://github.com/user-attachments/assets/45ca0ac6-5130-488f-8353-b935bcc277ca)
+
 
 
 
