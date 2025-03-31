@@ -1,0 +1,67 @@
+library(gtsummary)
+library(ggplot2)#
+library(ggpubr)#
+library(dplyr)#
+library(reshape2)#
+library(RColorBrewer)
+setwd("/Users/truonganhtu/Documents/Chula_gut_microbiome/GoldFish/script/Goldfish-16S-rRNA-amplicon-data-analysis")
+library(vegan)#
+library(ggplot2)#
+library(RColorBrewer)#
+library(dplyr)#
+library(readr)#
+library(stringr)#
+library(tidyr)#
+#
+metadata <- read.table("Qiime_steps/metadata.tsv", sep = "\t", header = TRUE, stringsAsFactors = FALSE)#
+#
+distance_matrix <- read.table("R_steps/distance-matrix.tsv", sep = "\t", header = TRUE, row.names = 1)#
+#
+rownames(distance_matrix) <- gsub("^X", "", rownames(distance_matrix))#
+#
+metadata$sample.id <- as.character(metadata$sample.id)#
+#
+metadata$Treatment <- factor(metadata$Treatment, levels = c("Control", "RP-5", "RP-10", "RP-20", "RP-40"))
+# Assign p-value from bray_curtis_significance.qzv.qzv#
+p_value <- 0.017#
+#
+# Run PCoA#
+pcoa_result <- cmdscale(as.dist(distance_matrix), k = 2, eig = TRUE)#
+#
+pc1_var <- round(pcoa_result$eig[1] / sum(pcoa_result$eig) * 100, 2)#
+pc2_var <- round(pcoa_result$eig[2] / sum(pcoa_result$eig) * 100, 2)#
+#
+pcoa_df <- data.frame(#
+  sample.id = rownames(distance_matrix),#
+  PCoA1 = pcoa_result$points[, 1],#
+  PCoA2 = pcoa_result$points[, 2]#
+) %>%#
+  left_join(metadata, by = "sample.id")#
+#
+hull_df <- pcoa_df %>%#
+  group_by(Treatment) %>%#
+  filter(n() >= 3) %>%#
+  slice(chull(PCoA1, PCoA2))#
+#
+colors_custom <- setNames(brewer.pal(length(unique(metadata$Treatment)), "Set3"), #
+                            c("Control", "RP-5", "RP-10", "RP-20", "RP-40"))
+ggplot(pcoa_df, aes(x = PCoA1, y = PCoA2, color = Treatment)) +#
+  geom_point(size = 3, alpha = 0.8) +#
+  geom_polygon(data = hull_df, aes(fill = Treatment, color = Treatment), alpha = 0.2, size = 0.3) +  # Convex hull outline#
+  scale_color_manual(values = colors_custom) +#
+  scale_fill_manual(values = colors_custom) +#
+  theme_minimal() +#
+  labs(title = "PCoA Analysis of Treatment Groups",#
+       x = paste("PCoA Axis 1 (", pc1_var, "%)", sep = ""),#
+       y = paste("PCoA Axis 2 (", pc2_var, "%)", sep = "")) +#
+  annotate("text", x = max(pcoa_df$PCoA1) * 0.9, y = max(pcoa_df$PCoA2) * 0.9, #
+           label = paste("PERMANOVA p =", round(p_value, 3)), #
+           hjust = 1, vjust = 1, size = 3) +#
+  theme(#
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5),#
+    legend.position = "right",#
+    axis.text = element_text(size = 11, face = "plain"),#
+    axis.title = element_text(size = 11, face = "plain"),#
+    legend.text = element_text(size = 11, face = "plain"),#
+    legend.title = element_text(size = 11, face = "plain")#
+  )
