@@ -208,7 +208,7 @@ print(p)
 # Save the plot as a PNG file
 ggsave("lfc_by_treatment.png", plot = last_plot(), width = 8, height = 6)
 ```
-[lfc_by_treatment.png] is a visualization of taxa that have significant log fold change values.
+[lfc_by_treatment.png](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/lfc_by_treatment1.png) is a visualization of taxa that have significant log fold change values.
 ![image](https://github.com/user-attachments/assets/dadc10f5-2fa6-4195-8b11-b2df76daf381)
 
 
@@ -318,8 +318,8 @@ long_results <- filtered_ancombc2_results %>%
         comparison = str_replace(comparison, "lfc_", ""),
         genus = str_extract(taxon, "g__[^;]+")
     ) %>%
-    filter(!is.na(genus)) %>%  # Loại bỏ taxon chưa phân loại tới genus
-    inner_join(  # Dùng inner_join để chỉ lấy các giá trị phù hợp
+    filter(!is.na(genus)) %>%  # Remove unclassified taxa to genus
+    inner_join(  # Use inner_join to get only matching values
         filtered_ancombc2_results %>%
             pivot_longer(
                 cols = all_of(pval_cols),
@@ -329,14 +329,14 @@ long_results <- filtered_ancombc2_results %>%
             mutate(comparison = str_replace(comparison, "p_", "")),
         by = c("taxon", "comparison")
     ) %>%
-    group_by(genus, comparison) %>%  # Nhóm theo genus và comparison
+    group_by(genus, comparison) %>%  # Grouping by genus and comparison
     summarise(
-        lfc = mean(lfc, na.rm = TRUE),  # Lấy trung bình nếu có nhiều giá trị lặp
+        lfc = mean(lfc, na.rm = TRUE),  
         pvalue = mean(pvalue, na.rm = TRUE)
     ) %>%
     mutate(
         significant = ifelse(pvalue < 0.05, "*", ""),
-        offset = ifelse(lfc >= 0, lfc + 0.2, lfc - 0.4)  # Cột dương: +0.2 | Cột âm: -0.4
+        offset = ifelse(lfc >= 0, lfc + 0.2, lfc - 0.4)  # Positive column: +0.2 | Cột âm: -0.4
     ) %>%
     ungroup()
 
@@ -349,12 +349,12 @@ p <- ggplot(long_results, aes(x = genus, y = lfc, fill = comparison)) +
     geom_hline(yintercept = 0, linetype = "dashed", color = "gray30") +
     scale_fill_manual(
         values = c(
-            "TreatmentRP-20_TreatmentRP-10" = "#E57373",  # Đỏ pastel đậm hơn
-            "TreatmentRP-40_TreatmentRP-10" = "#64B5F6",  # Xanh dương pastel đậm hơn
-            "TreatmentRP-5_TreatmentRP-10"  = "#81C784",  # Xanh lá pastel đậm hơn
-            "TreatmentRP-40_TreatmentRP-20" = "#BA68C8",  # Tím pastel đậm hơn
-            "TreatmentRP-5_TreatmentRP-20"  = "#FFB74D",  # Cam pastel đậm hơn
-            "TreatmentRP-5_TreatmentRP-40"  = "#FFF176"   # Vàng pastel đậm hơn
+            "TreatmentRP-20_TreatmentRP-10" = "#E57373",  # Red pastel
+            "TreatmentRP-40_TreatmentRP-10" = "#64B5F6",  # Blue pastel
+            "TreatmentRP-5_TreatmentRP-10"  = "#81C784",  # Green pastel
+            "TreatmentRP-40_TreatmentRP-20" = "#BA68C8",  # Purple paste
+            "TreatmentRP-5_TreatmentRP-20"  = "#FFB74D",  # Orange pastel
+            "TreatmentRP-5_TreatmentRP-40"  = "#FFF176"   # Yellow pastel
         )
     ) +
     labs(
@@ -376,7 +376,7 @@ print(p)
 # Save the plot as a PNG file
 ggsave("lfc_by_treatment_pairwise.png", plot = last_plot(), width = 8, height = 6)
 ```
-[lfc_by_treatment_pairwise.png] is generated
+[lfc_by_treatment_pairwise.png](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/lfc_by_treatment_pairwise1.png) is generated
 ![image](https://github.com/user-attachments/assets/ff6122fe-2e42-48c9-80e5-94ee5e6367ba)
 
 
