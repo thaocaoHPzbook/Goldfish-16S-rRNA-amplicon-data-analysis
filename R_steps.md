@@ -103,6 +103,8 @@ write.csv(res_ancombc2$res_pair, "pairwise_comparisons_results.csv", row.names =
 ```
 [ancombc2_results.csv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/ancombc2_results.csv), [pairwise_comparisons_results.csv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/pairwise_comparisons_results.csv) files are created.
 
+In this plot, the genera with statistically significant differences between treatment groups and the control group are highlighted. Asterisks (*) indicate treatments where the genus shows a significant difference (p-value < 0.05) compared to the control.
+
 # 2. Analysis of biomarkers for gut microbiome
 ## 2.1. Filtering Taxa with Significant p-value<0.05
 ```bash
@@ -211,8 +213,7 @@ ggsave("lfc_by_treatment.png", plot = last_plot(), width = 8, height = 6)
 [lfc_by_treatment.png](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/lfc_by_treatment2.png) is a visualization of taxa that have significant log fold change values.
 ![image](https://github.com/user-attachments/assets/45ca0ac6-5130-488f-8353-b935bcc277ca)
 
-
-
+In this plot, the genera with statistically significant differences in pairwise comparisons between treatment groups are highlighted. Asterisks (*) indicate treatment pairs where the genus shows a significant difference (p-value < 0.05).
 
 
 ## 2.3  Visualization of Log Fold Changes of Taxa with Significant p-value<0.05 - pairwise comparision
