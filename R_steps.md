@@ -162,7 +162,7 @@ filtered_ancombc2_results <- read_csv("filtered_ancombc2_results_with_taxonomy.c
 # Extract genus level name from taxon
 filtered_ancombc2_results$genus <- str_extract(filtered_ancombc2_results$taxon, "g__[^;]+")
 
-# Covert data to long format
+# Convert data to long format
 filtered_long <- filtered_ancombc2_results %>%
   pivot_longer(cols = starts_with("lfc_TreatmentRP"),
                names_to = "treatment",
@@ -171,32 +171,35 @@ filtered_long <- filtered_ancombc2_results %>%
   pivot_longer(cols = starts_with("p_TreatmentRP"),
                names_to = "p_treatment",
                values_to = "p_value") %>%
-  filter(str_replace(p_treatment, "p_Treatment", "") == treatment) %>% # Ghép đúng lfc với p-value
+  filter(str_replace(p_treatment, "p_Treatment", "") == treatment) %>% 
   select(-p_treatment)
 
 # Mark * at p-value < 0.05
 filtered_long$significance <- ifelse(filtered_long$p_value < 0.05, "*", "")
 
+# Define fresh & vibrant colors
+vibrant_colors <- c("RP.5" = "#FF6B6B",  # Coral Red
+                    "RP.10" = "#4ECDC4", # Turquoise
+                    "RP.20" = "#FFD166", # Bright Yellow
+                    "RP.40" = "#06D6A0", # Mint Green
+                    "RP.X" = "#A29BFE")  # Light Purple
+
 # Plotting
 p <- ggplot(filtered_long, aes(x = genus, y = lfc, fill = treatment)) +
     geom_col(position = position_dodge(width = 0.7),
-             width = 0.6,  # Điều chỉnh kích thước cột
-             color = "black") +  
+             width = 0.6,
+             show.legend = TRUE) +  
     geom_text(aes(label = significance, y = lfc + sign(lfc) * 0.4), 
               position = position_dodge(width = 0.7), 
               size = 6, color = "black") +
     geom_hline(yintercept = 0, linetype = "dashed", color = "gray30") + 
-    scale_fill_manual(values = c("RP.5" = "red",
-                                 "RP.10" = "blue",
-                                 "RP.20" = "green",
-                                 "RP.40" = "orange",
-                                 "RP.X" = "purple")) +
+    scale_fill_manual(values = vibrant_colors) +
     labs(x = "Genus",
          y = "Log2 Fold Change",
          fill = "Treatment") +
     theme_minimal(base_size = 14) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10),  # Xoay label trục X
-          legend.position = "right")  #
+    theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+          legend.position = "right")  
 
 # Display the plot
 print(p)
