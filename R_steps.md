@@ -318,8 +318,8 @@ long_results <- filtered_ancombc2_results %>%
         comparison = str_replace(comparison, "lfc_", ""),
         genus = str_extract(taxon, "g__[^;]+")
     ) %>%
-    filter(!is.na(genus)) %>%  # Loại bỏ taxon chưa phân loại tới genus
-    inner_join(  # Dùng inner_join để chỉ lấy các giá trị phù hợp
+    filter(!is.na(genus)) %>%
+    inner_join(
         filtered_ancombc2_results %>%
             pivot_longer(
                 cols = all_of(pval_cols),
@@ -329,20 +329,20 @@ long_results <- filtered_ancombc2_results %>%
             mutate(comparison = str_replace(comparison, "p_", "")),
         by = c("taxon", "comparison")
     ) %>%
-    group_by(genus, comparison) %>%  # Nhóm theo genus và comparison
+    group_by(genus, comparison) %>%
     summarise(
-        lfc = mean(lfc, na.rm = TRUE),  # Lấy trung bình nếu có nhiều giá trị lặp
+        lfc = mean(lfc, na.rm = TRUE),
         pvalue = mean(pvalue, na.rm = TRUE)
     ) %>%
     mutate(
         significant = ifelse(pvalue < 0.05, "*", ""),
-        offset = ifelse(lfc >= 0, lfc + 0.2, lfc - 0.4)  # Cột dương: +0.2 | Cột âm: -0.4
+        offset = ifelse(lfc >= 0, lfc + 0.2, lfc - 0.4)
     ) %>%
     ungroup()
 
 # 3. Plotting
 p <- ggplot(long_results, aes(x = genus, y = lfc, fill = comparison)) +
-    geom_col(position = position_dodge(width = 0.7), width = 0.6, color = "black") +  # Cột to hơn
+    geom_col(position = position_dodge(width = 0.7), width = 0.6, color = "black") +
     geom_text(aes(label = significant, y = offset),  
               position = position_dodge(width = 0.7),  
               size = 6, fontface = "bold", color = "black") +
