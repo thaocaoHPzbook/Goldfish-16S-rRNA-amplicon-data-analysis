@@ -208,8 +208,9 @@ print(p)
 # Save the plot as a PNG file
 ggsave("lfc_by_treatment.png", plot = last_plot(), width = 8, height = 6)
 ```
-[lfc_by_treatment.png](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/lfc_by_treatment.png) is a visualization of taxa that have significant log fold change values.
-![image](https://github.com/user-attachments/assets/ff26fbfd-5206-4a6e-ab86-1954ac640df5)
+[lfc_by_treatment.png] is a visualization of taxa that have significant log fold change values.
+![image](https://github.com/user-attachments/assets/dadc10f5-2fa6-4195-8b11-b2df76daf381)
+
 
 
 
@@ -280,6 +281,11 @@ final_results <- merged_results %>%
 write_csv(final_results, "filtered_ancombc2_pairwise_results_with_taxonomy.csv")
 ```
 
+```bash
+filtered_ancombc2_results <- read.csv("filtered_ancombc2_pairwise_results_with_taxonomy.csv", 
+                                      stringsAsFactors = FALSE, 
+                                      check.names = FALSE)
+```
 
 **Plotting**
 ```bash
@@ -290,12 +296,12 @@ library(ggplot2)
 
 # 1. List of comparison
 target_cols <- c(
-    "lfc_TreatmentRP.20_TreatmentRP.10",
-    "lfc_TreatmentRP.40_TreatmentRP.10",
-    "lfc_TreatmentRP.5_TreatmentRP.10",
-    "lfc_TreatmentRP.40_TreatmentRP.20",
-    "lfc_TreatmentRP.5_TreatmentRP.20",
-    "lfc_TreatmentRP.5_TreatmentRP.40"
+    "lfc_TreatmentRP-20_TreatmentRP-10",
+    "lfc_TreatmentRP-40_TreatmentRP-10",
+    "lfc_TreatmentRP-5_TreatmentRP-10",
+    "lfc_TreatmentRP-40_TreatmentRP-20",
+    "lfc_TreatmentRP-5_TreatmentRP-20",
+    "lfc_TreatmentRP-5_TreatmentRP-40"
 )
 
 pval_cols <- str_replace(target_cols, "lfc_", "p_")  # Create p-value column
@@ -336,19 +342,19 @@ long_results <- filtered_ancombc2_results %>%
 
 # 3. Plotting
 p <- ggplot(long_results, aes(x = genus, y = lfc, fill = comparison)) +
-    geom_col(position = position_dodge(width = 0.7), width = 0.6, color = "black") +  # Cột to hơn
+    geom_col(position = position_dodge(width = 0.7), width = 0.6) +
     geom_text(aes(label = significant, y = offset),  
               position = position_dodge(width = 0.7),  
-              size = 6, fontface = "bold", color = "black") +  # Đặt dấu sao đúng vị trí
-    geom_hline(yintercept = 0, linetype = "dashed", color = "gray30") +  # Đường tham chiếu
+              size = 6, fontface = "bold", color = "black") +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "gray30") +
     scale_fill_manual(
         values = c(
-            "TreatmentRP.20_TreatmentRP.10" = "#E41A1C",
-            "TreatmentRP.40_TreatmentRP.10" = "#377EB8",
-            "TreatmentRP.5_TreatmentRP.10"  = "#4DAF4A",
-            "TreatmentRP.40_TreatmentRP.20" = "#984EA3",
-            "TreatmentRP.5_TreatmentRP.20"  = "#FF7F00",
-            "TreatmentRP.5_TreatmentRP.40"  = "#A65628"
+            "TreatmentRP-20_TreatmentRP-10" = "#E57373",  # Đỏ pastel đậm hơn
+            "TreatmentRP-40_TreatmentRP-10" = "#64B5F6",  # Xanh dương pastel đậm hơn
+            "TreatmentRP-5_TreatmentRP-10"  = "#81C784",  # Xanh lá pastel đậm hơn
+            "TreatmentRP-40_TreatmentRP-20" = "#BA68C8",  # Tím pastel đậm hơn
+            "TreatmentRP-5_TreatmentRP-20"  = "#FFB74D",  # Cam pastel đậm hơn
+            "TreatmentRP-5_TreatmentRP-40"  = "#FFF176"   # Vàng pastel đậm hơn
         )
     ) +
     labs(
@@ -359,11 +365,10 @@ p <- ggplot(long_results, aes(x = genus, y = lfc, fill = comparison)) +
     theme_minimal(base_size = 14) +
     theme(
         plot.title = element_text(hjust = 0.5, face = "bold"),
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 10),  # Xoay label trục X để dễ đọc
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
         legend.position = "bottom"
     )
 
-# Display the plot
 print(p)
 ```
 **Save the plot**
@@ -371,8 +376,9 @@ print(p)
 # Save the plot as a PNG file
 ggsave("lfc_by_treatment_pairwise.png", plot = last_plot(), width = 8, height = 6)
 ```
-[lfc_by_treatment_pairwise.png](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/lfc_by_treatment_pairwise.png) is generated
-![image](https://github.com/user-attachments/assets/ca54fc29-893d-4fce-9569-28706db0350c)
+[lfc_by_treatment_pairwise.png] is generated
+![image](https://github.com/user-attachments/assets/ff6122fe-2e42-48c9-80e5-94ee5e6367ba)
+
 
 # 3. Spearman Correlation Analysis
 
