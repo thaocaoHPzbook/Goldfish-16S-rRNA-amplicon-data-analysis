@@ -514,8 +514,8 @@ corrplot(cor_matrix_filtered,
 ```
 
 **Visualization:**  
-![Correlations between Growth Parameters](Correlations%20between%20Growth%20Parameters.png)  
-*Download:* [Correlations between Growth Parameters](Correlations%20between%20Growth%20Parameters.png)
+![Correlations between Growth Parameters](R_steps/Correlations%20between%20Growth%20Parameters.png)  
+*Download:* [Correlations between Growth Parameters](R_steps/Correlations%20between%20Growth%20Parameters.png)
 
 ## 3.3 Correlation Analysis between Microbiome and Growth Parameters
 
@@ -643,7 +643,7 @@ write.csv(cor_df_with_tax, "spearman_genus_species.csv", row.names = FALSE)
 ```
 
 **Exported Data:**  
-- [spearman_genus_species.csv](spearman_genus_species.csv)
+- [spearman_genus_species.csv](R_steps/spearman_genus_species.csv)
 
 ##### Check Results
 
@@ -703,8 +703,8 @@ ggplot(cor_df_unique, aes(x = Taxon, y = Metadata,
 
 **Visualization:**  
 
-![Strongest Correlations between Gut Microbiota and Growth Parameters](<Strongest_Correlations.png>)
-*Download:* [Strongest Correlations between Gut Microbiota and Growth Parameters](Strongest_Correlations.png)
+![Strongest Correlations between Gut Microbiota and Growth Parameters](<R_steps/Strongest_Correlations.png>)
+*Download:* [Strongest Correlations between Gut Microbiota and Growth Parameters](R_steps/Strongest_Correlations.png)
 
 #### 3.3.3.2 Phylum-Level Correlation Analysis
 
@@ -749,11 +749,11 @@ nrow(cor_df_phylum)
 Export the phylum-level correlation results to a CSV file:
 
 ```r
-write.csv(cor_df_phylum, "spearman_phylum_correlation.csv", row.names = FALSE)
+write.csv(cor_df_phylum, "R_steps/spearman_phylum_correlation.csv", row.names = FALSE)
 ```
 
 **Exported Data:**  
-- [spearman_phylum_correlation.csv](spearman_phylum_correlation.csv)
+- [spearman_phylum_correlation.csv](R_steps/spearman_phylum_correlation.csv)
 
 ##### Draw Heatmap for Phylum-Level Correlations
 
@@ -793,8 +793,8 @@ corrplot(phylum_cor_matrix,
 ```
 
 **Visualization:**  
-![Spearman Correlation Heatmap by Phylum](Heatmap_by_Phylum.png)
-*Download:* [Spearman Correlation Heatmap by Phylum](Heatmap_by_Phylum.png)
+![Spearman Correlation Heatmap by Phylum](R_steps/Heatmap_by_Phylum.png)
+*Download:* [Spearman Correlation Heatmap by Phylum](R_steps/Heatmap_by_Phylum.png)
 
 ---
 
@@ -935,8 +935,8 @@ print(combined_plot)
 ```
 
 **Visualization:**  
-![Correlation with Final Weight](Correlation_with_Final_Weight.png) 
-*Download:* [Correlation with Final Weight](Correlation_with_Final_Weight.png)
+![Correlation with Final Weight](R_steps/Correlation_with_Final_Weight.png) 
+*Download:* [Correlation with Final Weight](R_steps/Correlation_with_Final_Weight.png)
 
 ---
 
@@ -1069,9 +1069,9 @@ ggplot(final_data, aes(x = Sample_Label, y = Relative_Abundance, fill = Genus)) 
 
 **Visualization:**
 
-![Composition barplot](<Composition_barplot.png>)
+![Composition barplot](<R_steps/Composition_barplot.png>)
 
-*Download:* [Composition barplot](<Composition_barplot.png>)
+*Download:* [Composition barplot](<R_steps/Composition_barplot.png>)
 
 ## 4.2. Alpha Diversity Analysis
 
@@ -1184,9 +1184,9 @@ print(alpha_plot)
 
 **Visualization:**
 
-![Alpha Diversity Across Treatment Groups](Alpha_Diversity.png)
+![Alpha Diversity Across Treatment Groups](R_steps/Alpha_Diversity.png)
 
-*Download:* [Alpha Diversity Across Treatment Groups](<Alpha_Diversity.png>)
+*Download:* [Alpha Diversity Across Treatment Groups](<R_steps/Alpha_Diversity.png>)
 
 ## 4.3. Beta Diversity Analysis
 
@@ -1267,8 +1267,8 @@ ggplot(pcoa_df, aes(x = PCoA1, y = PCoA2, color = Treatment)) +
 
 **Visualization:**
 
-![PCoA Analysis](<PCoA_Analysis.png>)
+![PCoA Analysis](<R_steps/PCoA_Analysis.png>)
 
-*Download:* [PCoA Analysis of Treatment Groups](<PCoA_Analysis.png>)
+*Download:* [PCoA Analysis of Treatment Groups](<R_steps/PCoA_Analysis.png>)
 
 
