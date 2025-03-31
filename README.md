@@ -20,7 +20,7 @@
 
 ### [7. Beta Diversity analysis](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/7.%20Beta%20Diversity%20analysis.md)
 
-### [8. Export file from Qiime2 for steps in R/Rstudio](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/8.%20Export%20file%20from%20Qimme2%20for%20R%20steps.md)
+### [8. Export file from Qiime2 for steps in R/Rstudio](/Users/truonganhtu/Documents/Chula_gut_microbiome/GoldFish/script/Goldfish-16S-rRNA-amplicon-data-analysis/README.md)
 
 
 ## [Steps in R/Rstudio](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/d058fe73c9d30b8898bde59f0690ec99a826114d/R_steps.md)
