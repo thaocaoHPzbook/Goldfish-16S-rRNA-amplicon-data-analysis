@@ -359,7 +359,7 @@ p <- ggplot(long_results, aes(x = genus, y = lfc, fill = comparison)) +
     ) +
     labs(
         x = "Genus",
-        y = "Log2 Fold Change",
+        y = "Log Fold Change",
         fill = "Comparison"
     ) +
     theme_minimal(base_size = 14) +
@@ -376,8 +376,9 @@ print(p)
 # Save the plot as a PNG file
 ggsave("lfc_by_treatment_pairwise.png", plot = last_plot(), width = 8, height = 6)
 ```
-[lfc_by_treatment_pairwise.png](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/lfc_by_treatment_pairwise1.png) is generated
-![image](https://github.com/user-attachments/assets/ff6122fe-2e42-48c9-80e5-94ee5e6367ba)
+[lfc_by_treatment_pairwise.png](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/lfc_by_treatment_pairwise2.png) is generated
+![image](https://github.com/user-attachments/assets/609fa204-adfd-42e8-8513-0c278b9e8288)
+
 
 
 # 3. Spearman Correlation Analysis
