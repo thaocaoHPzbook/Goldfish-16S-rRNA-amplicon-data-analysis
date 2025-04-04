@@ -1078,9 +1078,9 @@ ggplot(final_data, aes(x = Sample_Label, y = Relative_Abundance, fill = Genus)) 
 
 **Visualization:**
 
-![Composition barplot](<R_steps/Composition_barplot.png>)
+![Genus level composition barplot](<R_steps/Genus_Composition_barplot.png>)
 
-*Download:* [Composition barplot](<R_steps/Composition_barplot.png>)
+*Download:* [Genus level composition barplot](<R_steps/Genus_Composition_barplot.png>)
 
 ## 4.2. Phylum-Level Composition
 
