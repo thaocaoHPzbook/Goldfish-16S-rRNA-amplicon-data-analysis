@@ -23,7 +23,7 @@
 ### [8. Export file from Qiime2 for steps in R/Rstudio](/Users/truonganhtu/Documents/Chula_gut_microbiome/GoldFish/script/Goldfish-16S-rRNA-amplicon-data-analysis/README.md)
 
 
-## [Steps in R/Rstudio](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/c1b933b3a130058f550f885bc1f27b9646cee8e0/R_steps.md)
+## [Steps in R/Rstudio](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/e63de3b33ccca5b1cf2cf0c9b515fc23fd1bca62/R_steps.md)
 
 ### [1. Differential abundance analysis of taxa using ANCOMBC](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/1.%20Differential%20abundance%20analysis%20of%20taxa%20by%20ANCOMBC.md)
 
