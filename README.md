@@ -23,7 +23,7 @@
 ### [8. Export file from Qiime2 for steps in R/Rstudio](/Users/truonganhtu/Documents/Chula_gut_microbiome/GoldFish/script/Goldfish-16S-rRNA-amplicon-data-analysis/README.md)
 
 
-## [Steps in R/Rstudio](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/e63de3b33ccca5b1cf2cf0c9b515fc23fd1bca62/R_steps.md)
+## [Steps in R/Rstudio](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/0e6c82054001ff686ea0f168add311ee1bf25490/R_steps.md)
 
 ### [1. Differential abundance analysis of taxa using ANCOMBC](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/1.%20Differential%20abundance%20analysis%20of%20taxa%20by%20ANCOMBC.md)
 
@@ -33,4 +33,4 @@
 
 ### [4. Visualization of Gut Microbiome Analysis Results](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/R_steps/4.%20Visualization%20of%20microbiome%20analysis%20results.md)
 
-### [5. 5. Spearman correlation Rose petal](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/0e6c82054001ff686ea0f168add311ee1bf25490/R_steps/5.%20Spearman%20correlation%20Rose%20petal.md)
+### [5. Spearman correlation Rose petal](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/0e6c82054001ff686ea0f168add311ee1bf25490/R_steps/5.%20Spearman%20correlation%20Rose%20petal.md)
