@@ -1339,3 +1339,162 @@ ggplot(pcoa_df, aes(x = PCoA1, y = PCoA2, color = Treatment)) +
 *Download:* [PCoA Analysis of Treatment Groups](<R_steps/PCoA_Analysis.png>)
 
 
+# 5. Spearman correlation Rose petal
+
+This section presents Spearman correlation analyses between rose petal supplementation levels and biological responses in goldfish, including serum antioxidant activity, skin pigmentation, and gene expression.
+
+## 5.1. Serum Antioxidants
+
+This subsection investigates the correlation between rose petal concentration and serum antioxidant indicators (ABTS, SOD, MDA).
+
+### 5.1.1. Spearman Correlation Plots
+
+```r
+library(ggplot2)
+library(ggpubr)
+library(patchwork)
+
+df <- read.csv("Serum_antioxidants.csv")
+
+df$Treatment <- factor(df$Treatment, levels = c("RP-0", "RP-5", "RP-10", "RP-20", "RP-40"))
+df$Rose.petal <- as.numeric(df$Rose.petal)
+
+p_abts <- ggscatter(df, x = "Rose.petal", y = "ABTS",
+          add = "reg.line", conf.int = TRUE,
+          cor.coef = TRUE, cor.method = "spearman",
+          xlab = "Rose petal concentration (g/kg)", 
+          ylab = "ABTS radical scavenging activity (%)",
+          title = "(A)", color = "#66C2A5", shape = 19) +
+          scale_x_continuous(breaks = c(0, 5, 10, 20, 30, 40), 
+                             minor_breaks = c(15, 25, 35))
+
+p_sod <- ggscatter(df, x = "Rose.petal", y = "SOD",
+          add = "reg.line", conf.int = TRUE,
+          cor.coef = TRUE, cor.method = "spearman",
+          xlab = "Rose petal concentration (g/kg)", 
+          ylab = "Superoxide dismutase activity (U/mL)",
+          title = "(B)", color = "#8DA0CB", shape = 19) +
+          scale_x_continuous(breaks = c(0, 5, 10, 20, 30, 40), 
+                             minor_breaks = c(15, 25, 35))
+
+p_mda <- ggscatter(df, x = "Rose.petal", y = "MDA",
+          add = "reg.line", conf.int = TRUE,
+          cor.coef = TRUE, cor.method = "spearman",
+          xlab = "Rose petal concentration (g/kg)", 
+          ylab = "Malondialdehyde content (nM/mL)",
+          title = "(C)", color = "#FC8D62", shape = 19) +
+          scale_x_continuous(breaks = c(0, 5, 10, 20, 30, 40), 
+                             minor_breaks = c(15, 25, 35))
+
+(p_abts | p_sod | p_mda) +
+  plot_annotation(title = "Spearman Correlation between Dose and Serum Antioxidants",
+                  theme = theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5)))
+```
+
+### 5.1.2. Visualization
+
+![Spearman Correlation between Dose and Serum Antioxidants](<R_steps/Serum_Antioxidants.png>)
+
+*Download:* [Spearman Correlation between Dose and Serum Antioxidants](R_steps/Serum_Antioxidants.png)
+
+## 5.2. Skin Pigmentation
+
+This subsection examines the relationship between rose petal concentration and skin pigmentation indicators (a*, b*, L*).
+
+### 5.2.1. Spearman Correlation Plots
+
+```r
+library(ggplot2)
+library(ggpubr)
+library(patchwork)
+
+df <- read.csv("Skin_pigmentation.csv")
+df$Treatment <- factor(df$Treatment, levels = c("RP-0", "RP-5", "RP-10", "RP-20", "RP-40"))
+df$Rose.petal <- as.numeric(df$Rose.petal)
+
+plot_spearman <- function(y, y_label, title_label, color_code) {
+  ggscatter(df, x = "Rose.petal", y = y,
+            add = "reg.line", conf.int = TRUE,
+            cor.coef = TRUE, cor.method = "spearman",
+            xlab = "Rose petal concentration (g/kg)", 
+            ylab = y_label,
+            title = title_label,
+            color = color_code, shape = 19, size = 1.2) +
+    scale_x_continuous(breaks = c(0, 5, 10, 20, 30, 40),
+                       minor_breaks = c(15, 25, 35)) +
+    theme(plot.title = element_text(size = 14))
+}
+
+p_a <- plot_spearman("a.", "Redness (a*)", "(A)", "#E78AC3")
+p_b <- plot_spearman("b.", "Yellowness (b*)", "(B)", "#FDCB58")
+p_l <- plot_spearman("L.", "Luminosity (L*)", "(C)", "#BEBEBE")
+
+(p_a | p_b | p_l) + 
+  plot_annotation(title = "Spearman Correlation between Rose Petal Dose and Skin Pigmentation",
+                  theme = theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5)))
+```
+
+### 5.2.2. Visualization
+
+![Spearman Correlation between Rose Petal Dose and Skin Pigmentation](<R_steps/Skin_Pigmentation.png>)
+
+*Download:* [Spearman Correlation between Rose Petal Dose and Skin Pigmentation](R_steps/Skin_Pigmentation.png)
+
+## 5.3. Gene Expression
+
+This subsection explores the correlation between rose petal concentration and gene expression levels.
+
+### 5.3.1. Spearman Correlation Plots
+
+```r
+library(ggplot2)
+library(ggpubr)
+library(patchwork)
+
+df <- read.csv("Gene_expression.csv")
+df$Rose.petal <- as.numeric(df$Rose.petal)
+df$Treatment <- factor(df$Treatment, levels = c("RP-0", "RP-5", "RP-10", "RP-20", "RP-40"))
+
+gene_list <- c("HSP70", "IGF", "TGF", "CYB", "NAT", 
+               "TNFa", "CH2", "LYZ", 
+               "IL1B", "IL10")
+gene_labels <- c("HSP70", "IGF", "TGF", "CYB", "NAT",
+                 "TNF-α", "CH2", "LYZ",
+                 "IL-1β", "IL-10")
+panel_letters <- LETTERS[1:length(gene_list)]
+
+colors <- c("#FFB3B3", "#FFD92F", "#E6AB02", "#A6D854", "#B3B3B3",   
+            "#FC8D62", "#E5C494", "#80B1D3",                         
+            "#E78AC3", "#66C2A5")                                    
+
+plot_gene <- function(gene, label, panel, color) {
+  ggscatter(df, x = "Rose.petal", y = gene,
+            add = "reg.line", conf.int = TRUE,
+            cor.coef = TRUE, cor.method = "spearman",
+            xlab = "Rose petal concentration (g/kg)", 
+            ylab = paste0(label, " expression"),
+            title = paste0("(", panel, ")"),
+            color = color, shape = 19, size = 1.1) +
+    scale_x_continuous(breaks = c(0, 5, 10, 20, 30, 40),
+                       minor_breaks = c(15, 25, 35)) +
+    theme(
+  plot.title = element_text(size = 13),
+  axis.title.x = element_text(size = 11),
+  axis.title.y = element_text(size = 11, face = "bold"),
+  axis.text.x = element_text(size = 10),
+  axis.text.y = element_text(size = 10)
+)
+}
+
+plots <- mapply(plot_gene, gene_list, gene_labels, panel_letters, colors, SIMPLIFY = FALSE)
+
+wrap_plots(plots, ncol = 4) +
+  plot_annotation(title = "Spearman Correlation between Rose Petal Dose and Gene Expression",
+                  theme = theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5)))
+```
+
+### 5.3.2. Visualization
+
+![Spearman Correlation between Rose Petal Dose and Gene Expression](<R_steps/Gene_Expression.png>)
+
+*Download:* [Spearman Correlation between Rose Petal Dose and Gene Expression](R_steps/Gene_Expression.png)
