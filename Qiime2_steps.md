@@ -1,7 +1,7 @@
 # 1. Importing raw data into Qiime2
 ## Generate manifest.csv
 Sequence data are paired end in the format of FASTA with good quality score; therefore, in qiime2 the type will be "SampleData[PairedEndSequencesWithQuality]" and their imput format asigned as PairedEndFastqManifestPhred33.
-Before importing, [manifest.csv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/manifest.csv) file must be prepared.
+Before importing, [manifest.csv]file must be prepared.
 
  ```bash
 qiime tools import \
@@ -17,13 +17,13 @@ qiime demux summarize \
   --i-data short_reads_demux.qza \
   --o-visualization short_reads_demux.qzv
 ```
-This [short_reads_demux.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/short_reads_demux.qzv) is a visualized format of short_reads_demux.qza. which you can view it on [qiime2 viewer](https://view.qiime2.org/). Once you are there you can either drag-and-drop the artifact into the designated area or simpley copy the link to the artifact from this repository and paste it in the box file from the web. Once there, you must come across the following picture:
-![image](https://github.com/user-attachments/assets/dbfb9bb8-4dfc-4676-a680-1774ead4cbce)
+This [short_reads_demux.qzv] is a visualized format of short_reads_demux.qza. which you can view it on [qiime2 viewer](https://view.qiime2.org/). Once you are there you can either drag-and-drop the artifact into the designated area or simpley copy the link to the artifact from this repository and paste it in the box file from the web. Once there, you must come across the following picture:
+![image]
 **Figure 1. Demultiplexed pairedEnd read**    
 On this overview page you can see counts of demultiplexed sequences for the entire samples for both forward and reverse reads, with min, median, mean and max and total counts.
-![image](https://github.com/user-attachments/assets/352add1e-abed-404b-83dc-12a7d0200684)
+![image]
 **Figure 2. Interacvive plot for demultiplexed pairedEnd reads**    
-Understanding this plot is crucial for the denoising step, as it allows you to determine the appropriate truncation length for both forward and reverse reads, ensuring that at least 50% of the reads maintain a quality score (Q) of ≥ 30. You can observe these changes by hovering over the interactive box plots. In this case, the quality of both forward and reverse reads remained consistently high, indicating that minimal (at 246nt) or no truncation may be necessary.
+Understanding this plot is crucial for the denoising step, as it allows you to determine the appropriate truncation length for both forward and reverse reads, ensuring that at least 50% of the reads maintain a quality score (Q) of ≥ 30. You can observe these changes by hovering over the interactive box plots. In this case, the quality of both forward and reverse reads remained consistently high, indicating that minimal (at 251nt) or no truncation may be necessary.
 
 # 2. Filtering, dereplication, sample inference, chimera identification, and merging of paired-end reads by DADA2 package in qiime2.
 ```bash
@@ -31,54 +31,40 @@ qiime dada2 denoise-paired \
   --i-demultiplexed-seqs short_reads_demux.qza \
   --p-trim-left-f 0 \
   --p-trim-left-r 0 \
-  --p-trunc-len-f 0 \
-  --p-trunc-len-r 0 \
+  --p-trunc-len-f 251 \
+  --p-trunc-len-r 251 \
   --o-table table.qza \
   --o-representative-sequences rep-seqs.qza \
   --o-denoising-stats denoising-stats.qza
 ```
-You can convert the [denoising-stats.qza](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/denoising-stats.qza) file into a [denoising-stats.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/denoising-stats.qzv) file and visualize it on qiime viewer as explained earlier
+You can convert the [denoising-stats.qza] file into a [denoising-stats.qzv]file and visualize it on qiime viewer as explained earlier
 ```bash
 qiime metadata tabulate \
   --m-input-file denoising-stats.qza \
   --o-visualization denoising-stats.qzv
 ```
-![image](https://github.com/user-attachments/assets/11c8e699-d193-46e3-840f-bd042194580f)
+![image]
 
 **Figure 3. The denoising status of the reads for each sample.**    
 You can see the number of filtered reads and also the percentage of non-chimeric sequences after denoising.
 The filtered reads and the percentage of non-chimeric sequences being >50% is quite good. However, you may need to adjust the chimera filtering process in DADA2 or apply an alternative approach if you want to improve the results, such as:    
-**Perform de novo chimera filtering using VSEARCH in QIIME 2**
+
+**Filter to remove sample with < 5 reads**
 ```bash
-qiime vsearch uchime-denovo \
+qiime feature-table filter-samples \
   --i-table table.qza \
-  --i-sequences rep-seqs.qza \
-  --o-chimeras chimeras.qza \
-  --o-nonchimeras rep-seqs-no-chimera.qza \
-  --o-stats chimera-stats.qza
+  --p-min-frequency 5 \
+  --o-filtered-table table_filtered_min5.qza
 ```
-**Check the chimera filtering summary**
-```bash
-qiime metadata tabulate \
-  --m-input-file chimera-stats.qza \
-  --o-visualization chimera-stats.qzv
-```
-Then use the non-chimeric sequences for further analysis.    
-**Filter the feature table to remove chimeric sequences**
-```bash
-qiime feature-table filter-features \
-  --i-table table.qza \
-  --m-metadata-file rep-seqs-no-chimera.qza \
-  --o-filtered-table filtered-table.qza
-```
-**Visualize feature table after remove chimeric sequences**
+**Visualize feature table after filter**
 ```bash
 qiime feature-table summarize \
-  --i-table filtered-table.qza \
-  --o-visualization table-no-chimera.qzv
+  --i-table table.qza \
+  --m-sample-metadata-file metadata_final.tsv \
+  --o-visualization table.qzv
 ```
-If you drag and drop the [table-no-chimera.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/table-no-chimera.qzv) file in qiime2 view, you can see three main menues; Overview, Interactive Sample Detail and Feature Detail. If you click on Feature detail Detail you can see a slider to the left of the picture which could be changed, based which you can arbiterarily decide, to which depth of reading you can do your rarefaction.
-![image](https://github.com/user-attachments/assets/5e1cdc75-645f-4d19-8e0d-e63f5fe5e188)    
+If you drag and drop the [table-no-chimera.qzv] file in qiime2 view, you can see three main menues; Overview, Interactive Sample Detail and Feature Detail. If you click on Feature detail Detail you can see a slider to the left of the picture which could be changed, based which you can arbiterarily decide, to which depth of reading you can do your rarefaction.
+![image]
 
 **Figure 5. ASV table indicating number of samples per treatment and number of ASVs per sample**    
 
