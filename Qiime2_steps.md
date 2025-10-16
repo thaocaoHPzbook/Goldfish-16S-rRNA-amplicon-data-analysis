@@ -49,6 +49,21 @@ qiime metadata tabulate \
 You can see the number of filtered reads and also the percentage of non-chimeric sequences after denoising.
 The filtered reads and the percentage of non-chimeric sequences being >50% is quite good. However, you may need to adjust the chimera filtering process in DADA2 or apply an alternative approach if you want to improve the results, such as:    
 
+**Visualize feature table**
+```bash
+qiime feature-table summarize \
+  --i-table table.qza \
+  --m-sample-metadata-file metadata_final.tsv \
+  --o-visualization table.qzv
+```
+
+**Tabulate representative sequences**
+```bash
+qiime feature-table tabulate-seqs \
+  --i-data rep-seqs.qza \
+  --o-visualization rep-seqs.qzv
+```
+
 **Filter to remove sample with < 5 reads**
 ```bash
 qiime feature-table filter-samples \
@@ -56,6 +71,7 @@ qiime feature-table filter-samples \
   --p-min-frequency 5 \
   --o-filtered-table table_filtered_min5.qza
 ```
+
 **Visualize feature table after filter**
 ```bash
 qiime feature-table summarize \
@@ -77,15 +93,16 @@ wget https://data.qiime2.org/2023.7/common/silva-138-99-tax.qza -O silva_data/si
 **Train the downloaded database**
 ```bash
 qiime feature-classifier fit-classifier-naive-bayes \
-  --i-reference-reads silva_data/silva-138-99-seqs.qza \
-  --i-reference-taxonomy silva_data/silva-138-99-tax.qza \
-  --o-classifier silva_data/silva-classifier.qza
+  --i-reference-reads silva-138-99-seqs.qza \
+  --i-reference-taxonomy silva-138-99-tax.qza \
+  --o-classifier silva-138-99-nb-classifier.qza
 ```
 After you got **silva-classifier.qza** classifier file, you can use it for your taxonomic classifications as follows:
-## Taxonomic classification with a confidence score threshold of 90%
+
+## Taxonomic classification with a confidence score threshold of 80%
 ```bash
 qiime feature-classifier classify-sklearn \
-  --i-classifier silva_data/silva-138-99-nb-classifier.qza \
+  --i-classifier silva-138-99-nb-classifier.qza \
   --i-reads rep-seqs-no-chimera.qza \
   --p-confidence 0.8 \
   --o-classification taxonomy.qza
@@ -93,130 +110,87 @@ qiime feature-classifier classify-sklearn \
 **Generate taxa bar plot**
 ```bash
 qiime taxa barplot \
-  --i-table filtered-table.qza \
-  --i-taxonomy taxonomy.qza \
-  --m-metadata-file metadata.tsv \
-  --o-visualization taxa-barplot.qzv
+--i-table table_filtered_min5.qza \
+--i-taxonomy taxonomy.qza \
+--m-metadata-file metadata_final.tsv \
+--o-visualization taxa-barplot.qzv
 ```
-![image](https://github.com/user-attachments/assets/87310d82-f336-44cc-9638-9a41d90ed04c)
+
+![image]
 **Figure 6. Taxonomy classification bar plot at genus level**
 
-You can see in the [taxa barplot](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/taxa-barplot.qzv) that most samples have similar microbial compositions, except for one **control sample** and one **RP-20 sample**, which show abnormal patterns. This could be due to low sequencing depth, leading to an inaccurate representation of microbial diversity in these samples. Further analysis is needed to determine whether the microbial compositions in these samples, particularly in the control sample and RP-20 sample, differ significantly in a statistically meaningful way.
+**Visualize taxonomy classification result with confident score**
+```bash
+qiime metadata tabulate \
+ --m-input-file taxonomy.qza \
+ --o-visualization taxonomy.qzv
+```
 
 To investigate further, we will examine the summary statistics after chimera filtering and perform rarefaction curve analysis in the next steps.  
 
-### **Grouping feature table by Treatment**
-To compare microbial compositions at the treatment group level, we first aggregate the feature table by the `Treatment` column in the metadata. This step sums the feature abundances within each treatment group.
-
-```bash
-qiime feature-table group \
-  --i-table Qiime_steps/filtered-table.qza \
-  --m-metadata-file Qiime_steps/metadata.tsv \
-  --m-metadata-column Treatment \
-  --p-mode sum \
-  --p-axis sample \
-  --o-grouped-table Qiime_steps/grouped-feature-table.qza
-```
-After grouping, we generate a summary of the grouped feature table to check the total frequency and number of features per treatment group.
-
-```bash
-qiime feature-table summarize \
-  --i-table Qiime_steps/grouped-feature-table.qza \
-  --o-visualization Qiime_steps/grouped-feature-table.qzv
-```
-
-### **Taxonomic Classification of Grouped Data**
-Once the feature table is grouped by treatment using [metadata_grouped.tsv](Qiime_steps/metadata_grouped.tsv), we can generate a taxa barplot to visualize the taxonomic composition of each treatment group.
-
-```bash
-qiime taxa barplot \
-  --i-table Qiime_steps/grouped-feature-table.qza \
-  --i-taxonomy Qiime_steps/taxonomy.qza \
-  --m-metadata-file Qiime_steps/metadata_grouped.tsv \
-  --o-visualization Qiime_steps/grouped-taxa-barplot.qzv
-```
-
-The grouped taxa barplot helps us compare microbial compositions across different treatment groups, allowing us to identify major taxonomic differences at various classification levels.
-
-![Grouped taxa barplot](Qiime_steps/grouped-taxa-barplot.png)
 
 # 4. Creating a phylogenetic tree using align-to-tree-MAFFT-FastTree
 ```bash
 qiime phylogeny align-to-tree-mafft-fasttree \
-  --i-sequences rep-seqs-no-chimera.qza \
-  --o-alignment aligned-rep-seqs-no-chimera.qza \
-  --o-masked-alignment masked-aligned-rep-seqs-no-chimera.qza \
-  --o-tree unrooted-tree-no-chimera.qza \
-  --o-rooted-tree tree-no-chimera.qza
+  --i-sequences rep-seqs.qza \
+  --o-alignment aligned-rep-seqs.qza \
+  --o-masked-alignment masked-aligned-rep-seqs.qza \
+  --o-tree unrooted-tree.qza \
+  --o-rooted-tree rooted-tree.qza
 ```
-**Visualization**
-```bash
-qiime tools export \
-  --input-path tree-no-chimera.qza \
-  --output-path exported_tree
-```
-The Newick file will be in the exported_tree/tree.nwk folder. You can upload [tree.nwk](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/tree.nwk) to [iTOL](https://itol.embl.de/upload.cgi) to view it.
-![image](https://github.com/user-attachments/assets/127c7827-0201-43b2-aaff-df37807df5ba)
 
 # 5. Rarefraction curve analysis
 Rarefaction curves assess sequencing depth sufficiency and microbial diversity saturation in samples. This helps (1) Ensure adequate sequencing depth for reliable diversity estimation (2) Compare samples to detect under-sequenced ones; (3) Evaluate data stability—a plateauing curve indicates sufficient sampling.
 **Generate rarefraction curve chart**
 ```bash
 qiime diversity alpha-rarefaction \
-  --i-table filtered-table.qza \
-  --i-phylogeny tree-no-chimera.qza \
-  --p-max-depth 25000 \
-  --p-steps 20 \
-  --p-iterations 10 \
-  --m-metadata-file metadata.tsv \
+  --i-table table_filtered_min5.qza \
+  --i-phylogeny rooted-tree.qza \
+  --p-max-depth 87959 \
+  --m-metadata-file metadata_final.tsv \
   --o-visualization alpha-rarefaction.qzv
 ```
-You can view the chart [alpha-rarefaction.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/alpha-rarefaction.qzv) by qiime view as method explained previously.
-![image](https://github.com/user-attachments/assets/17745783-82e3-4938-aecb-8c9540d007e2)
+You can view the chart [alpha-rarefaction.qzv] by qiime view as method explained previously.
+![image]
 
-At a depth of 20000, the rarefaction curve reaches saturation, indicating that increasing reads will not detect many new ASVs, and 15 samples are removed, it means that 100% of the samples are retained. This suggests that normalization at this depth would keep all of the dataset for analysis.    
-**Proceed with normalization at a subsampling depth of 20000**
+At a depth of 9000, the rarefaction curve almost reaches saturation, indicating that increasing reads will not detect many new ASVs, 70% of the samples are retained. This suggests that normalization at this depth would keep all of the dataset for analysis.    
+**Proceed with normalization at a subsampling depth of 9000**
 ```bash
 qiime diversity core-metrics-phylogenetic \
-  --i-table filtered-table.qza \
-  --i-phylogeny tree-no-chimera.qza \
-  --p-sampling-depth 20000 \
-  --m-metadata-file metadata.tsv \
-  --output-dir core-metrics-results-20000
+  --i-table table_filtered_min5.qza \
+  --i-phylogeny rooted-tree.qza \
+  --m-metadata-file metadata_final.tsv \
+  --p-sampling-depth 9000 \
+  --output-dir core-metrics-results
 ```
 # 6. Alpha diversity analysis
 ## Chao1
 Chao1 alpha diversity analysis estimates species richness in a sample. It focuses on rare ASVs (appearing only once or twice), helping to assess how many species might be undetected due to limited sequencing depth. This is useful for comparing microbial richness across sample groups.
 ```bash
 qiime diversity alpha \
-  --i-table core-metrics-results-20000/rarefied_table.qza \
+  --i-table core-metrics-results/rarefied_table.qza \
   --p-metric chao1 \
-  --o-alpha-diversity core-metrics-results-20000/chao1_vector.qza
+  --o-alpha-diversity core-metrics-results/chao1_vector.qza
 ```
 ```bash
 qiime metadata tabulate \
-  --m-input-file core-metrics-results-20000/chao1_vector.qza \
-  --o-visualization core-metrics-results-20000/chao1_vector.qzv
+  --m-input-file core-metrics-results/chao1_vector.qza \
+  --o-visualization core-metrics-results/chao1_vector.qzv
 ```
-[chao1_vector.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/chao1_vector.qzv) is generated.
-![image](https://github.com/user-attachments/assets/3efb70bb-01fb-4f2f-92ec-d1cd1c9d2b30)
-Sample 4 has a Chao1 index of 209.25, and Sample 5 has a Chao1 index of 210.86, indicating a lower ASV richness compared to other samples. A statistical test is needed to determine whether this difference is statistically significant among groups.
+[chao1_vector.qzv] is generated.
+![image]
+A statistical test is needed to determine whether this difference is statistically significant among groups.
 
-**Analysis Chao1 between groups of treatment**
+**Analysis Chao1 between groups**
 ```bash
 qiime diversity alpha-group-significance \
-  --i-alpha-diversity core-metrics-results-20000/chao1_vector.qza \
-  --m-metadata-file metadata.tsv \
-  --o-visualization core-metrics-results-20000/chao1_group_significance.qzv
+  --i-alpha-diversity core-metrics-results/chao1_vector.qza \
+  --m-metadata-file metadata_final.tsv \
+  --o-visualization core-metrics-results/chao1_group_significance.qzv
 ```
-[chao1-group-significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/chao1_group_significance.qzv) is generated.
-![image](https://github.com/user-attachments/assets/60b5ead9-2414-433d-acd8-bb15ba935eca)
+[chao1-group-significance.qzv]
+![image]
 
-The Kruskal-Wallis test was performed to compare Chao1 richness across different treatment groups. The overall test statistic H=3.23 with a p-value of 0.5196, indicating that there is no statistically significant difference in Chao1 richness among the groups.
-
-Pairwise comparisons using the Kruskal-Wallis test show that all p-values are greater than 0.05, suggesting no significant differences between any two groups. The lowest p-values (e.g., 0.1266) are still far from the significance threshold, further supporting that the observed variations in OTU richness are likely due to random fluctuations rather than meaningful biological differences.
-
-**Conclusion: The results indicate that there is no statistically significant difference in Chao1 richness among the Treatment groups.**
 
 ## Shannon index
 The Shannon index measures alpha diversity, accounting for both species richness (number of species) and evenness (distribution of species abundances).
@@ -224,48 +198,38 @@ The Shannon index measures alpha diversity, accounting for both species richness
     Lower Shannon index → A community dominated by a few species, indicating lower diversity.
 ```bash
 qiime diversity alpha-group-significance \
-  --i-alpha-diversity core-metrics-results-20000/shannon_vector.qza \
-  --m-metadata-file metadata.tsv \
-  --o-visualization core-metrics-results-20000/shannon_group_significance.qzv
+  --i-alpha-diversity core-metrics-results/shannon_vector.qza \
+  --m-metadata-file metadata_final.tsv \
+  --o-visualization core-metrics-results/shannon_pneumonia_significance.qzv
 ```
 
-[shannon-group-significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/shannon_group_significance.qzv) file is generated.
-![image](https://github.com/user-attachments/assets/a7a975f0-0a76-4c85-bc84-be0db50dcb18)
+[shannon-group-significance.qzv] file is generated.
+![image]
 
-Overall: p-value =  	0.597 → There is no significant difference in the Shannon index between groups overall. This means that the microbial diversity structure across all groups is similar.
-Pairwise: All p-values > 0.05 → There is no significant difference in the Shannon index between any pair of groups. This indicates that no group has significantly higher or lower microbial diversity compared to the others.    
-**Conclusion: The groups have equivalent microbial diversity, suggesting that the grouping factor (e.g., experimental condition) does not strongly influence gut microbiome diversity in this dataset**    
 
 ## Pielou's Evenness Index
 Pielou's Evenness Index measures the evenness of species distribution in a community. It indicates how evenly the species are distributed, with values ranging from 0 (completely uneven) to 1 (completely even).
 ```bash
 qiime diversity alpha-group-significance \
-  --i-alpha-diversity core-metrics-results-20000/evenness_vector.qza \
-  --m-metadata-file metadata.tsv \
-  --o-visualization core-metrics-results-20000/evenness_group_significance.qzv
+  --i-alpha-diversity core-metrics-results/evenness_vector.qza \
+  --m-metadata-file metadata_final.tsv \
+  --o-visualization core-metrics-results/evenness_pneumonia_significance.qzv
 ```
-[evenness_group_significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/evenness_group_significance.qzv) file is generated
-![image](https://github.com/user-attachments/assets/28de76cb-ba44-402a-a521-b154e002d13a)
+[evenness_group_significance.qzv] file is generated
+![image]
 
-Overall: H =	2.933, p-value = 0.569 → No significant difference in evenness between groups.
-Pairwise: All pairwise comparisons have p-value > 0.05, indicating no significant differences in evenness between any pair of groups.    
-**Conclusion:There is no significant difference in Pielou's Evenness Index across groups, suggesting that the evenness of microbial distribution is similar in all groups**
 
 ## Faith's Phylogenetic Diversity (Faith's PD) 
 Faith's PD measures the total branch length of a phylogenetic tree that connects all species in a sample. It reflects both species richness and phylogenetic diversity, considering evolutionary relationships.
 A higher Faith’s PD indicates a more diverse microbial community with greater evolutionary variety, while a lower Faith’s PD suggests a more phylogenetically constrained community.
 ```bash
 qiime diversity alpha-group-significance \
-  --i-alpha-diversity core-metrics-results-20000/faith_pd_vector.qza \
-  --m-metadata-file metadata.tsv \
-  --o-visualization core-metrics-results-20000/faith_pd_group_significance.qzv
+  --i-alpha-diversity core-metrics-results/faith_pd_vector.qza \
+  --m-metadata-file metadata_final.tsv \
+  --o-visualization core-metrics-results/faith_pd_group_significance.qzv
 ```
-[faith-pd-group-significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/faith_pd_group_significance.qzv) is generated
-![image](https://github.com/user-attachments/assets/aa4215e4-6fa9-4c80-8892-d333ea0ed3d3)
-
-Overall (All groups): H-statistic = 5.566, p-value = 0.2339 → No significant difference in Faith's PD between the groups.    
-Pairwise (Between groups):All pairwise comparisons have p-value > 0.05, indicating no significant differences in Faith's PD between any of the groups.    
-**Conclusion: There is no significant difference in Faith's PD between the groups, suggesting that the phylogenetic diversity is similar across all groups in this study.**
+[faith-pd-group-significance.qzv]is generated
+![image]
 
 # 7. Beta diversity analysis
 ## Bray-Curtis Index
@@ -276,34 +240,33 @@ This index helps us understand the level of difference in microbial species betw
 **PCoA Plot**
 ```bash
 qiime diversity pcoa \
-  --i-distance-matrix core-metrics-results-20000/bray_curtis_distance_matrix.qza \
-  --o-pcoa core-metrics-results-20000/bray_curtis_pcoa_results.qza
+  --i-distance-matrix core-metrics-results/bray_curtis_distance_matrix.qza \
+  --o-pcoa core-metrics-results/bray_curtis_pcoa_results.qza
 ```
 ```bash
 qiime emperor plot \
-  --i-pcoa core-metrics-results-20000/bray_curtis_pcoa_results.qza \
-  --m-metadata-file metadata.tsv \
-  --o-visualization core-metrics-results-20000/bray_curtis_emperor.qzv
+  --i-pcoa core-metrics-results/bray_curtis_pcoa_results.qza \
+  --m-metadata-file metadata_final.tsv \
+  --o-visualization core-metrics-results/bray_curtis_emperor.qzv
 ```
-![image](https://github.com/user-attachments/assets/7c95322d-b373-45b6-9841-dca732f2cadb)
+![image]
 
 
-The PCoA plot [bray_curtis_emperor.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/bray_curtis_emperor.qzv) does not show clear clustering between the treatments,further PERMANOVA analysis for a more detailed examination and reveals significant differences in microbial communities across the groups.
+The PCoA plot [bray_curtis_emperor.qzv] does not show clear clustering between the treatments,further PERMANOVA analysis for a more detailed examination and reveals significant differences in microbial communities across the groups.
 **PERMANOVA analysis**
 ```bash
 qiime diversity beta-group-significance \
-  --i-distance-matrix core-metrics-results-20000/bray_curtis_distance_matrix.qza \
-  --m-metadata-file metadata.tsv \
-  --m-metadata-column Treatment \
-  --o-visualization core-metrics-results-20000/bray_curtis_significance.qzv \
-  --p-method permanova \
-  --p-pairwise
+  --i-distance-matrix core-metrics-results/bray_curtis_distance_matrix.qza \
+  --m-metadata-file metadata_final.tsv \
+  --m-metadata-column pneumonia \
+  --o-visualization core-metrics-results/bray_curtis_pneumonia_significance.qzv \
+  --p-method permanova
 ```
-[bray_curtis_group_significance.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/bray_curtis_significance.qzv) file is generated.
-![image](https://github.com/user-attachments/assets/ac60bc70-1fbd-469f-9256-8dcaad943654)
+[bray_curtis_group_significance.qzv] file is generated.
+![image]
 ![image](https://github.com/user-attachments/assets/b74d8b0d-661c-4f52-8eda-c5ddea82cc02)
 
-The overall PERMANOVA test (Bray-Curtis dissimilarity) shows a significant difference between groups (p = 0.017). However, all pairwise comparisons have p-values greater than 0.05, suggesting that while there is a global difference among groups, no specific pairwise comparison shows a statistically significant difference. This could be due to limited sample size or variability within groups.
+
 
 ## Jaccard index
 Jaccard index is a measure of similarity between two sets. In microbiome studies, it is used to compare the presence or absence of species across different samples.
