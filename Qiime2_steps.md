@@ -8,18 +8,18 @@ Before importing, [manifest.csv](https://github.com/thaocaoHPzbook/Goldfish-16S-
 
 ```bash
 qiime tools import \
---type 'SampleData[PairedEndSequencesWithQuality]' \
---input-path manifest.csv \
---output-path short_reads_demux.qza \
---input-format PairedEndFastqManifestPhred33
+  --type 'SampleData[PairedEndSequencesWithQuality]' \
+  --input-path manifest.csv \
+  --output-path short_reads_demux.qza \
+  --input-format PairedEndFastqManifestPhred33
 ```
 
 This might take a while before you get the results. The output of this command is a **short_reads_demux.qza** file, which you have already specified in the command. You can then create a visualized file from this artifact, with the following command:
 
 ```bash
 qiime demux summarize \
---i-data short_reads_demux.qza \
---o-visualization short_reads_demux.qzv
+  --i-data short_reads_demux.qza \
+  --o-visualization short_reads_demux.qzv
 ```
 
 This [short_reads_demux.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/short_reads_demux.qzv) is a visualized format of short_reads_demux.qza. which you can view it on [qiime2 viewer](https://view.qiime2.org/). Once you are there you can either drag-and-drop the artifact into the designated area or simpley copy the link to the artifact from this repository and paste it in the box file from the web. Once there, you must come across the following picture:
@@ -42,14 +42,14 @@ Understanding this plot is crucial for the denoising step, as it allows you to d
 # 2. Filtering, dereplication, sample inference, chimera identification, and merging of paired-end reads by DADA2 package in qiime2.
 ```bash
 qiime dada2 denoise-paired \
---i-demultiplexed-seqs short_reads_demux.qza \
---p-trim-left-f 0 \
---p-trim-left-r 0 \
---p-trunc-len-f 0 \
---p-trunc-len-r 0 \
---o-table table.qza \
---o-representative-sequences rep-seqs.qza \
--o-denoising-stats denoising-stats.qza
+  --i-demultiplexed-seqs short_reads_demux.qza \
+  --p-trim-left-f 0 \
+  --p-trim-left-r 0 \
+  --p-trunc-len-f 0 \
+  --p-trunc-len-r 0 \
+  --o-table table.qza \
+  --o-representative-sequences rep-seqs.qza \
+  --o-denoising-stats denoising-stats.qza
 ```
 
 You can convert the [denoising-stats.qza](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/denoising-stats.qza) file into a [denoising-stats.qzv](https://github.com/thaocaoHPzbook/Goldfish-16S-rRNA-amplicon-data-analysis/blob/main/Qiime_steps/denoising-stats.qzv) file and visualize it on qiime viewer as explained earlier   
